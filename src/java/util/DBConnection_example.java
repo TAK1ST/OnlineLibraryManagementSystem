@@ -12,15 +12,15 @@ import java.sql.SQLException;
  *
  * @author asus
  */
-public class DBConnection {
+public class DBConnection_example {
     private static final String DB_NAME = "YOUR_DB_NAME";
-    private static final String DB_USER_NAME = "YOUR_USERNAME";
-    private static final String DB_PASSWORD = "YORUR_PASSWORD";
+    private static final String DB_USER_NAME = "YOUR_DB_USER_NAME";
+    private static final String DB_PASSWORD = "YOUR_DB_PASSWORD";
     
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Connection conn = null;
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        String url = "jdbc:mysql://localhost:3306/" + DB_NAME + "?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=" + DB_NAME;
         conn = DriverManager.getConnection(url, DB_USER_NAME, DB_PASSWORD);
         return conn;
     }
