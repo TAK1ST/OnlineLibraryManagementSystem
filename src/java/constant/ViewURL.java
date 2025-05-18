@@ -9,5 +9,5 @@ package constant;
  * @author asus
  */
 public class ViewURL {
-    
+    public static String ADMIN_DASHBOARD = "/view/dashboard/admin-dashboard.jsp";
 }
