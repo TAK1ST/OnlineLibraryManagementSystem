@@ -12,10 +12,10 @@ import java.sql.SQLException;
  *
  * @author asus
  */
-public class DBConnection {
-    private static final String DB_NAME = "library_system";
-    private static final String DB_USER_NAME = "SA";
-    private static final String DB_PASSWORD = "12345";
+public class DBConnection_example {
+    private static final String DB_NAME = "YOUR_DB_NAME";
+    private static final String DB_USER_NAME = "YOUR_DB_USER_NAME";
+    private static final String DB_PASSWORD = "YOUR_DB_PASSWORD";
     
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Connection conn = null;
