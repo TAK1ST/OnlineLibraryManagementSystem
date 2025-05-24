@@ -1,12 +1,21 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : May 24, 2025, 6:37:07 PM
+    Author     : asus
+*/
+
 .footer {
-      position: fixed;
-      bottom: 0;
-      left: 350px;
-      background-color: #1abc9c;
-      color: white;
-      /*make copyright center*/
-      width: calc(100% - 350px);                /*300 is left*/
       text-align: center;
-      padding: 5px;
-      font-weight: 400;
+      color: white;
+      font-weight: 600;
+      padding: 10px;
+      background-color: #16A085;
+      position: fixed;
+      left:250px;
+      bottom: 0;
+      width: calc(100% - 250px);
+      text-align: center;
 }
