@@ -1,49 +1,60 @@
-body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-}
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : May 24, 2025, 6:34:35 PM
+    Author     : asus
+*/
 
 .sidebar {
-      height: 100vh;
-      width: 350px;
       background-color: #2c3e50;
-      color: white;
-      padding-top: 30px;
+      width: 250px;
+      height: 100vh;
       position: fixed;
+      left: 0;
+      top: 0;
+      padding: 30px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 }
 
 .sidebar img {
-      width: 160px;
-      height: 160px;
-      margin-bottom: 10px;
+      width: 80px;
+      height: 80px;
+      background-color: #bdc3c7;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      padding: 15px;
 }
 
 .sidebar h3 {
-      font-weight: 600;
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 40px;
+      text-align: center;
 }
 
-.sidebar .nav-link {
-      color: white;
-      font-size: 26px;
-      font-weight: 600;
-      padding: 10px 0;
+.nav-link {
+      color: #bdc3c7 !important;
+      text-decoration: none;
+      padding: 15px 30px;
       width: 100%;
-      text-align: center;
-      margin-bottom: 10px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      text-align: left;
+      font-size: 14px;
+      border: none;
+      background: none;
+      transition: all 0.3s ease;
 }
 
-.sidebar .nav-link.active,
-.sidebar .nav-link:hover {
-      background-color: #1abc9c;
-      color: white;
-      border-radius: 5px;
-      padding: 10px 82px;
-      width: 100%;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+.nav-link:hover {
+      background-color: #34495e;
+      color: white !important;
+}
+
+.nav-link.active {
+      background-color: #27ae60;
+      color: white !important;
 }
