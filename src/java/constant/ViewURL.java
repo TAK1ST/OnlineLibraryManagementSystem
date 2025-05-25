@@ -13,4 +13,5 @@ public class ViewURL {
     public static String ADMIN_SYSTEM_CONFIG = "/view/dashboard/admin-system-config.jsp";
     public static String ADMIN_USER_MANAGEMENT= "/view/dashboard/admin-user-manager.jsp";
     public static String ADMIN_BOOK_MANAGEMENT= "/view/dashboard/admin-book-manager.jsp";
+    public static String ADMIN_ADD_BOOK_MANAGEMENT= "/view/dashboard/admin-add-book-manager.jsp";
 }
