@@ -10,19 +10,16 @@ import java.sql.SQLException;
 
 /**
  *
- * @author asus
+ * @author Admin
  */
-public class DBConnection_example {
-    private static final String DB_NAME = "YOUR_DB_NAME";
-    private static final String DB_USER_NAME = "YOUR_DB_USER_NAME";
-    private static final String DB_PASSWORD = "YOUR_DB_PASSWORD";
+public class DBContext {
+    private static final String dbName = "library_system";
+    private static final String userID = "sa";
+    private static final String password = "12345";
     
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
+        String url = "jdbc:sqlserver://" + ":" + ";databaseName=" + dbName;
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=" + DB_NAME;
-        conn = DriverManager.getConnection(url, DB_USER_NAME, DB_PASSWORD);
-        return conn;
+        return DriverManager.getConnection(url, userID, password);
     }
-
 }
