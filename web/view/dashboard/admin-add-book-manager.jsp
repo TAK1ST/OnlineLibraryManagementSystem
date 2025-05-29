@@ -1,6 +1,6 @@
 <%-- 
-    Document   : admin-add-book-management
-    Created on : May 25, 2025, 4:56:47 PM
+    Document   : admin-add-book-manager
+    Created on : May 29, 2025, 11:04:26 PM
     Author     : asus
 --%>
 
@@ -9,7 +9,7 @@
 <html>
       <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            <title>add book management</title>
+            <title>Add Book Management</title>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css"/>
@@ -51,15 +51,6 @@
                                           <!-- Image Upload Section -->
                                           <div class="image-upload">
                                                 <div class="upload-box" onclick="document.getElementById('bookImage').click()">
-                                                      <div class="upload-placeholder">
-                                                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                            <circle cx="9" cy="9" r="7"></circle>
-                                                            <path d="M21 21l-6-6M9 8.5L7.5 7M15 15L8.5 8.5"></path>
-                                                            <rect x="3" y="3" width="18" height="14" rx="2" ry="2"></rect>
-                                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                                            <polyline points="21,15 16,10 5,21"></polyline>
-                                                            </svg>
-                                                      </div>
                                                 </div>
                                                 <input type="file" id="bookImage" name="bookImage" accept="image/*" class="hidden-file-input">
                                           </div>
