@@ -74,10 +74,6 @@
         <servlet-name>ViewURL</servlet-name>
         <url-pattern>/ViewURL</url-pattern>
     </servlet-mapping>
-<<<<<<< HEAD
-    <welcome-file-list>
-        <welcome-file>home</welcome-file>
-=======
     <servlet-mapping>
         <servlet-name>AdminSystemConfig</servlet-name>
         <url-pattern>/systemconfig</url-pattern>
@@ -94,14 +90,9 @@
         <servlet-name>AddBookManagement</servlet-name>
         <url-pattern>/addbookmanagement</url-pattern>
     </servlet-mapping>
-    <session-config>
-        <session-timeout>
-                  30
-            </session-timeout>
-    </session-config>
+
     <welcome-file-list>
         <welcome-file>view/auth/login.jsp</welcome-file>
->>>>>>> 3c03fa0dfde5adfb315ef76c184195f7f8e68e37
     </welcome-file-list>
     <session-config>
         <session-timeout>30</session-timeout>

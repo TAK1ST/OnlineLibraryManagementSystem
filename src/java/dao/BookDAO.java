@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Book;
-import utils.DBContext;
+import util.DBConnection;
 
 public class BookDAO {
     
@@ -15,7 +15,7 @@ public class BookDAO {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books WHERE status = 'active'";
         
-        try (Connection conn = DBContext.getConnection();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             
@@ -30,7 +30,7 @@ public class BookDAO {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT TOP 10 * FROM books WHERE status = 'active' ORDER BY published_year DESC";
         
-        try (Connection conn = DBContext.getConnection();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             
@@ -45,7 +45,7 @@ public class BookDAO {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books WHERE status = 'active' AND " + searchBy + " LIKE ?";
         
-        try (Connection conn = DBContext.getConnection();
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, "%" + searchTerm + "%");
