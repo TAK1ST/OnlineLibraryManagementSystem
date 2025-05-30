@@ -1,194 +1,287 @@
+/* Container Styles */
+body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+}
+
+.container-fluid {
+      padding: 0;
+      min-height: 100vh;
+}
+
+/* Main Content */
 .main-content {
       margin-left: 250px;
       padding: 0;
       min-height: 100vh;
-      background-color: #ecf0f1;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       position: relative;
 }
 
-.header {
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-}
-
-.header h1 {
-      color: #16A085;
-      font-size: 28px;
-      font-weight: 600;
-      margin: 0;
+/* Header Section */
+.header-section {
+      background: linear-gradient(135deg, #16A085 0%, #1ABC9C 100%);
+      padding: 30px 40px;
+      color: white;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 .logout-btn {
-      background-color: #34495e;
+      background-color: #34495E;
       color: white;
       border: none;
-      padding: 8px 20px;
-      border-radius: 6px;
+      padding: 10px 25px;
+      border-radius: 10px;
       font-size: 14px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
       position: absolute;
-      top: 20px;
+      top: 30px;
       right: 40px;
-      z-index: 10;
 }
 
 .logout-btn:hover {
       background-color: #2c3e50;
+      border-color: rgba(255,255,255,0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .stat-title {
-      background-color: white;
-      padding: 20px 40px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      color: #27ae60;
-      font-size: 32px;
-      font-weight: 600;
-      padding: 20px 0;
+      font-size: 36px;
+      font-weight: 700;
+      margin: 0;
       text-align: center;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.stat-subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+      text-align: center;
+      margin-top: 10px;
+}
+
+/* Stats Container */
 .stats-container {
-      padding: 20px 40px;
+      padding: 40px;
       max-width: 100%;
       margin: 0 auto;
 }
 
-.stat-row {
+/* Statistics Cards */
+.stats-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
 }
 
-.stat-section {
-      background-color: white;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+.stat-card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+}
+
+.stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.stat-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      margin-bottom: 20px;
 }
 
 .stat-label {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
       color: #2c3e50;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
 }
 
-.stat-input {
-      width: 100%;
-      border: 2px solid #bdc3c7;
-      border-radius: 8px;
-      padding: 12px 15px;
-      font-size: 16px;
-      transition: border-color 0.3s ease;
-      background-color: white;
+.stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 5px;
 }
 
-.stat-input:focus {
-      outline: none;
-      border-color: #27ae60;
-      box-shadow: 0 0 0 0.2rem rgba(39, 174, 96, 0.25);
+.stat-change {
+      font-size: 14px;
+      color: #27ae60;
 }
 
-.stat-input:read-only {
-      background-color: #f8f9fa;
-      cursor: default;
-}
-
-.books-section {
-      grid-column: span 2;
+/* Charts Section */
+.charts-section {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 2fr 1fr;
       gap: 30px;
-      background: none;
-      padding: 0;
-      box-shadow: none;
+      margin-bottom: 40px;
 }
 
-.book-card {
-      background-color: white;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      min-height: 200px;
+.chart-card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+}
+
+.chart-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+}
+
+.chart-container {
+      position: relative;
+      height: 300px;
+}
+
+/* Most Borrowed Books */
+.books-list {
+      max-height: 300px;
+      overflow-y: auto;
+}
+
+.book-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      margin-bottom: 10px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+}
+
+.book-item:hover {
+      background: #e9ecef;
+      transform: translateX(5px);
+}
+
+.book-rank {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin-right: 15px;
+}
+
+.book-info {
+      flex: 1;
 }
 
 .book-title {
-      font-size: 18px;
       font-weight: 600;
       color: #2c3e50;
-      margin-bottom: 15px;
-      border-bottom: 2px solid #27ae60;
-      padding-bottom: 10px;
+      margin-bottom: 5px;
 }
 
-.book-content {
-      color: #7f8c8d;
+.book-count {
       font-size: 14px;
-      line-height: 1.6;
+      color: #7f8c8d;
 }
 
-.footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: #27ae60;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      font-size: 12px;
-      z-index: 5;
-}
-
-.no-data {
-      color: #95a5a6;
-      font-style: italic;
-      text-align: center;
-      padding: 20px;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
       .sidebar {
             width: 200px;
       }
 
-      .content {
+      .main-content {
             margin-left: 200px;
       }
 
-      .stats-container {
+      .footer {
+            left: 200px;
+            width: calc(100% - 200px);
+      }
+
+      .stats-grid {
+            grid-template-columns: 1fr;
+      }
+
+      .charts-section {
+            grid-template-columns: 1fr;
+      }
+
+      .header-section {
             padding: 20px;
-      }
-
-      .stat-row {
-            grid-template-columns: 1fr;
-            gap: 20px;
-      }
-
-      .books-section {
-            grid-column: span 1;
-            grid-template-columns: 1fr;
       }
 
       .logout-btn {
             right: 20px;
       }
+}
 
-      .stat-title {
-            font-size: 28px;
+/* Loading Animation */
+.loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+      0% {
+            transform: rotate(0deg);
+      }
+      100% {
+            transform: rotate(360deg);
       }
 }
 
-@media (max-width: 480px) {
-      .sidebar {
-            width: 180px;
-      }
+/* Custom scrollbar */
+.books-list::-webkit-scrollbar {
+      width: 6px;
+}
 
-      .content {
-            margin-left: 180px;
-      }
+.books-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+}
+
+.books-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 10px;
 }

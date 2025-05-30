@@ -50,8 +50,8 @@
         <servlet-class>controller.admin.AdminUpdateInventory</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                        AdminChangeProfileUser                                      </servlet-name>
-        <servlet-class>controller.admin.AdminChangeProfileUser</servlet-class>
+        <servlet-name>                                                      AdminOverdueBook                                               </servlet-name>
+        <servlet-class>controller.admin.AdminOverdueBook</servlet-class>
     </servlet>
     <!--mapping-->
     <servlet-mapping>
@@ -103,8 +103,8 @@
         <url-pattern>/updateinventory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AdminChangeProfileUser</servlet-name>
-        <url-pattern>/changeprofileuser</url-pattern>
+        <servlet-name>AdminOverdueBook</servlet-name>
+        <url-pattern>/overduebook</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

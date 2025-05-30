@@ -1,6 +1,7 @@
 package dao.implement;
 
-import dao.interfaces.BaseDAO;
+import dao.interfaces.IBaseDAO;
+import dao.interfaces.IUserDAO;
 import entity.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +19,7 @@ import util.DBConnection;
  *
  * @author asus
  */
-public class UserDAO extends BaseDAO<User> {
+public class UserDAO implements IUserDAO {
 
       private final List<User> users = new ArrayList<>();
 
@@ -35,17 +36,19 @@ public class UserDAO extends BaseDAO<User> {
                         //ResultSet in OOP = table in Database
                         ResultSet table = st.executeQuery(sql);
                         // step 3: get data from table 
-                        if (table != null && table.next()) {
+                        while (table != null && table.next()) {
                               int id = table.getInt("id");
                               String name = table.getString("name");
                               String email = table.getString("email");
                               String password = table.getString("password");
                               String role = table.getString("role");
                               String status = table.getString("status");
-                              users.add(new User(id, name, email, password, role, status));
+                              users.add(new User(id, name != null ? name : "",
+                                      email != null ? email : "",
+                                      password != null ? password : "",
+                                      role != null ? role : "",
+                                      status != null ? status : ""));
                         }
-                  } else {
-                        System.out.println("Cannot connect database");
                   }
             } catch (Exception e) {
                   e.printStackTrace();
@@ -61,6 +64,7 @@ public class UserDAO extends BaseDAO<User> {
             return users;
       }
 
+      @Override
       public User getId(int id) {
             User user = new User();
             Connection cn = null;
@@ -83,8 +87,6 @@ public class UserDAO extends BaseDAO<User> {
                               String status = table.getString("status");
                               user = new User(id, name, email, password, role, status);
                         }
-                  } else {
-                        System.out.println("Cannot connect database");
                   }
             } catch (Exception e) {
                   e.printStackTrace();
@@ -122,8 +124,6 @@ public class UserDAO extends BaseDAO<User> {
                               String status = table.getString("status");
                               user = new User(id, name, email, password, role, status);
                         }
-                  } else {
-                        System.out.println("Cannot connect database");
                   }
             } catch (Exception e) {
                   e.printStackTrace();
@@ -138,8 +138,9 @@ public class UserDAO extends BaseDAO<User> {
             }
             return user;
       }
-      
-            public User getEmail(String email) {
+
+      @Override
+      public User getEmail(String email) {
             User user = new User();
             Connection cn = null;
             try {
@@ -161,8 +162,6 @@ public class UserDAO extends BaseDAO<User> {
                               String status = table.getString("status");
                               user = new User(id, name, email, password, role, status);
                         }
-                  } else {
-                        System.out.println("Cannot connect database");
                   }
             } catch (Exception e) {
                   e.printStackTrace();
@@ -177,7 +176,7 @@ public class UserDAO extends BaseDAO<User> {
             }
             return user;
       }
-      
+
       @Override
       public void save(User user) {
             Connection cn = null;

@@ -16,12 +16,12 @@
                   <div class="sidebar">
                         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
                         <h3>Role: Adminator</h3>
-                        <a href="#" class="nav-link">Dashboard</a>
-                        <a href="#" class="nav-link active">System Config</a>
-                        <a href="#" class="nav-link">User Management</a>
-                        <a href="#" class="nav-link">Overdue Books</a>
-                        <a href="#" class="nav-link">Book Management</a>
-                        <a href="#" class="nav-link">Update Inventory</a>
+                        <a href="admindashboard" class="nav-link">Dashboard</a>
+                        <a href="systemconfig" class="nav-link ">System Config</a>
+                        <a href="usermanagement" class="nav-link">User Management</a>
+                        <a href="overduebook" class="nav-link">Overdue Books</a>
+                        <a href="bookmanagement" class="nav-link active">Book Management</a>
+                        <a href="updateinventory" class="nav-link">Update Inventory</a>
                   </div>
 
                   <!-- Main Content -->
@@ -38,7 +38,7 @@
                         </div>
 
                         <!-- Filter Section -->
-                        <div class="filter-section">
+                        <div class="filter-section d-flex justify-content-around">
                               <div class="filter-row">
                                     <div class="filter-group">
                                           <label>title</label>
@@ -97,5 +97,15 @@
                         ©Copyright Group 7
                   </div>
             </div>
-</body>
+            <script>
+                  function goBack() {
+                        history.back();
+                  }
+                  
+                  function addNewBook()
+                  {
+                        window.location.href = "admin-add-book-manager.jsp";
+                  }
+            </script>
+      </body>
 </html>

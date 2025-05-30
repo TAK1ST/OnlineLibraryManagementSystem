@@ -15,16 +15,16 @@
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css"/>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/container.css"/>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css"/>
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-update-inventory.css"/>
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-overdue-book.css"/>
 
       </head>
       <body>
             <div class="header">
                   <div class="header-content">
-                        <a href="#" class="back-arrow">
+                        <a href="admindashboard" class="back-arrow">
                               <i class="fas fa-arrow-left fa-2x"></i>
                         </a>
-                        <h1>Update Inventory</h1>
+                        <h1>Overdue Book</h1>
                         <button class="logout-btn" onclick="logout()">
                               Logout
                         </button>
@@ -35,9 +35,9 @@
                   <table class="table table-hover inventory-table">
                         <thead >
                               <tr>
-                                    <th>name</th>
                                     <th>isbn</th>
                                     <th>title</th>
+                                    <th>author</th>
                                     <th>available copies</th>
                                     <th>overdue fine</th>
                                     <th>action</th>
