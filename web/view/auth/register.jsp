@@ -12,6 +12,12 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <form accept-charset="utf-8" action="RegisterServlet" method="post" style=" padding: 5%" >
+            <p>name:<input type="text" name="txtname" required="">*</p>
+            <p>email<input type="text" name="txtemail" required="">*</p>
+            <p>password:<input type="password" name="txtpassword" required="">*</p>
+            <p>confirm password:<input type="password" name="txtconfirmpassword" required="">*</p>
+            <p><input type="submit" name="btn" value="submit"></p>
+        </form>
     </body>
 </html>

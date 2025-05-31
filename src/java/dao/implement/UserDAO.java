@@ -23,6 +23,40 @@ public class UserDAO implements IUserDAO {
 
       private final List<User> users = new ArrayList<>();
 
+      //      insert new line into user table =  > return 1/0 (true/false)
+      public int insertNewUser(String name, String email, String password) {
+            int result = 0;
+//            step 1: connection Connection 
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        System.out.println("connect successfully");
+                  }
+//                  step 2: query and execute 
+                  String sql = "insert [dbo].[users] values( ? , ? , ? , 'user' , 'active') ";
+//                  init OOP, just prepare not start 
+                  PreparedStatement prst = cn.prepareStatement(sql);
+//                  value 1 = place at the first < ?  > 
+                  prst.setString(1, name);
+                  prst.setString(2, email);
+                  prst.setString(3, password);
+                  result = prst.executeUpdate();
+//                  step 3: get data from table 
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return result;
+      }
+
       @Override
       public List<User> getAll() {
 
@@ -102,6 +136,7 @@ public class UserDAO implements IUserDAO {
             return user;
       }
 
+      @Override
       public User getName(String name) {
             User user = new User();
             Connection cn = null;
