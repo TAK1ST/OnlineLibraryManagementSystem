@@ -6,9 +6,9 @@
             <title>Book Management</title>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-book-manager.css"/>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css"/>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css"/>
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-book-manager.css"/>
       </head>
       <body>
             <div class="container-fluid">
@@ -38,8 +38,8 @@
                         </div>
 
                         <!-- Filter Section -->
-                        <div class="filter-section d-flex justify-content-around">
-                              <div class="filter-row">
+                        <div class="filter-section ">
+                              <div class="filter-row d-flex justify-content-around">
                                     <div class="filter-group">
                                           <label>title</label>
                                           <input type="text" class="filter-input" id="titleFilter" placeholder="">
@@ -62,7 +62,7 @@
                               </div>
                               <div>
                                     <button class="add-book-btn" onclick="addNewBook()">
-                                          <i class="fas fa-plus me-1"></i>Add new book
+                                          <i class="fas fa-plus me-1"></i>Add Book
                                     </button>
                               </div>
                         </div>

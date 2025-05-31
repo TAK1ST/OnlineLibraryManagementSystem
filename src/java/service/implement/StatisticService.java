@@ -4,7 +4,6 @@
  */
 package service.implement;
 
-import dao.implement.BookDAO;
 import dao.implement.UserDAO;
 import entity.User;
 import java.util.List;
@@ -16,12 +15,12 @@ import java.util.List;
 public class StatisticService {
 
       private final UserDAO userDAO;
-      private final BookDAO bookDAO;
+//      private final BookDAO bookDAO;
 //      private final List<Book> bookList;
 
       public StatisticService() {
             userDAO = new UserDAO();
-            bookDAO = new BookDAO();
+//            bookDAO = new BookDAO();
       }
 
       public int getTotalUser() {

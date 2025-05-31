@@ -22,12 +22,12 @@
                   <!-- Sidebar -->
                   <div class="sidebar">
                         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
-                        <h3>Role: Adminator</h3>
+                        <h3>Role: Administrator</h3>
                         <a href="admindashboard" class="nav-link">Dashboard</a>
                         <a href="systemconfig" class="nav-link active">System Config</a>
                         <a href="usermanagement" class="nav-link">User Management</a>
                         <a href="overduebook" class="nav-link">Overdue Books</a>
-                        <a href="bookmanagement" class="nav-link ">Book Management</a>
+                        <a href="bookmanagement" class="nav-link">Book Management</a>
                         <a href="updateinventory" class="nav-link">Update Inventory</a>
                   </div>
 
@@ -36,31 +36,41 @@
                         <!-- Header -->
                         <div class="header">
                               <h1>System Configuration</h1>
-                              <button class="logout-btn">Logout</button>
+                              <button class="logout-btn" onclick="logout()">Logout</button>
                         </div>
 
+                        <!-- Message Display -->
+                        <% if (request.getAttribute("message") != null) { %>
+                        <div id="autoAlert" class="alert alert-info fade show" 
+                             role="alert" style="margin:0 25% ; text-align: center">
+                              <%= request.getAttribute("message") %>
+                        </div>
+                        <% } %>
                         <!-- Configuration Form -->
                         <div class="config-content">
-                              <form class="config-form" method="post" action="updateSystemConfig.jsp">
-                                    <div class="form-group">
-                                          <label class="form-label" for="overdueFine">Overdue Fine</label>
+                              <form class="config-form" method="POST" action="systemconfig">
+                                    <div class="form-group mb-3">
+                                          <label class="form-label" for="overdueFine">Overdue Fine (per day)</label>
                                           <input type="number" class="form-control" id="overdueFine" name="overdueFine" 
-                                               min="0" placeholder="Enter overdue fine amount">
+                                                 min="0" placeholder="Enter overdue fine amount">
+                                          <small class="form-text text-muted">Leave empty if you don't want to update this value</small>
                                     </div>
 
-                                    <div class="form-group">
-                                          <label class="form-label" for="returnFine">Return Fine</label>
+                                    <div class="form-group mb-3">
+                                          <label class="form-label" for="returnFine">Default Borrow Duration (days)</label>
                                           <input type="number" class="form-control" id="returnFine" name="returnFine" 
-                                                 min="0" placeholder="Enter return fine amount">
+                                                 min="0" placeholder="Enter default borrow duration">
+                                          <small class="form-text text-muted">Leave empty if you don't want to update this value</small>
                                     </div>
 
-                                    <div class="form-group">
-                                          <label class="form-label" for="borrowUnitPrice">Borrow Unit Price</label>
+                                    <div class="form-group mb-3">
+                                          <label class="form-label" for="borrowUnitPrice">Unit Price per Book</label>
                                           <input type="number" class="form-control" id="borrowUnitPrice" name="borrowUnitPrice" 
-                                                 min="0" placeholder="Enter borrow unit price">
+                                                 min="0" placeholder="Enter unit price per book">
+                                          <small class="form-text text-muted">Leave empty if you don't want to update this value</small>
                                     </div>
 
-                                    <button type="submit" class="update-btn">Update</button>
+                                    <button type="submit" class="btn btn-primary update-btn">Update Configuration</button>
                               </form>
                         </div>
                   </div>
@@ -70,5 +80,22 @@
                         ©Copyright Group 7
                   </div>
             </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                                    function logout() {
+                                          if (confirm('Are you sure you want to logout?')) {
+                                                window.location.href = 'logout';
+                                          }
+                                    }
+                                    setTimeout(function () {
+                                          const alertEl = document.getElementById("autoAlert");
+                                          if (alertEl) {
+                                                alertEl.classList.remove("show");
+                                                alertEl.classList.add("fade"); 
+                                                setTimeout(() => alertEl.remove(), 300);
+                                          }
+                                    }, 1000);
+            </script>
       </body>
 </html>
