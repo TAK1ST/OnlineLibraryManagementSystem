@@ -90,12 +90,11 @@
         <servlet-name>AddBookManagement</servlet-name>
         <url-pattern>/addbookmanagement</url-pattern>
     </servlet-mapping>
-    <session-config>
-        <session-timeout>
-                  30
-            </session-timeout>
-    </session-config>
+
     <welcome-file-list>
         <welcome-file>view/auth/login.jsp</welcome-file>
     </welcome-file-list>
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
 </web-app>
