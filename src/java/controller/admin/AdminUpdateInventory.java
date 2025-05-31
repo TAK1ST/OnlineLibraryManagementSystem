@@ -4,12 +4,14 @@
  */
 package controller.admin;
 
+import service.implement.UpdateInventoryService;
 import constant.ViewURL;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -17,42 +19,36 @@ import java.io.IOException;
  */
 public class AdminUpdateInventory extends HttpServlet {
 
-      // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-      /**
-       * Handles the HTTP <code>GET</code> method.
-       *
-       * @param request servlet request
-       * @param response servlet response
-       * @throws ServletException if a servlet-specific error occurs
-       * @throws IOException if an I/O error occurs
-       */
+      private final IUpdateInventoryService inventoryService = new UpdateInventoryService();
+
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+
+            List<Inventory> inventories = inventoryService.getAllInventory();
+            request.setAttribute("inventories", inventories);
             request.getRequestDispatcher(ViewURL.ADMIN_UPDATE_INVENTORY).forward(request, response);
       }
 
-      /**
-       * Handles the HTTP <code>POST</code> method.
-       *
-       * @param request servlet request
-       * @param response servlet response
-       * @throws ServletException if a servlet-specific error occurs
-       * @throws IOException if an I/O error occurs
-       */
       @Override
       protected void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+
+            try {
+                  int bookId = Integer.parseInt(request.getParameter("bookId"));
+                  int newQuantity = Integer.parseInt(request.getParameter("quantity"));
+
+                  if (inventoryService.updateStock(bookId, newQuantity)) {
+                        request.setAttribute("success", "Cập nhật tồn kho thành công!");
+                  } else {
+                        request.setAttribute("error", "Cập nhật thất bại!");
+                  }
+            } catch (NumberFormatException e) {
+                  request.setAttribute("error", "Dữ liệu không hợp lệ");
+            } catch (IllegalArgumentException e) {
+                  request.setAttribute("error", e.getMessage());
+            }
+
+            doGet(request, response);
       }
-
-      /**
-       * Returns a short description of the servlet.
-       *
-       * @return a String containing servlet description
-       */
-      @Override
-      public String getServletInfo() {
-            return "Short description";
-      }// </editor-fold>
-
 }

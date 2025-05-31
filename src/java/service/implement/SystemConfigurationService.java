@@ -10,11 +10,11 @@ import dao.implement.SystemConfigDAO;
  *
  * @author asus
  */
-public class SystemConfigService {
+public class SystemConfigurationService {
 
       private final SystemConfigDAO systemConfigDAO;
 
-      public SystemConfigService() {
+      public SystemConfigurationService() {
             this.systemConfigDAO = new SystemConfigDAO();
       }
 

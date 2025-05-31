@@ -4,10 +4,18 @@
  */
 package dao.interfaces;
 
+import entity.Book;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author asus
  */
 public interface IBookDAO {
-      
+      public ArrayList<Book> getBookByTitle(String title);
+      public List<Book> getAllBook() throws SQLException, ClassNotFoundException;
+      public List<Book> getNewBooks() throws SQLException, ClassNotFoundException;
+      public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException;
 }

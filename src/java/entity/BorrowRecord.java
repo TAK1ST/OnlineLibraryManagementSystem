@@ -12,8 +12,8 @@ import java.time.LocalDate;
  */
 public class BorrowRecord {
     private int id;
-    private User user;
-    private Book book;
+    private int userId;
+    private int bookId;
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
@@ -23,10 +23,10 @@ public class BorrowRecord {
       }
 
     
-      public BorrowRecord(int id, User user, Book book, LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, String status) {
+      public BorrowRecord(int id, int userId, int bookId, LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, String status) {
             this.id = id;
-            this.user = user;
-            this.book = book;
+            this.userId = userId;
+            this.bookId = bookId;
             this.borrowDate = borrowDate;
             this.dueDate = dueDate;
             this.returnDate = returnDate;
@@ -41,20 +41,20 @@ public class BorrowRecord {
             this.id = id;
       }
 
-      public User getUser() {
-            return user;
+      public int getUser() {
+            return userId;
       }
 
-      public void setUser(User user) {
-            this.user = user;
+      public void setUser(int userId) {
+            this.userId = userId;
       }
 
-      public Book getBook() {
-            return book;
+      public int getBook() {
+            return bookId;
       }
 
-      public void setBook(Book book) {
-            this.book = book;
+      public void setBook(int bookId) {
+            this.bookId = bookId;
       }
 
       public LocalDate getBorrowDate() {
