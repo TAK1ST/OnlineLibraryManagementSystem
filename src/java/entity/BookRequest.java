@@ -37,19 +37,19 @@ public class BookRequest {
             this.id = id;
       }
 
-      public int getUser() {
+      public int getUserId() {
             return userId;
       }
 
-      public void setUser(int userId) {
+      public void setUserId(int userId) {
             this.userId = userId;
       }
 
-      public int getBook() {
+      public int getBookId() {
             return bookId;
       }
 
-      public void setBook(int bookId) {
+      public void setBookId(int bookId) {
             this.bookId = bookId;
       }
 

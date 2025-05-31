@@ -185,7 +185,7 @@ public class UserDAO implements IUserDAO {
                         String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users]"
                                 + "where  [email] = ?";
                         PreparedStatement pst = cn.prepareStatement(sql);
-                        pst.setString(3, email);
+                        pst.setString(1, email);
                         //ResultSet in OOP = table in Database
                         ResultSet table = pst.executeQuery();
                         // step 3: get data from table 
@@ -220,7 +220,7 @@ public class UserDAO implements IUserDAO {
             try {
                   cn = DBConnection.getConnection();
                   if (cn == null) {
-                        System.out.println("Cannot connect to database");
+                        System.err.println("Cannot connect to database");
                         return;
                   }
 
