@@ -10,7 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.implement.SystemConfigService;
+import service.implement.SystemConfigurationService;
 
 /**
  *
@@ -28,7 +28,7 @@ public class AdminSystemConfig extends HttpServlet {
       protected void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
 
-            SystemConfigService systemConfigService = new SystemConfigService();
+            SystemConfigurationService systemConfigService = new SystemConfigurationService();
             String message = "";
             boolean hasUpdate = false;
 

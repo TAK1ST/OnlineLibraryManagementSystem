@@ -5,6 +5,7 @@
 package dao.implement;
 
 
+import dao.interfaces.IBookDAO;
 import entity.Book;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,8 +19,9 @@ import util.DBConnection;
  *
  * @author Admin
  */
-public class BookDAO {
+public class BookDAO implements IBookDAO{
     //ham nay De lay tat ca quyen sach 
+    @Override
     public ArrayList<Book> getBookByTitle(String title){
         ArrayList<Book> result = new ArrayList<>();
         Connection cn = null;
@@ -67,6 +69,7 @@ public class BookDAO {
         return result;        
     }
 
+    @Override
     public List<Book> getAllBook() throws SQLException, ClassNotFoundException {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books WHERE status = 'active'";
@@ -82,6 +85,7 @@ public class BookDAO {
         return books;
     }
     
+    @Override
     public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT TOP 10 * FROM books WHERE status = 'active' ORDER BY published_year DESC";
@@ -97,6 +101,7 @@ public class BookDAO {
         return books;
     }
     
+    @Override
     public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books WHERE status = 'active' AND " + searchBy + " LIKE ?";

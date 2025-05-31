@@ -11,19 +11,20 @@ import java.time.LocalDate;
  * @author asus
  */
 public class BookRequest {
-    private int id;
-    private User user;
-    private Book book;
-    private LocalDate requestDate;
-    private String status;
+
+      private int id;
+      private int userId;
+      private int bookId;
+      private LocalDate requestDate;
+      private String status;
 
       public BookRequest() {
       }
 
-      public BookRequest(int id, User user, Book book, LocalDate requestDate, String status) {
+      public BookRequest(int id, int userId, int bookId, LocalDate requestDate, String status) {
             this.id = id;
-            this.user = user;
-            this.book = book;
+            this.userId = userId;
+            this.bookId = bookId;
             this.requestDate = requestDate;
             this.status = status;
       }
@@ -36,20 +37,20 @@ public class BookRequest {
             this.id = id;
       }
 
-      public User getUser() {
-            return user;
+      public int getUser() {
+            return userId;
       }
 
-      public void setUser(User user) {
-            this.user = user;
+      public void setUser(int userId) {
+            this.userId = userId;
       }
 
-      public Book getBook() {
-            return book;
+      public int getBook() {
+            return bookId;
       }
 
-      public void setBook(Book book) {
-            this.book = book;
+      public void setBook(int bookId) {
+            this.bookId = bookId;
       }
 
       public LocalDate getRequestDate() {
@@ -67,5 +68,5 @@ public class BookRequest {
       public void setStatus(String status) {
             this.status = status;
       }
-    
+
 }
