@@ -46,6 +46,10 @@
         <servlet-class>controller.admin.AddBookManagement</servlet-class>
     </servlet>
     <!--mapping-->
+    <servlet>
+        <servlet-name>BookDetailServlet</servlet-name>
+        <servlet-class>controller.auth.BookDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AdminDashboard</servlet-name>
         <url-pattern>/admindashboard</url-pattern>
@@ -91,6 +95,11 @@
         <url-pattern>/addbookmanagement</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>BookDetailServlet</servlet-name>
+        <url-pattern>/BookDetailServlet</url-pattern>
+    </servlet-mapping>
+   
     <welcome-file-list>
         <welcome-file>view/auth/login.jsp</welcome-file>
     </welcome-file-list>

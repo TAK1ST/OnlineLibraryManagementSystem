@@ -4,6 +4,8 @@
  */
 package controller.auth;
 
+import dao.implement.UserDAO;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -26,22 +28,22 @@ public class RegisterServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet RegisterServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet RegisterServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+//    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        response.setContentType("text/html;charset=UTF-8");
+//        try ( PrintWriter out = response.getWriter()) {
+//            /* TODO output your page here. You may use following sample code. */
+//            out.println("<!DOCTYPE html>");
+//            out.println("<html>");
+//            out.println("<head>");
+//            out.println("<title>Servlet RegisterServlet</title>");            
+//            out.println("</head>");
+//            out.println("<body>");
+//            out.println("<h1>Servlet RegisterServlet at " + request.getContextPath() + "</h1>");
+//            out.println("</body>");
+//            out.println("</html>");
+//        }
+//    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -55,7 +57,7 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
     }
 
     /**
@@ -69,8 +71,53 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("utf-8");
+        PrintWriter out = response.getWriter();
+
+        String name = request.getParameter("txtname");
+        String email = request.getParameter("txtemail");
+        String password = request.getParameter("txtconfirmpassword");
+        
+        if (!password.equals(password)) {
+            out.print("<p style='color:red;'>Passwords do not match!</p>");
+            out.print("<p><a href='view/auth/register.jsp'>Back</a></p>");
+            return;
+        }
+
+        UserDAO d = new UserDAO();
+        User us = d.getEmail(email);
+        
+        if (us == null) {
+                  int result = d.insertNewUser(name, email, password);
+                  if (result == 1) {
+                        out.print("<p>Add user successully</p>");
+                        out.print("<p><a href='register.jsp'>Home</a></p>");
+                  } else {
+                        out.print("<p>Not Insert</p>");
+                        out.print("<p><a href='register.jsp'>Home</a></p>");
+                  }
+            } else {
+                  out.print("<p>duplicate email</p>");
+                  out.print("<p><a href='register.jsp'>Home</a></p>");
+            }
     }
+            
+//        d.save(us);
+//        if (us == null) {
+//            int result = d.save;
+//            if (result == 1) {
+//                out.print("<p>Add user successully</p>");
+//                out.print("<p><a>Home</a></p>");
+//            } else {
+//                out.print("<p>Not Insert</p>");
+//                out.print("<p><a>Home</a></p>");
+//            }
+//        } else {
+//            out.print("<p>duplicate email</p>");
+//            out.print("<p><a>Home</a></p>");
+//        }
+    
 
     /**
      * Returns a short description of the servlet.
