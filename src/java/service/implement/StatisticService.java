@@ -7,34 +7,28 @@ package service.implement;
 import dao.implement.UserDAO;
 import entity.User;
 import java.util.List;
-import service.interfaces.IUserService;
 
 /**
  *
  * @author asus
  */
+public class StatisticService {
 
-public class StatisticService implements IUserService {
+      private final UserDAO userDAO;
+//      private final BookDAO bookDAO;
+//      private final List<Book> bookList;
 
-      private final UserDAO userDAO = new UserDAO();
-
-      @Override
-      public List<User> getAllUser() {
-            return userDAO.getAll();
+      public StatisticService() {
+            userDAO = new UserDAO();
+//            bookDAO = new BookDAO();
       }
 
-      @Override
-      public User getUserById(int id) {
-            return userDAO.getId(id);
-      }
-
-      @Override
-      public User getUserEmail(String email) {
-            return userDAO.getEmail(email);
-      }
-
-      @Override
-      public User getUserName(String name) {
-            return userDAO.getName(name);
+      public int getTotalUser() {
+            List<User> userList = userDAO.getAll();
+            int count = 0;
+            for (User user : userList) {
+                  count++;
+            }
+            return count;
       }
 }

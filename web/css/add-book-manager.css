@@ -39,7 +39,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 .page-title {
       font-size: 32px;
       font-weight: bold;
-      color: #20c997;
+      color: #16A085;
       margin: 0;
       flex-grow: 1;
       text-align: center;
@@ -47,11 +47,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 }
 
 .logout-btn {
-      background-color: #6c757d;
+      background-color: #34495E;
       color: white;
       border: none;
       padding: 12px 24px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -59,7 +59,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 }
 
 .logout-btn:hover {
-      background-color: #5a6268;
+      background-color: #2C3E50;
 }
 
 .form-container {
@@ -97,11 +97,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 .upload-box:hover {
       border-color: #20c997;
       box-shadow: 0 2px 8px rgba(32, 201, 151, 0.2);
-}
-
-.upload-placeholder {
-      text-align: center;
-      color: #666;
 }
 
 .upload-icon {
@@ -150,7 +145,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 }
 
 .add-btn {
-      background-color: #20c997;
+      background-color: #1ABC9C;
       color: white;
       border: none;
       padding: 15px 60px;
@@ -164,7 +159,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 }
 
 .add-btn:hover {
-      background-color: #1ba085;
+      background-color: #16A085;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(32, 201, 151, 0.3);
 }

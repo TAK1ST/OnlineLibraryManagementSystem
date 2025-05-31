@@ -4,16 +4,10 @@
  */
 package dao.interfaces;
 
-import entity.User;
-import java.util.List;
-
 /**
  *
  * @author asus
- * @param <T>
  */
-public abstract class BaseDAO<T> {
-    public abstract List<T> getAll();
-    public abstract void save(User user);
-    public abstract void delete(int  userId);
+public interface IBookDAO {
+      
 }

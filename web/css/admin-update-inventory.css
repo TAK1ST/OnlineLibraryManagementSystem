@@ -1,0 +1,419 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : May 30, 2025, 6:53:13 PM
+    Author     : asus
+*/
+
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+}
+
+body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #16A085 0%, #1ABC9C 100%);
+      min-height: 100vh;
+      color: #2C3E50;
+}
+
+/* Header */
+.header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+}
+
+.header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+}
+
+.back-btn {
+      background: #16A085;
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+}
+
+.back-btn:hover {
+      background: #1ABC9C;
+      transform: translateX(-2px);
+}
+
+.page-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #1ABC9C;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.logout-btn {
+      background: #34495E;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(52, 73, 94, 0.3);
+}
+
+.logout-btn:hover {
+      background: #2C3E50;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(52, 73, 94, 0.4);
+}
+
+/* Main Content */
+.main-container {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+}
+
+.content-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Search and Filter Section */
+.search-section {
+      background: linear-gradient(45deg, #E0E0E0, #f8f9fa);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(224, 224, 224, 0.5);
+}
+
+.search-row {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1fr 1fr;
+      gap: 1rem;
+      align-items: end;
+}
+
+.form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+}
+
+.form-group label {
+      font-weight: 600;
+      color: #2C3E50;
+      font-size: 0.9rem;
+}
+
+.form-input {
+      padding: 0.75rem;
+      border: 2px solid #E0E0E0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+}
+
+.form-input:focus {
+      outline: none;
+      border-color: #1ABC9C;
+      box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
+}
+
+.search-btn {
+      background: linear-gradient(45deg, #16A085, #1ABC9C);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      height: fit-content;
+}
+
+.search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(26, 188, 156, 0.3);
+}
+
+.reset-btn {
+      background: #34495E;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      height: fit-content;
+}
+
+.reset-btn:hover {
+      background: #2C3E50;
+      transform: translateY(-2px);
+}
+
+/* Books Table */
+.table-container {
+      overflow-x: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.books-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+}
+
+.books-table thead {
+      background: linear-gradient(45deg, #16A085, #1ABC9C);
+      color: white;
+}
+
+.books-table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+}
+
+.books-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #E0E0E0;
+      transition: all 0.3s ease;
+}
+
+.books-table tbody tr:hover {
+      background: rgba(26, 188, 156, 0.05);
+      transform: scale(1.01);
+}
+
+.books-table tbody tr:last-child td {
+      border-bottom: none;
+}
+
+/* Status badges */
+.status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      display: inline-block;
+      min-width: 80px;
+}
+
+.status-available {
+      background: rgba(22, 160, 133, 0.1);
+      color: #16A085;
+      border: 1px solid rgba(22, 160, 133, 0.3);
+}
+
+.status-borrowed {
+      background: rgba(52, 73, 94, 0.1);
+      color: #34495E;
+      border: 1px solid rgba(52, 73, 94, 0.3);
+}
+
+.status-maintenance {
+      background: rgba(231, 76, 60, 0.1);
+      color: #e74c3c;
+      border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+/* Quantity controls */
+.quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+}
+
+.qty-btn {
+      background: #1ABC9C;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      transition: all 0.2s ease;
+}
+
+.qty-btn:hover {
+      background: #16A085;
+      transform: scale(1.1);
+}
+
+.qty-btn:disabled {
+      background: #E0E0E0;
+      color: #999;
+      cursor: not-allowed;
+      transform: none;
+}
+
+.qty-input {
+      width: 60px;
+      text-align: center;
+      border: 2px solid #E0E0E0;
+      border-radius: 5px;
+      padding: 0.25rem;
+      font-weight: 600;
+}
+
+/* Action buttons */
+.action-buttons {
+      display: flex;
+      gap: 0.5rem;
+}
+
+.action-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+}
+
+.btn-update {
+      background: #1ABC9C;
+      color: white;
+}
+
+.btn-update:hover {
+      background: #16A085;
+      transform: translateY(-1px);
+}
+
+.btn-details {
+      background: #34495E;
+      color: white;
+}
+
+.btn-details:hover {
+      background: #2C3E50;
+      transform: translateY(-1px);
+}
+
+/* Stats Cards */
+.stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+}
+
+.stat-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #1ABC9C;
+      margin-bottom: 0.5rem;
+}
+
+.stat-label {
+      color: #34495E;
+      font-weight: 600;
+      font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+      .header {
+            padding: 1rem;
+      }
+
+      .page-title {
+            font-size: 1.5rem;
+      }
+
+      .search-row {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+      }
+
+      .main-container {
+            padding: 1rem;
+      }
+
+      .content-card {
+            padding: 1rem;
+      }
+
+      .books-table {
+            font-size: 0.8rem;
+      }
+
+      .books-table th,
+      .books-table td {
+            padding: 0.5rem;
+      }
+}
+
+/* Loading Animation */
+.loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #1ABC9C;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+      0% {
+            transform: rotate(0deg);
+      }
+      100% {
+            transform: rotate(360deg);
+      }
+}

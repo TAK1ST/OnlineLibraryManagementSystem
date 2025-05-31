@@ -5,17 +5,22 @@
 package controller.admin;
 
 import constant.ViewURL;
+import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.List;
+import service.implement.StatisticService;
 
 /**
  *
  * @author asus
  */
 public class AdminDashboard extends HttpServlet {
+      
       // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
       /**
        * Handles the HTTP <code>GET</code> method.
@@ -28,6 +33,12 @@ public class AdminDashboard extends HttpServlet {
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+            PrintWriter out = response.getWriter();
+            StatisticService statisticService = new StatisticService();
+            int totalUser =  statisticService.getTotalUser();
+            int totalBook =  statisticService.getTotalUser();
+           request.setAttribute("totalUsersCount", totalUser);
+           request.setAttribute("totalBookCount", totalUser);
             request.getRequestDispatcher(ViewURL.ADMIN_DASHBOARD).forward(request, response);
       }
 
@@ -42,7 +53,7 @@ public class AdminDashboard extends HttpServlet {
       @Override
       protected void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
-            
+
       }
 
       /**

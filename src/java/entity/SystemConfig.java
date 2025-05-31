@@ -11,13 +11,13 @@ package entity;
 public class SystemConfig {
     private int id;
     private String configKey;
-    private String configValue;
+    private  float configValue;
     private String description;
 
       public SystemConfig() {
       }
 
-      public SystemConfig(int id, String configKey, String configValue, String description) {
+      public SystemConfig(int id, String configKey, float configValue, String description) {
             this.id = id;
             this.configKey = configKey;
             this.configValue = configValue;
@@ -40,11 +40,11 @@ public class SystemConfig {
             this.configKey = configKey;
       }
 
-      public String getConfigValue() {
+      public float getConfigValue() {
             return configValue;
       }
 
-      public void setConfigValue(String configValue) {
+      public void setConfigValue(float configValue) {
             this.configValue = configValue;
       }
 

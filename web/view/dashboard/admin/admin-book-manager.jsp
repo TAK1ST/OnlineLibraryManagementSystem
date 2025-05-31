@@ -6,9 +6,9 @@
             <title>Book Management</title>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-book-manager.css"/>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css"/>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css"/>
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-book-manager.css"/>
       </head>
       <body>
             <div class="container-fluid">
@@ -16,12 +16,12 @@
                   <div class="sidebar">
                         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
                         <h3>Role: Adminator</h3>
-                        <a href="#" class="nav-link">Dashboard</a>
-                        <a href="#" class="nav-link active">System Config</a>
-                        <a href="#" class="nav-link">User Management</a>
-                        <a href="#" class="nav-link">Overdue Books</a>
-                        <a href="#" class="nav-link">Book Management</a>
-                        <a href="#" class="nav-link">Update Inventory</a>
+                        <a href="admindashboard" class="nav-link">Dashboard</a>
+                        <a href="systemconfig" class="nav-link ">System Config</a>
+                        <a href="usermanagement" class="nav-link">User Management</a>
+                        <a href="overduebook" class="nav-link">Overdue Books</a>
+                        <a href="bookmanagement" class="nav-link active">Book Management</a>
+                        <a href="updateinventory" class="nav-link">Update Inventory</a>
                   </div>
 
                   <!-- Main Content -->
@@ -38,8 +38,8 @@
                         </div>
 
                         <!-- Filter Section -->
-                        <div class="filter-section">
-                              <div class="filter-row">
+                        <div class="filter-section ">
+                              <div class="filter-row d-flex justify-content-around">
                                     <div class="filter-group">
                                           <label>title</label>
                                           <input type="text" class="filter-input" id="titleFilter" placeholder="">
@@ -62,7 +62,7 @@
                               </div>
                               <div>
                                     <button class="add-book-btn" onclick="addNewBook()">
-                                          <i class="fas fa-plus me-1"></i>Add new book
+                                          <i class="fas fa-plus me-1"></i>Add Book
                                     </button>
                               </div>
                         </div>
@@ -97,5 +97,15 @@
                         ©Copyright Group 7
                   </div>
             </div>
-</body>
+            <script>
+                  function goBack() {
+                        history.back();
+                  }
+                  
+                  function addNewBook()
+                  {
+                        window.location.href = "admin-add-book-manager.jsp";
+                  }
+            </script>
+      </body>
 </html>

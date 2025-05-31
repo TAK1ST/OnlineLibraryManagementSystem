@@ -5,15 +5,14 @@
 package controller.auth;
 
 import dao.implement.BookDAO;
+import entity.Book;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.SQLException;
 import java.util.List;
-import model.Book;
 
 @WebServlet(name = "SearchBook", urlPatterns = {"/search"})
 public class SearchBook extends HttpServlet {
@@ -46,7 +45,7 @@ public class SearchBook extends HttpServlet {
             // Forward to the search results page
             request.getRequestDispatcher("search.jsp").forward(request, response);
             
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (Exception e) {
             request.setAttribute("error", "An error occurred while searching for books: " + e.getMessage());
             request.getRequestDispatcher("search.jsp").forward(request, response);
         }

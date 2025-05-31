@@ -1,6 +1,7 @@
 package dao.implement;
 
-import dao.interfaces.BaseDAO;
+import dao.interfaces.IBaseDAO;
+import dao.interfaces.IUserDAO;
 import entity.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,43 +19,43 @@ import util.DBConnection;
  *
  * @author asus
  */
-public class UserDAO extends BaseDAO<User> {
-    
-    //      insert new line into user table =  > return 1/0 (true/false)
-    public int insertNewUser(String name, String email, String password) {
-        int result = 0;
-//            step 1: connection Connection 
-        Connection cn = null;
-        try {
-            cn = DBConnection.getConnection();
-            if (cn != null) {
-                System.out.println("connect successfully");
-            }
-//                  step 2: query and execute 
-            String sql = "insert [dbo].[users] values( ? , ? , ? , 'user' , 'active') ";
-//                  init OOP, just prepare not start 
-            PreparedStatement prst = cn.prepareStatement(sql);
-//                  value 1 = place at the first < ?  > 
-            prst.setString(1, name);
-            prst.setString(2, email);
-            prst.setString(3, password);
-            result = prst.executeUpdate();
-//                  step 3: get data from table 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (cn != null) {
-                    cn.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
+public class UserDAO implements IUserDAO {
 
       private final List<User> users = new ArrayList<>();
+
+      //      insert new line into user table =  > return 1/0 (true/false)
+      public int insertNewUser(String name, String email, String password) {
+            int result = 0;
+//            step 1: connection Connection 
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        System.out.println("connect successfully");
+                  }
+//                  step 2: query and execute 
+                  String sql = "insert [dbo].[users] values( ? , ? , ? , 'user' , 'active') ";
+//                  init OOP, just prepare not start 
+                  PreparedStatement prst = cn.prepareStatement(sql);
+//                  value 1 = place at the first < ?  > 
+                  prst.setString(1, name);
+                  prst.setString(2, email);
+                  prst.setString(3, password);
+                  result = prst.executeUpdate();
+//                  step 3: get data from table 
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return result;
+      }
 
       @Override
       public List<User> getAll() {
@@ -69,17 +70,19 @@ public class UserDAO extends BaseDAO<User> {
                         //ResultSet in OOP = table in Database
                         ResultSet table = st.executeQuery(sql);
                         // step 3: get data from table 
-                        if (table != null && table.next()) {
+                        while (table != null && table.next()) {
                               int id = table.getInt("id");
                               String name = table.getString("name");
                               String email = table.getString("email");
                               String password = table.getString("password");
                               String role = table.getString("role");
                               String status = table.getString("status");
-                              users.add(new User(id, name, email, password, role, status));
+                              users.add(new User(id, name != null ? name : "",
+                                      email != null ? email : "",
+                                      password != null ? password : "",
+                                      role != null ? role : "",
+                                      status != null ? status : ""));
                         }
-                  } else {
-                        System.out.println("Cannot connect database");
                   }
             } catch (Exception e) {
                   e.printStackTrace();
@@ -95,6 +98,7 @@ public class UserDAO extends BaseDAO<User> {
             return users;
       }
 
+      @Override
       public User getId(int id) {
             User user = new User();
             Connection cn = null;
@@ -117,8 +121,6 @@ public class UserDAO extends BaseDAO<User> {
                               String status = table.getString("status");
                               user = new User(id, name, email, password, role, status);
                         }
-                  } else {
-                        System.out.println("Cannot connect database");
                   }
             } catch (Exception e) {
                   e.printStackTrace();
@@ -134,6 +136,7 @@ public class UserDAO extends BaseDAO<User> {
             return user;
       }
 
+      @Override
       public User getName(String name) {
             User user = new User();
             Connection cn = null;
@@ -156,8 +159,6 @@ public class UserDAO extends BaseDAO<User> {
                               String status = table.getString("status");
                               user = new User(id, name, email, password, role, status);
                         }
-                  } else {
-                        System.out.println("Cannot connect database");
                   }
             } catch (Exception e) {
                   e.printStackTrace();
@@ -172,8 +173,9 @@ public class UserDAO extends BaseDAO<User> {
             }
             return user;
       }
-      
-            public User getEmail(String email) {
+
+      @Override
+      public User getEmail(String email) {
             User user = new User();
             Connection cn = null;
             try {
@@ -195,8 +197,6 @@ public class UserDAO extends BaseDAO<User> {
                               String status = table.getString("status");
                               user = new User(id, name, email, password, role, status);
                         }
-                  } else {
-                        System.out.println("Cannot connect database");
                   }
             } catch (Exception e) {
                   e.printStackTrace();
@@ -211,7 +211,7 @@ public class UserDAO extends BaseDAO<User> {
             }
             return user;
       }
-      
+
       @Override
       public void save(User user) {
             Connection cn = null;

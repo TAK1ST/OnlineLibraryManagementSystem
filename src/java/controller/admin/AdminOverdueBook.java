@@ -16,8 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author asus
  */
-public class AddBookManagement extends HttpServlet {
-
+public class AdminOverdueBook extends HttpServlet {
       // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
       /**
        * Handles the HTTP <code>GET</code> method.
@@ -30,7 +29,7 @@ public class AddBookManagement extends HttpServlet {
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
-            request.getRequestDispatcher(ViewURL.ADMIN_ADD_BOOK_MANAGEMENT).forward(request, response);
+            request.getRequestDispatcher(ViewURL.ADMIN_OVERDUE_BOOK).forward(request, response);
       }
 
       /**

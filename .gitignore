@@ -10,3 +10,5 @@ build/
 
 ### enviroment
 **/DBConnection.java
+
+**/nbproject/private/*
