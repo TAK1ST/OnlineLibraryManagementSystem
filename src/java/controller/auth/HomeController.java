@@ -9,7 +9,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+
 @WebServlet(name = "HomeController", urlPatterns = {"/home"})
 public class HomeController extends HttpServlet {
     
@@ -20,9 +22,11 @@ public class HomeController extends HttpServlet {
             BookDAO bookDAO = new BookDAO();
             List<Book> allBooks = bookDAO.getAllBook();
             List<Book> newBooks = bookDAO.getNewBooks();
+            ArrayList<String> categories = bookDAO.getAllCategories();
             
             request.setAttribute("allBooks", allBooks);
             request.setAttribute("newBooks", newBooks);
+            request.setAttribute("categories", categories);
             
             request.getRequestDispatcher("index.jsp").forward(request, response);
         } catch (SQLException | ClassNotFoundException e) {
