@@ -13,6 +13,7 @@ import java.util.List;
  *
  * @author asus
  */
+
 public interface IBookDAO {
       public ArrayList<Book> getBookByTitle(String title);
       public List<Book> getAllBook() throws SQLException, ClassNotFoundException;

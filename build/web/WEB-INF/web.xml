@@ -118,10 +118,6 @@
         <servlet-name>BookDetailServlet</servlet-name>
         <url-pattern>/BookDetailServlet</url-pattern>
     </servlet-mapping>
-    <welcome-file-list>
-        <welcome-file>view/auth/bookdetail.jsp</welcome-file>
-        <welcome-file>view/auth/register.jsp</welcome-file>
-    </welcome-file-list>
     <servlet-mapping>
         <servlet-name>UserDashboard</servlet-name>
         <url-pattern>/UserDashboard</url-pattern>
@@ -137,4 +133,7 @@
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
+    <welcome-file-list>
+        <welcome-file>view/auth/login.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>
