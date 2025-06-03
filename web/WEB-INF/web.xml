@@ -119,6 +119,7 @@
         <url-pattern>/BookDetailServlet</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
+        <welcome-file>view/dashboard/admin/admin-dashboard.jsp</welcome-file>
         <welcome-file>view/auth/bookdetail.jsp</welcome-file>
         <welcome-file>view/auth/register.jsp</welcome-file>
     </welcome-file-list>
