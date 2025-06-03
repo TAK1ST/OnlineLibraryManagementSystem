@@ -57,6 +57,37 @@ public class UserDAO implements IUserDAO {
             return result;
       }
 
+      public int getTotalUsers() {
+            Connection cn = null;
+            int count = 0;
+            ResultSet rs = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        // step 2: query and execute
+                        String sql = "SELECT COUNT(id) FROM [dbo].[users];";
+                        Statement st = cn.createStatement();
+                        //ResultSet in OOP = table in Database
+                        ResultSet table = st.executeQuery(sql);
+                        // step 3: get data from table 
+                        if (table.next()) {
+                              count = table.getInt(1);
+                        }
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return count;
+      }
+
       @Override
       public List<User> getAll() {
 
@@ -286,4 +317,5 @@ public class UserDAO implements IUserDAO {
                   }
             }
       }
+
 }

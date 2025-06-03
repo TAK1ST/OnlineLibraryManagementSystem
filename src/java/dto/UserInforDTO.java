@@ -8,16 +8,16 @@ package dto;
  *
  * @author asus
  */
-public class UserResponse {
+public class UserInforDTO {
       private String name;
       private String email;
       private String role;
       private String status;
 
-      public UserResponse() {
+      public UserInforDTO() {
       }
 
-      public UserResponse(String name, String email, String role, String status) {
+      public UserInforDTO(String name, String email, String role, String status) {
             this.name = name;
             this.email = email;
             this.role = role;

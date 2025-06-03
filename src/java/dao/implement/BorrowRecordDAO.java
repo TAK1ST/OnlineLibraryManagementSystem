@@ -5,17 +5,16 @@
 package dao.implement;
 
 import dao.interfaces.IBorrowRecordDAO;
-import entity.BookRequest;
 import entity.BorrowRecord;
-import entity.User;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,19 +26,16 @@ import util.DBConnection;
  */
 public class BorrowRecordDAO implements IBorrowRecordDAO {
 
-      private Connection cn = null;
-
-      public BorrowRecordDAO(Connection cn) {
-            this.cn = cn;
-      }
-
       @Override
       public List<BorrowRecord> getAll() {
             List<BorrowRecord> records = new ArrayList<>();
-            String sql = "SELECT id, userId, bookId, borrowDate, dueDate, returnDate, status FROM [dbo].[borrow_records]";
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records]";
             PreparedStatement prst = null;
             ResultSet rs = null;
+            Connection cn = null;
             try {
+                  cn = DBConnection.getConnection();
+
                   if (cn == null) {
                         System.err.println("Cannot connect database");
                         return records;
@@ -69,12 +65,13 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       }
 
       @Override
-      public Optional<BorrowRecord> getBorrowRecordById(int id
-      ) {
-            String sql = "SELECT id, userId, bookId, borrowDate, dueDate, returnDate, status FROM [dbo].[borrow_records] WHERE id = ?";
+      public Optional<BorrowRecord> getBorrowRecordById(int id) {
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE id = ?";
             PreparedStatement prst = null;
             ResultSet rs = null;
+            Connection cn = null;
             try {
+                  cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return Optional.empty();
@@ -85,7 +82,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   if (rs.next()) {
                         return Optional.of(mapRowToBorrowRecord(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -104,13 +101,15 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       }
 
       @Override
-      public List<BorrowRecord> getBorrowRecordsByUserId(int userId
-      ) {
+      public List<BorrowRecord> getBorrowRecordsByUserId(int userId) {
             List<BorrowRecord> records = new ArrayList<>();
-            String sql = "SELECT id, userId, bookId, borrowDate, dueDate, returnDate, status FROM [dbo].[borrow_records] WHERE userId = ?";
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE user_id = ?";
             PreparedStatement prst = null;
             ResultSet rs = null;
+            Connection cn = null;
+
             try {
+                  cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return records;
@@ -121,7 +120,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   while (rs.next()) {
                         records.add(mapRowToBorrowRecord(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -140,13 +139,14 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       }
 
       @Override
-      public List<BorrowRecord> getBorrowRecordsByBookId(int bookId
-      ) {
+      public List<BorrowRecord> getBorrowRecordsByBookId(int bookId) {
             List<BorrowRecord> records = new ArrayList<>();
-            String sql = "SELECT id, userId, bookId, borrowDate, dueDate, returnDate, status FROM [dbo].[borrow_records] WHERE bookId = ?";
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE book_id = ?";
             PreparedStatement prst = null;
             ResultSet rs = null;
+            Connection cn = null;
             try {
+                  cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return records;
@@ -157,7 +157,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   while (rs.next()) {
                         records.add(mapRowToBorrowRecord(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -176,14 +176,14 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       }
 
       @Override
-      public boolean updateReturnStatus(int id, LocalDate returnDate,
-              String status
-      ) {
-            String sql = "UPDATE [dbo].[borrow_records] SET returnDate = ?, status = ? WHERE id = ?";
+      public boolean updateReturnStatus(int id, LocalDate returnDate, String status) {
+            String sql = "UPDATE [dbo].[borrow_records] SET return_date = ?, status = ? WHERE id = ?";
             PreparedStatement prst = null;
+            Connection cn = null;
             try {
+                  cn = DBConnection.getConnection();
                   if (cn == null) {
-                        System.err.println("Lỗi BorrowRecordDAO (updateReturnStatus): Connection is null.");
+                        System.err.println("Cannot connect database.");
                         return false;
                   }
                   prst = cn.prepareStatement(sql);
@@ -203,7 +203,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                         System.out.println("No book loan records found (ID: " + id + ") to update or remain unchanged.");
                         return false;
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
                   return false;
@@ -221,10 +221,14 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       @Override
       public List<BorrowRecord> getCurrentBorrowedBooks() {
             List<BorrowRecord> records = new ArrayList<>();
-            String sql = "SELECT id, userId, bookId, borrowDate, dueDate, returnDate, status FROM [dbo].[borrow_records] WHERE returnDate IS NULL AND (status = 'borrowed' OR status = 'overdue')";
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE return_date IS NULL AND (status = 'borrowed' OR status = 'overdue')";
+
             PreparedStatement prst = null;
             ResultSet rs = null;
+            Connection cn = null;
             try {
+                  cn = DBConnection.getConnection();
+
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return records;
@@ -234,7 +238,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   while (rs.next()) {
                         records.add(mapRowToBorrowRecord(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -255,21 +259,23 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       @Override
       public List<BorrowRecord> getOverdueBooks() {
             List<BorrowRecord> records = new ArrayList<>();
-            String sql = "SELECT id, userId, bookId, borrowDate, dueDate, returnDate, status FROM [dbo].[borrow_records] WHERE status = 'overdue'";
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE status = 'overdue'";
             PreparedStatement prst = null;
             ResultSet rs = null;
+            Connection cn = null;
             try {
+                  cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return records;
                   }
                   prst = cn.prepareStatement(sql);
-                  prst.setDate(1, Date.valueOf(LocalDate.now()));
+                  // Fixed: Removed the unnecessary setDate parameter since the query doesn't have a date parameter
                   rs = prst.executeQuery();
                   while (rs.next()) {
                         records.add(mapRowToBorrowRecord(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -288,13 +294,14 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       }
 
       @Override
-      public List<BorrowRecord> getBorrowRecordsByUserIdAndStatus(int userId, String status
-      ) {
+      public List<BorrowRecord> getBorrowRecordsByUserIdAndStatus(int userId, String status) {
             List<BorrowRecord> records = new ArrayList<>();
-            String sql = "SELECT id, userId, bookId, borrowDate, dueDate, returnDate, status FROM [dbo].[borrow_records] WHERE userId = ? AND status = ?";
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE user_id = ? AND status = ?";
             PreparedStatement prst = null;
             ResultSet rs = null;
+            Connection cn = null;
             try {
+                  cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return records;
@@ -306,7 +313,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   while (rs.next()) {
                         records.add(mapRowToBorrowRecord(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -327,7 +334,9 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       @Override
       public void delete(int id) throws Exception {
             PreparedStatement pst = null;
+            Connection cn = null;
             try {
+                  cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return;
@@ -343,7 +352,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   } else {
                         System.out.println("No book request found to delete (ID: " + id + ").");
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error delete: " + e.getMessage());
                   e.printStackTrace();
                   throw e;
@@ -358,12 +367,70 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
             }
       }
 
-      @Override
-      public void save(BorrowRecord borrowRecord) throws SQLException { 
+      public int countUniqueUsersBorrowedThisWeek() {
+            int uniqueUserCount = 0;
+
+            LocalDate today = LocalDate.now();
+            
+            LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+            String sql = "SELECT COUNT(DISTINCT user_id) FROM [dbo].[borrow_records] WHERE borrow_date BETWEEN ? AND ?";
+
+            Connection cn = null;
             PreparedStatement prst = null;
-            String sql = "INSERT INTO [dbo].[borrow_records] (userId, bookId, borrowDate, dueDate, returnDate, status) VALUES (?, ?, ?, ?, ?, ?)";
+            ResultSet rs = null;
 
             try {
+                  cn = DBConnection.getConnection();
+                  if (cn == null) {
+                        System.err.println("Cannot connect database.");
+                        return 0;
+                  }
+
+                  prst = cn.prepareStatement(sql);
+                  prst.setDate(1, Date.valueOf(startOfWeek));
+                  prst.setDate(2, Date.valueOf(today));
+
+                  rs = prst.executeQuery();
+                  if (rs.next()) {
+                        uniqueUserCount = rs.getInt(1);
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (rs != null) {
+                              rs.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+                  try {
+                        if (prst != null) {
+                              prst.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return uniqueUserCount;
+      }
+
+      @Override
+      public void save(BorrowRecord borrowRecord) throws SQLException {
+            PreparedStatement prst = null;
+            String sql = "INSERT INTO [dbo].[borrow_records] ([user_id],[book_id],[borrow_date], [due_date],[return_date],[status]) VALUES (?, ?, ?, ?, ?, ?)";
+
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database");
                         throw new SQLException("Connection is null, cannot save borrow record.");
@@ -377,11 +444,10 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   prst.setInt(1, borrowRecord.getUserId());
                   prst.setInt(2, borrowRecord.getBookId());
 
-                  // Xử lý borrowDate
                   if (borrowRecord.getBorrowDate() != null) {
                         prst.setDate(3, Date.valueOf(borrowRecord.getBorrowDate()));
                   } else {
-                        
+
                         prst.setDate(3, Date.valueOf(LocalDate.now()));
                         System.err.println("Warning: BorrowDate not supply, using time now.");
                   }
@@ -401,7 +467,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   if (borrowRecord.getStatus() != null && !borrowRecord.getStatus().trim().isEmpty()) {
                         prst.setString(6, borrowRecord.getStatus());
                   } else {
-                        prst.setString(6, "borrowed"); 
+                        prst.setString(6, "borrowed");
                         System.err.println("Warning: Status not supply, set default 'borrowed'.");
                   }
 
@@ -409,16 +475,11 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   if (rowsInserted > 0) {
                         System.err.println("Save successfully!");
                   } else {
-                         throw new SQLException("Save fail.");
+                        throw new SQLException("Save fail.");
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
-                  throw e; 
-            } catch (IllegalArgumentException e) {
-                  System.err.println("Error: " + e.getMessage());
-                  e.printStackTrace();
-                  throw e;
             } finally {
                   try {
                         if (prst != null) {
@@ -434,13 +495,18 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       private BorrowRecord mapRowToBorrowRecord(ResultSet rs) throws SQLException {
             BorrowRecord record = new BorrowRecord();
             record.setId(rs.getInt("id"));
-            record.setUserId(rs.getInt("userId"));
-            record.setBookId(rs.getInt("bookId"));
-            record.setBorrowDate(rs.getDate("borrowDate").toLocalDate());
-            record.setDueDate(rs.getDate("dueDate").toLocalDate());
-            record.setReturnDate(rs.getDate("returnDate").toLocalDate());
+            record.setUserId(rs.getInt("user_id"));
+            record.setBookId(rs.getInt("book_id"));
+            record.setBorrowDate(rs.getDate("borrow_date").toLocalDate());
+            record.setDueDate(rs.getDate("due_date").toLocalDate());
+            Date returnDate = rs.getDate("return_date");
+            if (returnDate != null) {
+                  record.setReturnDate(returnDate.toLocalDate());
+            } else {
+                  record.setReturnDate(null);
+            }
+
             record.setStatus(rs.getString("status"));
             return record;
       }
-
 }

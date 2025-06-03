@@ -50,7 +50,7 @@
                                     <i class="fas fa-sign-out-alt"></i> Logout
                               </button>
                               <h1 class="stat-title">Library Statistics Dashboard</h1>
-                              <p class="stat-subtitle">Comprehensive overview of your library system</p>
+                              <p class="stat-subtitle">Comprehensive overview of library system</p>
                         </div>
 
                         <!-- Statistics Container -->
@@ -63,7 +63,7 @@
                                                 <i class="fas fa-book"></i>
                                           </div>
                                           <div class="stat-label">Total Books</div>
-                                          <div class="stat-value" id="totalBooks">1,247</div>
+                                          <div class="stat-value" id="totalBooks">${totalBooksCount}</div>
                                           <div class="stat-change">+12 this month</div>
                                     </div>
 
@@ -83,7 +83,7 @@
                                                 <i class="fas fa-book-reader"></i>
                                           </div>
                                           <div class="stat-label">Currently Borrowed</div>
-                                          <div class="stat-value" id="currentlyBorrowed">342</div>
+                                          <div class="stat-value" id="currentlyBorrowed">${currentlyBorrowed}</div>
                                           <div class="stat-change">72% utilization</div>
                                     </div>
 
@@ -93,7 +93,7 @@
                                                 <i class="fas fa-hourglass-half"></i>
                                           </div>
                                           <div class="stat-label">Avg. Borrow Duration</div>
-                                          <div class="stat-value" id="avgDuration">12.5</div>
+                                          <div class="stat-value" id="avgDuration">${avgDuration}</div>
                                           <div class="stat-change">days per book</div>
                                     </div>
                               </div>
@@ -166,7 +166,6 @@
             </div>
 
             <script>
-                  // Initialize Monthly Borrowing Chart
                   const ctx = document.getElementById('monthlyChart').getContext('2d');
                   const monthlyChart = new Chart(ctx, {
                         type: 'bar',
@@ -239,14 +238,6 @@
                                     this.style.background = 'white';
                               });
                         });
-                  });
-
-                  // Logout button functionality
-                  document.querySelector('.logout-btn').addEventListener('click', function () {
-                        if (confirm('Are you sure you want to logout?')) {
-                              // Add logout logic here
-                              console.log('Logging out...');
-                        }
                   });
             </script>
       </body>

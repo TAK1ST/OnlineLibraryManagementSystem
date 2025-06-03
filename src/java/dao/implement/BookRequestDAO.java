@@ -14,6 +14,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.DBConnection;
 
 /**
  *
@@ -21,10 +24,7 @@ import java.util.Optional;
  */
 public class BookRequestDAO implements IBookRequestDAO {
 
-      private final Connection cn;
-
-      public BookRequestDAO(Connection cn) {
-            this.cn = cn;
+      public BookRequestDAO() {
       }
 
       @Override
@@ -34,6 +34,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             PreparedStatement prst = null;
             ResultSet rs = null;
             try {
+                  Connection cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Error: cannot connect database.");
                         return requests;
@@ -43,8 +44,8 @@ public class BookRequestDAO implements IBookRequestDAO {
                   while (rs.next()) {
                         requests.add(mapRowToBookRequest(rs));
                   }
-            } catch (SQLException e) {
-                  System.err.println("Lỗi BookRequestDAO (getAll): " + e.getMessage());
+            } catch (Exception e) {
+                  System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
                   try {
@@ -64,7 +65,7 @@ public class BookRequestDAO implements IBookRequestDAO {
       @Override
       public void save(BookRequest bookRequest) throws Exception {
             PreparedStatement prst = null;
-
+            Connection cn = DBConnection.getConnection();
             try {
                   if (cn == null) {
                         System.out.println("Cannot connect to database");
@@ -102,6 +103,7 @@ public class BookRequestDAO implements IBookRequestDAO {
       @Override
       public void delete(int id) throws Exception {
             PreparedStatement pst = null;
+            Connection cn = DBConnection.getConnection();
             try {
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
@@ -139,6 +141,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             PreparedStatement prst = null;
             ResultSet rs = null;
             try {
+                  Connection cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect  database.");
                         return Optional.empty();
@@ -149,7 +152,7 @@ public class BookRequestDAO implements IBookRequestDAO {
                   if (rs.next()) {
                         return Optional.of(mapRowToBookRequest(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -173,7 +176,9 @@ public class BookRequestDAO implements IBookRequestDAO {
             String sql = "SELECT id, userId, bookId, requestDate, status FROM [dbo].[book_requests] WHERE userId = ?";
             PreparedStatement prst = null;
             ResultSet rs = null;
+
             try {
+                  Connection cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return requests;
@@ -184,7 +189,7 @@ public class BookRequestDAO implements IBookRequestDAO {
                   while (rs.next()) {
                         requests.add(mapRowToBookRequest(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -207,6 +212,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             String sql = "UPDATE [dbo].[book_requests] SET status = ? WHERE id = ?";
             PreparedStatement prst = null;
             try {
+                  Connection cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return false;
@@ -222,7 +228,7 @@ public class BookRequestDAO implements IBookRequestDAO {
                         System.out.println("Book request not found (ID: " + id + ") to update or unchanged status.");
                         return false;
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
                   return false;
@@ -245,6 +251,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             PreparedStatement prst = null;
             ResultSet rs = null;
             try {
+                  Connection cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return requests;
@@ -254,7 +261,7 @@ public class BookRequestDAO implements IBookRequestDAO {
                   while (rs.next()) {
                         requests.add(mapRowToBookRequest(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
@@ -279,6 +286,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             PreparedStatement prst = null;
             ResultSet rs = null;
             try {
+                  Connection cn = DBConnection.getConnection();
                   if (cn == null) {
                         System.err.println("Cannot connect database.");
                         return requests;
@@ -289,7 +297,7 @@ public class BookRequestDAO implements IBookRequestDAO {
                   while (rs.next()) {
                         requests.add(mapRowToBookRequest(rs));
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   System.err.println("Error: " + e.getMessage());
                   e.printStackTrace();
             } finally {
