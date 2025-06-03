@@ -20,7 +20,7 @@ import service.implement.StatisticService;
  * @author asus
  */
 public class AdminDashboard extends HttpServlet {
-      
+
       // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
       /**
        * Handles the HTTP <code>GET</code> method.
@@ -35,10 +35,16 @@ public class AdminDashboard extends HttpServlet {
               throws ServletException, IOException {
             PrintWriter out = response.getWriter();
             StatisticService statisticService = new StatisticService();
-            int totalUser =  statisticService.getTotalUser();
-            int totalBook =  statisticService.getTotalUser();
-           request.setAttribute("totalUsersCount", totalUser);
-           request.setAttribute("totalBookCount", totalUser);
+            int totalUser = statisticService.getTotalUser();
+            int totalBook = statisticService.getTotalBook();
+            int currentlyBorrowed = statisticService.getTotalCurrentBorrowPerWeek();
+            int avgDuration = statisticService.calculateAverageBorrowPerDay();
+
+            request.setAttribute("totalUsersCount", totalUser);
+            request.setAttribute("totalBooksCount", totalBook);
+            request.setAttribute("currentlyBorrowed", currentlyBorrowed);
+            request.setAttribute("avgDuration", avgDuration);
+
             request.getRequestDispatcher(ViewURL.ADMIN_DASHBOARD).forward(request, response);
       }
 

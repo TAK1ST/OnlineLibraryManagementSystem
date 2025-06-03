@@ -14,6 +14,6 @@ import java.util.List;
  */
 public interface IBaseDAO<T> {
     public List<T> getAll();
-    public void save(User user) throws Exception;
-    public void delete(int  userId) throws Exception;
+    public void save(T Obj) throws Exception;
+    public void delete(int  id) throws Exception;
 }
