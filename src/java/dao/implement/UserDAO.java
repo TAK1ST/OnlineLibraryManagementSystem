@@ -6,9 +6,12 @@ import entity.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.DBConnection;
 
 /*
@@ -129,6 +132,47 @@ public class UserDAO implements IUserDAO {
             return users;
       }
 
+      public User getUser(String email, String password) {
+            User result = null;
+            //buoc 1: ket noi
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        //b2: viet query va execute
+                        String sql = "select id,name,email,password,role,status\n"
+                                + "from dbo.users\n"
+                                + "where email=? and password=?  COLLATE Latin1_General_CS_AS";
+                        PreparedStatement st = cn.prepareStatement(sql);
+                        st.setString(1, email);
+                        st.setString(2, password);
+
+                        ResultSet table = st.executeQuery();
+                        //bc3:lay data trong bien table
+                        if (table != null && table.next()) {
+                              int id = table.getInt("id");
+                              String name = table.getString("name");
+                              //String email=table.getString("email");
+                              //String password = table.getString("password");
+                              String role = table.getString("role");
+                              String status = table.getString("status");
+                              result = new User(id, name, email, password, role, status);
+                        }
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return result;
+      }
+
       @Override
       public User getId(int id) {
             User user = new User();
@@ -207,26 +251,27 @@ public class UserDAO implements IUserDAO {
 
       @Override
       public User getEmail(String email) {
-            User user = new User();
+            User result = null;
+            //buoc 1: ket noi
             Connection cn = null;
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        // step 2: query and execute
-                        String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users]"
-                                + "where  [email] = ?";
-                        PreparedStatement pst = cn.prepareStatement(sql);
-                        pst.setString(1, email);
-                        //ResultSet in OOP = table in Database
-                        ResultSet table = pst.executeQuery();
-                        // step 3: get data from table 
+                        //b2: viet query va execute
+                        String sql = "select id,name,email,password,role,status\n"
+                                + "from dbo.users\n"
+                                + "where email='" + email + "'";
+                        Statement st = cn.createStatement();
+                        ResultSet table = st.executeQuery(sql);
+                        //bc3:lay data trong bien table
                         if (table != null && table.next()) {
                               int id = table.getInt("id");
                               String name = table.getString("name");
+                              //String email=table.getString("email");
                               String password = table.getString("password");
                               String role = table.getString("role");
                               String status = table.getString("status");
-                              user = new User(id, name, email, password, role, status);
+                              result = new User(id, name, email, password, role, status);
                         }
                   }
             } catch (Exception e) {
@@ -240,7 +285,7 @@ public class UserDAO implements IUserDAO {
                         e.printStackTrace();
                   }
             }
-            return user;
+            return result;
       }
 
       @Override
@@ -251,7 +296,7 @@ public class UserDAO implements IUserDAO {
             try {
                   cn = DBConnection.getConnection();
                   if (cn == null) {
-                        System.err.println("Cannot connect to database");
+                        System.out.println("Cannot connect to database");
                         return;
                   }
 
@@ -281,6 +326,36 @@ public class UserDAO implements IUserDAO {
                         e.printStackTrace();
                   }
             }
+      }
+
+      public int updateUser(int id, String name, String password) {
+            int result = 0;
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        String sql = "update dbo.users\n"
+                                + "set name=? , password=?\n"
+                                + "where id=?";
+                        PreparedStatement st = cn.prepareStatement(sql);
+                        st.setString(1, name);
+                        st.setString(2, password);
+                        st.setInt(3, id);
+                        result = st.executeUpdate();
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+
+            return result;
       }
 
       @Override
@@ -317,5 +392,4 @@ public class UserDAO implements IUserDAO {
                   }
             }
       }
-
 }
