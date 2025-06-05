@@ -102,22 +102,6 @@ public class RegisterServlet extends HttpServlet {
                   out.print("<p><a href='register.jsp'>Home</a></p>");
             }
     }
-            
-//        d.save(us);
-//        if (us == null) {
-//            int result = d.save;
-//            if (result == 1) {
-//                out.print("<p>Add user successully</p>");
-//                out.print("<p><a>Home</a></p>");
-//            } else {
-//                out.print("<p>Not Insert</p>");
-//                out.print("<p><a>Home</a></p>");
-//            }
-//        } else {
-//            out.print("<p>duplicate email</p>");
-//            out.print("<p><a>Home</a></p>");
-//        }
-    
 
     /**
      * Returns a short description of the servlet.

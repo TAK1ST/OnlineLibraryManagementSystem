@@ -18,10 +18,10 @@ import java.util.logging.Logger;
 import util.DBConnection;
 
 /**
- *
  * @author Admin
  */
 public class BookDAO implements IBookDAO {
+
 
     //ham nay De lay tat ca quyen sach 
     @Override
@@ -33,6 +33,7 @@ public class BookDAO implements IBookDAO {
             if (cn != null) {
                 System.out.println("connect successfully");
             }
+
             String sql = "select [id],[title],[isbn],[author],[category],[published_year]," +
                         "[total_copies],[available_copies],[status]\n" +
                         "from [dbo].[books]\n" +
@@ -425,31 +426,44 @@ public class BookDAO implements IBookDAO {
             Connection cn = null;
             int count = 0;
             try {
-                  cn = DBConnection.getConnection();
-                  if (cn != null) {
-                        // step 2: query and execute
-                        String sql = "select COUNT([id]) from [dbo].[books];";
-                        Statement st = cn.createStatement();
-                        //ResultSet in OOP = table in Database
-                        ResultSet table = st.executeQuery(sql);
-                        // step 3: get data from table 
-                        if (table.next()) {
-                              count = table.getInt(1);
-                        }
-                  }
+                if (cn != null) {
+                    cn.close();
+                }
             } catch (Exception e) {
-                  e.printStackTrace();
-            } finally {
-                  try {
-                        if (cn != null) {
-                              cn.close();
-                        }
-                  } catch (Exception e) {
-                        e.printStackTrace();
-                  }
+                e.printStackTrace();
             }
-            return count;
-      }
+        }
+        return result;
+    }
 
+    public int getTotalBooks() {
+        Connection cn = null;
+        int count = 0;
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                // step 2: query and execute
+                String sql = "select COUNT([id]) from [dbo].[books];";
+                Statement st = cn.createStatement();
+                //ResultSet in OOP = table in Database
+                ResultSet table = st.executeQuery(sql);
+                // step 3: get data from table 
+                if (table.next()) {
+                    count = table.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return count;
+    }
 
 }
