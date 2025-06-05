@@ -16,6 +16,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.DBConnection;
 
 /**
@@ -83,6 +85,11 @@ public class BookDetailServlet extends HttpServlet {
                     Book b = books.get(i);
                     System.out.println("Book " + i + ": " + b.getTitle() + " - " + b.getAuthor());
                 }
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (Exception ex) {
+                Logger.getLogger(BookDetailServlet.class.getName()).log(Level.SEVERE, null, ex);
+
             }
 
             // Đẩy dữ liệu lên view
