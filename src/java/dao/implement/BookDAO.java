@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.DBConnection;
 
 /**
@@ -67,6 +69,7 @@ public class BookDAO implements IBookDAO {
         return result;
     }
 
+    @Override
     public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
         List<Book> newBooks = new ArrayList<>();
         Connection cn = null;
@@ -93,12 +96,50 @@ public class BookDAO implements IBookDAO {
                 book.setStatus(rs.getString("status"));
                 newBooks.add(book);
             }
+        } catch (Exception ex) {
+            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (cn != null) {
                 cn.close();
             }
         }
         return newBooks;
+    }
+
+    public ArrayList<Book> getNewBooks(int limit) throws ClassNotFoundException, SQLException, Exception {
+        ArrayList<Book> result = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            String sql = "SELECT TOP (?) [id],[title],[isbn],[author],[category],[published_year]," +
+                        "[total_copies],[available_copies],[status]\n" +
+                        "FROM [dbo].[books]\n" +
+                        "WHERE [status] = 'active'\n" +
+                        "ORDER BY [id] DESC";
+            PreparedStatement st = cn.prepareStatement(sql);
+            st.setInt(1, limit);
+            ResultSet table = st.executeQuery();
+            if (table != null) {
+                while (table.next()) {
+                    int id = table.getInt("id");
+                    String title = table.getString("title");
+                    String isbn = table.getString("isbn");
+                    String author = table.getString("author");
+                    String category = table.getString("category");
+                    int year = table.getInt("published_year");
+                    int total = table.getInt("total_copies");
+                    int avaCopies = table.getInt("available_copies");
+                    String status = table.getString("status");
+                    Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
+                    result.add(book);
+                }
+            }
+        } finally {
+            if (cn != null) {
+                cn.close();
+            }
+        }
+        return result;
     }
 
     @Override
@@ -127,6 +168,8 @@ public class BookDAO implements IBookDAO {
                 book.setStatus(rs.getString("status"));
                 books.add(book);
             }
+        } catch (Exception ex) {
+            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (cn != null) {
                 cn.close();
@@ -151,6 +194,8 @@ public class BookDAO implements IBookDAO {
                     books.add(extractBookFromResultSet(rs));
                 }
             }
+        } catch (Exception ex) {
+            Logger.getLogger(BookDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return books;
     }
@@ -193,7 +238,7 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-    public ArrayList<Book> getBooksByCategory(String category) throws ClassNotFoundException {
+    public ArrayList<Book> getBooksByCategory(String category) throws ClassNotFoundException, Exception {
         ArrayList<Book> result = new ArrayList<>();
         Connection cn = null;
         try {
@@ -234,7 +279,7 @@ public class BookDAO implements IBookDAO {
         return result;
     }
 
-    public ArrayList<Book> getBooksByAuthor(String author) throws ClassNotFoundException {
+    public ArrayList<Book> getBooksByAuthor(String author) throws ClassNotFoundException, Exception {
         ArrayList<Book> result = new ArrayList<>();
         Connection cn = null;
         try {
@@ -275,7 +320,7 @@ public class BookDAO implements IBookDAO {
         return result;
     }
 
-    public ArrayList<String> getAllCategories() throws ClassNotFoundException {
+    public ArrayList<String> getAllCategories() throws ClassNotFoundException, Exception {
         ArrayList<String> categories = new ArrayList<>();
         Connection cn = null;
         try {
@@ -302,7 +347,7 @@ public class BookDAO implements IBookDAO {
         return categories;
     }
 
-    public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException {
+    public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException, Exception {
         ArrayList<Book> result = new ArrayList<>();
         Connection cn = null;
         try {
@@ -406,113 +451,5 @@ public class BookDAO implements IBookDAO {
             return count;
       }
 
-      //ham nay De lay tat ca quyen sach 
-      @Override
-      public ArrayList<Book> getBookByTitle(String title) {
-            ArrayList<Book> result = new ArrayList<>();
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  if (cn != null) {
-                        System.out.println("connect successfully");
-                  }
-//                  step 2: query and execute 
-                  String sql = "select [id],[title],[author],[isbn],[category],[published_year],[total_copies],[available_copies],[status]\n"
-                          + "from [dbo].[books]\n"
-                          + "where title like ?";
-//                  init OOP, just prepare not start 
-                  PreparedStatement st = cn.prepareStatement(sql);
-//                  value 1 = place at the first < ?  > 
-                  st.setString(1, "%" + title + "%");
-                  ResultSet table = st.executeQuery();
-                  if (table != null) {
-                        while (table.next()) {
-                              int id = table.getInt("id");
-                              title = table.getString("title");
-                              String author = table.getString("author");
-                              String isbn = table.getString("isbn");
-                              String category = table.getString("category");
-                              int year = table.getInt("publishedYear");
-                              int total = table.getInt("totalCopies");
-                              int avaCopies = table.getInt("availableCopies");
-                              String status = table.getString("status");
-                              Book b = new Book(id, title, author, isbn, category, year, total, avaCopies, status);
-                              result.add(b);
-                        }
-                  }
-//                  step 3: get data from table 
-            } catch (Exception e) {
-                  e.printStackTrace();
-            } finally {
-                  try {
-                        if (cn != null) {
-                              cn.close();
-                        }
-                  } catch (Exception e) {
-                        e.printStackTrace();
-                  }
-            }
-            return result;
-      }
-
-      @Override
-      public List<Book> getAllBook() throws SQLException, ClassNotFoundException {
-            List<Book> books = new ArrayList<>();
-            String sql = "SELECT * FROM books WHERE status = 'active'";
-
-            try ( Connection conn = DBConnection.getConnection();  PreparedStatement ps = conn.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
-
-                  while (rs.next()) {
-                        books.add(extractBookFromResultSet(rs));
-                  }
-            }
-            return books;
-      }
-
-      @Override
-      public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
-            List<Book> books = new ArrayList<>();
-            String sql = "SELECT TOP 10 * FROM books WHERE status = 'active' ORDER BY published_year DESC";
-
-            try ( Connection conn = DBConnection.getConnection();  PreparedStatement ps = conn.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
-
-                  while (rs.next()) {
-                        books.add(extractBookFromResultSet(rs));
-                  }
-            }
-            return books;
-      }
-
-      @Override
-      public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
-            List<Book> books = new ArrayList<>();
-            String sql = "SELECT * FROM books WHERE status = 'active' AND " + searchBy + " LIKE ?";
-
-            try ( Connection conn = DBConnection.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
-
-                  ps.setString(1, "%" + searchTerm + "%");
-
-                  try ( ResultSet rs = ps.executeQuery()) {
-                        while (rs.next()) {
-                              books.add(extractBookFromResultSet(rs));
-                        }
-                  }
-            }
-            return books;
-      }
-
-      private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
-            return new Book(
-                    rs.getInt("id"),
-                    rs.getString("title"),
-                    rs.getString("author"),
-                    rs.getString("isbn"),
-                    rs.getString("category"),
-                    rs.getInt("published_year"),
-                    rs.getInt("total_copies"),
-                    rs.getInt("available_copies"),
-                    rs.getString("status")
-            );
-      }
 
 }

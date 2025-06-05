@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "HomeController", urlPatterns = {"/home"})
 public class HomeController extends HttpServlet {
@@ -32,6 +34,8 @@ public class HomeController extends HttpServlet {
         } catch (SQLException | ClassNotFoundException e) {
             request.setAttribute("error", "Error loading books: " + e.getMessage());
             request.getRequestDispatcher("index.jsp").forward(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
