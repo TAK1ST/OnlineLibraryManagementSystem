@@ -4,44 +4,25 @@
     Author     : CAU_TU
 --%>
 
+<%-- 
+    Document   : booklist
+    Created on : June 4, 2025
+    Author     : CAU_TU
+--%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="entity.Book" %>
-<%@ page import="java.sql.*" %>
+<%@ page import="java.util.List" %>
 <%
-    // Lấy id sách từ request
-    String bookId = request.getParameter("id");
-    Book book = null;
-
-    if (bookId != null) {
-        try (Connection conn = util.DBConnection.getConnection()) {
-            String sql = "SELECT * FROM books WHERE id=?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, Integer.parseInt(bookId));
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                book = new Book(
-                    rs.getInt("id"),
-                    rs.getString("title"),
-                    rs.getString("author"),
-                    rs.getString("isbn"),
-                    rs.getString("category"),
-                    rs.getInt("published_year"),
-                    rs.getInt("total_copies"),
-                    rs.getInt("available_copies"),
-                    rs.getString("status")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+    List<Book> books = (List<Book>) request.getAttribute("books");
+    String error = (String) request.getAttribute("error");
 %>
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Chi tiết sách - Library Management</title>
+        <title>Danh sách sách - Library Management</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
             * {
@@ -71,274 +52,288 @@
             }
 
             .container {
-                max-width: 900px;
+                max-width: 1200px;
                 margin: 0 auto;
                 position: relative;
                 z-index: 1;
             }
 
-            .book-card {
+            .header {
                 background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: blur(20px);
                 border-radius: 25px;
-                box-shadow: 
-                    0 25px 60px rgba(0, 0, 0, 0.3),
-                    0 0 0 1px rgba(255, 255, 255, 0.2);
-                overflow: hidden;
-                position: relative;
-                animation: fadeInUp 0.8s ease-out;
-            }
-
-            .book-header {
-                background: linear-gradient(135deg, #1ABC9C, #16A085);
                 padding: 40px;
                 text-align: center;
-                position: relative;
-                overflow: hidden;
+                margin-bottom: 30px;
+                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+                animation: fadeInDown 0.8s ease-out;
             }
 
-            .book-header::before {
-                content: '';
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-                animation: shimmer 3s infinite;
-            }
-
-            .book-icon {
-                width: 120px;
-                height: 120px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 15px;
-                margin: 0 auto 25px;
+            .header-icon {
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #1ABC9C, #16A085);
+                border-radius: 50%;
+                margin: 0 auto 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 50px;
+                font-size: 30px;
                 color: white;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-                position: relative;
-                z-index: 2;
+                box-shadow: 0 10px 30px rgba(26, 188, 156, 0.3);
             }
 
-            .book-title {
-                font-size: 32px;
+            .header-title {
+                font-size: 36px;
                 font-weight: 700;
-                color: white;
+                color: #2C3E50;
                 margin-bottom: 10px;
-                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-                position: relative;
-                z-index: 2;
             }
 
-            .book-subtitle {
+            .header-subtitle {
                 font-size: 16px;
-                color: rgba(255, 255, 255, 0.9);
-                position: relative;
-                z-index: 2;
+                color: #34495E;
+                opacity: 0.8;
             }
 
-            .book-content {
-                padding: 50px;
-            }
-
-            .detail-grid {
+            .books-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
                 gap: 25px;
                 margin-bottom: 40px;
             }
 
-            .detail-item {
-                background: linear-gradient(135deg, #ECFOF1, rgba(236, 240, 241, 0.5));
-                border-radius: 15px;
-                padding: 25px;
-                border-left: 5px solid #1ABC9C;
-                transition: all 0.3s ease;
-                position: relative;
+            .book-card {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
                 overflow: hidden;
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                animation: fadeInUp 0.6s ease-out;
+                animation-fill-mode: both;
+                position: relative;
             }
 
-            .detail-item::before {
+            .book-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            }
+
+            .book-card::before {
                 content: '';
                 position: absolute;
                 top: 0;
+                left: 0;
                 right: 0;
-                width: 50px;
-                height: 50px;
-                background: linear-gradient(135deg, #1ABC9C, transparent);
-                border-radius: 0 15px 0 100%;
-                opacity: 0.1;
+                height: 5px;
+                background: linear-gradient(135deg, #1ABC9C, #16A085);
             }
 
-            .detail-item:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 35px rgba(26, 188, 156, 0.2);
-                background: linear-gradient(135deg, #ECFOF1, white);
+            .book-header {
+                padding: 25px;
+                text-align: center;
+                background: linear-gradient(135deg, rgba(26, 188, 156, 0.1), rgba(22, 160, 133, 0.05));
+            }
+
+            .book-icon {
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #1ABC9C, #16A085);
+                border-radius: 12px;
+                margin: 0 auto 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                color: white;
+            }
+
+            .book-title {
+                font-size: 20px;
+                font-weight: 600;
+                color: #2C3E50;
+                margin-bottom: 8px;
+                line-height: 1.3;
+                height: 52px;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            .book-author {
+                font-size: 14px;
+                color: #1ABC9C;
+                font-weight: 500;
+            }
+
+            .book-content {
+                padding: 20px 25px;
+            }
+
+            .book-details {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+
+            .detail-item {
+                background: #F8F9FA;
+                border-radius: 10px;
+                padding: 12px;
+                text-align: center;
             }
 
             .detail-label {
-                font-weight: 700;
-                color: #2C3E50;
-                font-size: 14px;
+                font-size: 11px;
+                color: #34495E;
                 text-transform: uppercase;
-                letter-spacing: 1px;
-                margin-bottom: 8px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
+                font-weight: 600;
+                margin-bottom: 5px;
+                letter-spacing: 0.5px;
             }
 
             .detail-value {
-                font-size: 18px;
-                color: #34495E;
-                font-weight: 500;
-                line-height: 1.4;
-            }
-
-            .status-badge {
-                display: inline-block;
-                padding: 8px 20px;
-                border-radius: 25px;
                 font-size: 14px;
+                color: #2C3E50;
                 font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                background: linear-gradient(135deg, #16A085, #1ABC9C);
-                color: white;
-                box-shadow: 0 5px 15px rgba(22, 160, 133, 0.3);
             }
 
             .availability-indicator {
                 display: flex;
                 align-items: center;
-                gap: 15px;
+                justify-content: space-between;
                 background: linear-gradient(135deg, #1ABC9C, #16A085);
                 color: white;
-                padding: 20px;
-                border-radius: 15px;
-                margin: 30px 0;
-                box-shadow: 0 10px 25px rgba(26, 188, 156, 0.3);
+                padding: 15px;
+                border-radius: 12px;
+                margin-bottom: 20px;
             }
 
-            .availability-circle {
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.2);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                font-weight: bold;
+            .availability-count {
+                font-size: 20px;
+                font-weight: 700;
             }
 
             .availability-text {
-                flex: 1;
-            }
-
-            .availability-title {
-                font-size: 18px;
-                font-weight: 600;
-                margin-bottom: 5px;
-            }
-
-            .availability-desc {
-                font-size: 14px;
+                font-size: 12px;
                 opacity: 0.9;
             }
 
-            .action-buttons {
+            .book-actions {
                 display: flex;
-                gap: 20px;
-                justify-content: center;
-                margin-top: 40px;
-                flex-wrap: wrap;
+                gap: 10px;
             }
 
             .btn {
-                padding: 15px 30px;
+                padding: 12px 20px;
                 border: none;
-                border-radius: 50px;
-                font-size: 16px;
+                border-radius: 8px;
+                font-size: 14px;
                 font-weight: 600;
                 text-decoration: none;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                transition: all 0.3s ease;
+                text-align: center;
                 cursor: pointer;
+                transition: all 0.3s ease;
+                flex: 1;
                 display: inline-flex;
                 align-items: center;
-                gap: 10px;
-                position: relative;
-                overflow: hidden;
+                justify-content: center;
+                gap: 8px;
             }
 
             .btn-primary {
                 background: linear-gradient(135deg, #1ABC9C, #16A085);
                 color: white;
-                box-shadow: 0 8px 25px rgba(26, 188, 156, 0.3);
             }
 
             .btn-secondary {
-                background: linear-gradient(135deg, #34495E, #2C3E50);
-                color: white;
-                box-shadow: 0 8px 25px rgba(52, 73, 94, 0.3);
+                background: #ECF0F1;
+                color: #2C3E50;
             }
 
             .btn:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             }
 
-            .btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                transition: left 0.5s;
+            .status-badge {
+                display: inline-block;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                background: linear-gradient(135deg, #27AE60, #2ECC71);
+                color: white;
             }
 
-            .btn:hover::before {
-                left: 100%;
-            }
-
-            .not-found {
+            .no-books {
                 text-align: center;
                 padding: 60px 40px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             }
 
-            .not-found-icon {
+            .no-books-icon {
                 font-size: 80px;
                 color: #34495E;
                 margin-bottom: 25px;
-                opacity: 0.5;
+                opacity: 0.3;
             }
 
-            .not-found-title {
-                font-size: 28px;
+            .no-books-title {
+                font-size: 24px;
                 color: #2C3E50;
                 font-weight: 600;
                 margin-bottom: 15px;
             }
 
-            .not-found-desc {
+            .no-books-desc {
                 font-size: 16px;
                 color: #34495E;
                 opacity: 0.8;
-                margin-bottom: 30px;
             }
 
-            @keyframes fadeInUp {
+            .error-message {
+                background: #E74C3C;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .back-button {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #1ABC9C, #16A085);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                font-size: 20px;
+                cursor: pointer;
+                box-shadow: 0 10px 30px rgba(26, 188, 156, 0.3);
+                transition: all 0.3s ease;
+                z-index: 1000;
+            }
+
+            .back-button:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(26, 188, 156, 0.4);
+            }
+
+            @keyframes fadeInDown {
                 from {
                     opacity: 0;
-                    transform: translateY(60px);
+                    transform: translateY(-50px);
                 }
                 to {
                     opacity: 1;
@@ -346,173 +341,140 @@
                 }
             }
 
-            @keyframes shimmer {
-                0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-                100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
-            .detail-item {
-                animation: fadeInUp 0.6s ease-out;
-                animation-fill-mode: both;
+            .book-card:nth-child(1) {
+                animation-delay: 0.1s;
             }
-
-            .detail-item:nth-child(1) { animation-delay: 0.1s; }
-            .detail-item:nth-child(2) { animation-delay: 0.2s; }
-            .detail-item:nth-child(3) { animation-delay: 0.3s; }
-            .detail-item:nth-child(4) { animation-delay: 0.4s; }
-            .detail-item:nth-child(5) { animation-delay: 0.5s; }
-            .detail-item:nth-child(6) { animation-delay: 0.6s; }
+            .book-card:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+            .book-card:nth-child(3) {
+                animation-delay: 0.3s;
+            }
+            .book-card:nth-child(4) {
+                animation-delay: 0.4s;
+            }
+            .book-card:nth-child(5) {
+                animation-delay: 0.5s;
+            }
+            .book-card:nth-child(6) {
+                animation-delay: 0.6s;
+            }
 
             @media (max-width: 768px) {
                 .container {
                     margin: 10px;
                 }
-                
-                .book-header {
+
+                .header {
                     padding: 30px 20px;
                 }
-                
-                .book-title {
-                    font-size: 24px;
+
+                .header-title {
+                    font-size: 28px;
                 }
-                
-                .book-content {
-                    padding: 30px 20px;
-                }
-                
-                .detail-grid {
+
+                .books-grid {
                     grid-template-columns: 1fr;
-                    gap: 15px;
+                    gap: 20px;
                 }
-                
-                .detail-item {
-                    padding: 20px;
+
+                .book-details {
+                    grid-template-columns: 1fr;
+                    gap: 10px;
                 }
-                
-                .action-buttons {
+
+                .book-actions {
                     flex-direction: column;
-                    align-items: center;
-                }
-                
-                .btn {
-                    width: 100%;
-                    max-width: 300px;
-                    justify-content: center;
                 }
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="book-card">
-                <% if (book != null) { %>
-                <div class="book-header">
-                    <div class="book-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <h1 class="book-title"><%= book.getTitle() %></h1>
-                    <p class="book-subtitle">Chi tiết thông tin sách</p>
+            <div class="header">
+                <div class="header-icon">
+                    <i class="fas fa-book-open"></i>
                 </div>
-                
-                <div class="book-content">
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-user"></i>
-                                Tác giả
-                            </div>
-                            <div class="detail-value"><%= book.getAuthor() %></div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-barcode"></i>
-                                ISBN
-                            </div>
-                            <div class="detail-value"><%= book.getIsbn() %></div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-tags"></i>
-                                Danh mục
-                            </div>
-                            <div class="detail-value"><%= book.getCategory() %></div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-calendar-alt"></i>
-                                Năm xuất bản
-                            </div>
-                            <div class="detail-value"><%= book.getPublishedYear() %></div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-clone"></i>
-                                Tổng số bản
-                            </div>
-                            <div class="detail-value"><%= book.getTotalCopies() %> bản</div>
-                        </div>
-                        
-                        <div class="detail-item">
-                            <div class="detail-label">
-                                <i class="fas fa-info-circle"></i>
-                                Trạng thái
-                            </div>
-                            <div class="detail-value">
-                                <span class="status-badge"><%= book.getStatus() %></span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="availability-indicator">
-                        <div class="availability-circle">
-                            <%= book.getAvailableCopies() %>
-                        </div>
-                        <div class="availability-text">
-                            <div class="availability-title">Số bản có sẵn để mượn</div>
-                            <div class="availability-desc">
-                                <%= book.getAvailableCopies() %> trên tổng số <%= book.getTotalCopies() %> bản
-                            </div>
-                        </div>
-                        <div class="availability-circle">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <% if (book.getAvailableCopies() > 0) { %>
-                        <a href="#" class="btn btn-primary">
-                            <i class="fas fa-book-reader"></i>
-                            Mượn sách
-                        </a>
-                        <% } %>
-                        <a href="register.jsp" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i>
-                            Quay lại trang chủ
-                        </a>
-                    </div>
-                </div>
-                <% } else { %>
-                <div class="book-content">
-                    <div class="not-found">
-                        <div class="not-found-icon">
-                            <i class="fas fa-book-dead"></i>
-                        </div>
-                        <h2 class="not-found-title">Không tìm thấy sách</h2>
-                        <p class="not-found-desc">Xin lỗi, sách bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.</p>
-                        <div class="action-buttons">
-                            <a href="register.jsp" class="btn btn-primary">
-                                <i class="fas fa-home"></i>
-                                Về trang chủ
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <% } %>
+                <h1 class="header-title">Thư viện sách</h1>
+                <p class="header-subtitle">Danh sách tất cả các cuốn sách có sẵn</p>
             </div>
+
+            <% if (error != null) { %>
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <%= error %>
+            </div>
+            <% } %>
+
+            <% if (books != null && !books.isEmpty()) { %>
+            <div class="books-grid">
+                <% for (Book book : books) { %>
+                <div class="book-card">
+                    <div class="book-header">
+                        <div class="book-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="book-title"><%= book.getTitle() %></h3>
+                        <p class="book-author"><%= book.getAuthor() %></p>
+                    </div>
+
+                    <div class="book-content">
+                        <div class="book-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Danh mục</div>
+                                <div class="detail-value"><%= book.getCategory() %></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Năm XB</div>
+                                <div class="detail-value"><%= book.getPublishedYear() %></div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">ISBN</div>
+                                <div class="detail-value"><%= book.getIsbn() %></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="availability-indicator">
+                        <div class="availability-count"><%= book.getQuantity() %></div>
+                        <div class="availability-text">Sách còn lại</div>
+                    </div>
+
+                    <div class="book-actions">
+                        <a href="bookdetail?id=<%= book.getId() %>" class="btn btn-primary">
+                            <i class="fas fa-info-circle"></i> Chi tiết
+                        </a>
+                        <a href="borrow?id=<%= book.getId() %>" class="btn btn-secondary">
+                            <i class="fas fa-book-reader"></i> Mượn sách
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <% } %>
         </div>
+        <% } else { %>
+        <div class="no-books">
+            <div class="no-books-icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h2 class="no-books-title">Không có sách nào!</h2>
+            <p class="no-books-desc">Hiện tại không có sách nào được liệt kê trong hệ thống.</p>
+        </div>
+        <% } %>
+
+        <button class="back-button" onclick="window.history.back();">
+            <i class="fas fa-arrow-left"></i>
+        </button>
     </body>
 </html>

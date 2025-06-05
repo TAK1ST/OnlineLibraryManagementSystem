@@ -4,7 +4,6 @@
  */
 package dao.implement;
 
-
 import dao.interfaces.IBookDAO;
 import entity.Book;
 import java.sql.Connection;
@@ -16,13 +15,13 @@ import java.util.List;
 import util.DBConnection;
 
 /**
- *
  * @author Admin
  */
-public class BookDAO implements IBookDAO{
-    //ham nay De lay tat ca quyen sach 
+public class BookDAO implements IBookDAO {
+    
+    // Hàm này để lấy sách theo title
     @Override
-    public ArrayList<Book> getBookByTitle(String title){
+    public ArrayList<Book> getBookByTitle(String title) {
         ArrayList<Book> result = new ArrayList<>();
         Connection cn = null;
         try {
@@ -30,31 +29,31 @@ public class BookDAO implements IBookDAO{
             if (cn != null) {
                 System.out.println("connect successfully");
             }
-//                  step 2: query and execute 
-            String sql = "select [id],[title],[author],[isbn],[category],[published_year],[total_copies],[available_copies],[status]\n"
-                    + "from [dbo].[books]\n"
-                    + "where title like ?";
-//                  init OOP, just prepare not start 
+            
+            String sql = "SELECT [id],[title],[author],[isbn],[category],[published_year],[total_copies],[available_copies],[status] " +
+                        "FROM [dbo].[books] " +
+                        "WHERE title LIKE ?";
+            
             PreparedStatement st = cn.prepareStatement(sql);
-//                  value 1 = place at the first < ?  > 
-            st.setString(1, "%"+ title +"%");
+            st.setString(1, "%" + title + "%");
             ResultSet table = st.executeQuery();
-            if(table != null){
-                while(table.next()){
+            
+            if (table != null) {
+                while (table.next()) {
                     int id = table.getInt("id");
-                    title = table.getString("title");
+                    String bookTitle = table.getString("title"); 
                     String author = table.getString("author");
                     String isbn = table.getString("isbn");
                     String category = table.getString("category");
-                    int year = table.getInt("publishedYear");
-                    int total = table.getInt("totalCopies");
-                    int avaCopies = table.getInt("availableCopies");
+                    int year = table.getInt("published_year"); 
+                    int total = table.getInt("total_copies"); 
+                    int avaCopies = table.getInt("available_copies"); 
                     String status = table.getString("status");
-                    Book b= new Book(id, title, author, isbn, category, year, total, avaCopies, status);
+                    
+                    Book b = new Book(id, bookTitle, author, isbn, category, year, total, avaCopies, status);
                     result.add(b);
                 }
             }
-//                  step 3: get data from table 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -66,7 +65,7 @@ public class BookDAO implements IBookDAO{
                 e.printStackTrace();
             }
         }
-        return result;        
+        return result;
     }
 
     @Override
@@ -127,9 +126,9 @@ public class BookDAO implements IBookDAO{
             rs.getString("author"),
             rs.getString("isbn"),
             rs.getString("category"),
-            rs.getInt("published_year"),
-            rs.getInt("total_copies"),
-            rs.getInt("available_copies"),
+            rs.getInt("published_year"),      
+            rs.getInt("total_copies"),       
+            rs.getInt("available_copies"),   
             rs.getString("status")
         );
     }
