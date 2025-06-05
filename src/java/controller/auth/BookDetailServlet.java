@@ -15,6 +15,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.DBConnection;
 
 /**
@@ -53,6 +55,8 @@ private static final long serialVersionUID = 1L;
                 }
             } catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
+            } catch (Exception ex) {
+                Logger.getLogger(BookDetailServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

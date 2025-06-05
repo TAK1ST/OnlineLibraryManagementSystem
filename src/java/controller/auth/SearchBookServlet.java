@@ -25,6 +25,7 @@ public class SearchBookServlet extends HttpServlet {
         
         BookDAO bookDAO = new BookDAO();
         ArrayList<Book> books = new ArrayList<>();
+        ArrayList<Book> newBooks = new ArrayList<>();
         
         try {
             // Nếu không có tiêu chí tìm kiếm nào, hiển thị tất cả sách
@@ -32,24 +33,28 @@ public class SearchBookServlet extends HttpServlet {
                 (author == null || author.trim().isEmpty()) && 
                 (category == null || category.trim().isEmpty())) {
                 books = new ArrayList<>(bookDAO.getAllBook());
+                // Get new books for the homepage
+                newBooks = new ArrayList<>(bookDAO.getNewBooks(5)); // Get top 5 new books
             } else {
                 books = bookDAO.searchBooks(title, author, category);
             }
             
             // Lấy danh sách categories cho dropdown
             ArrayList<String> categories = bookDAO.getAllCategories();
-            request.setAttribute("categories", categories);
             
-        } catch (ClassNotFoundException ex) {
+            request.setAttribute("categories", categories);
+            request.setAttribute("books", books);
+            request.setAttribute("newBooks", newBooks);
+            request.setAttribute("title", title);
+            request.setAttribute("author", author);
+            request.setAttribute("category", category);
+            
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(SearchBookServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+            request.setAttribute("error", "An error occurred while processing your request.");
+        } catch (Exception ex) {
             Logger.getLogger(SearchBookServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        request.setAttribute("books", books);
-        request.setAttribute("title", title);
-        request.setAttribute("author", author);
-        request.setAttribute("selectedCategory", category);
         
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
