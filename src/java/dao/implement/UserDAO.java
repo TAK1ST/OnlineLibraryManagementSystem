@@ -1,6 +1,6 @@
 package dao.implement;
 
-import dao.interfaces.IBaseDAO;
+
 import dao.interfaces.IUserDAO;
 import entity.User;
 import java.sql.Connection;
