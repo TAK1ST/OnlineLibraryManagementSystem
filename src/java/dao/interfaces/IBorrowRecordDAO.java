@@ -15,8 +15,6 @@ import java.util.Optional;
  */
 public interface IBorrowRecordDAO extends IBaseDAO<BorrowRecord>{
 
-      Optional<BorrowRecord> getBorrowRecordById(int id);
-
       List<BorrowRecord> getBorrowRecordsByUserId(int userId);
 
       List<BorrowRecord> getBorrowRecordsByBookId(int bookId);
@@ -27,5 +25,4 @@ public interface IBorrowRecordDAO extends IBaseDAO<BorrowRecord>{
 
       List<BorrowRecord> getOverdueBooks();
 
-      List<BorrowRecord> getBorrowRecordsByUserIdAndStatus(int userId, String status);
 }

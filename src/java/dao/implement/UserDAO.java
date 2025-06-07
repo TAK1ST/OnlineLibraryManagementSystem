@@ -1,17 +1,14 @@
 package dao.implement;
 
-import dao.interfaces.IBaseDAO;
+import static constant.constance.RECORDS_PER_LOAD;
 import dao.interfaces.IUserDAO;
 import entity.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.DBConnection;
 
 /*
@@ -24,28 +21,20 @@ import util.DBConnection;
  */
 public class UserDAO implements IUserDAO {
 
-      private final List<User> users = new ArrayList<>();
-
-      //      insert new line into user table =  > return 1/0 (true/false)
       public int insertNewUser(String name, String email, String password) {
             int result = 0;
-//            step 1: connection Connection 
             Connection cn = null;
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
                         System.out.println("connect successfully");
                   }
-//                  step 2: query and execute 
                   String sql = "insert [dbo].[users] values( ? , ? , ? , 'user' , 'active') ";
-//                  init OOP, just prepare not start 
                   PreparedStatement prst = cn.prepareStatement(sql);
-//                  value 1 = place at the first < ?  > 
                   prst.setString(1, name);
                   prst.setString(2, email);
                   prst.setString(3, password);
                   result = prst.executeUpdate();
-//                  step 3: get data from table 
             } catch (Exception e) {
                   e.printStackTrace();
             } finally {
@@ -67,12 +56,9 @@ public class UserDAO implements IUserDAO {
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        // step 2: query and execute
                         String sql = "SELECT COUNT(id) FROM [dbo].[users];";
                         Statement st = cn.createStatement();
-                        //ResultSet in OOP = table in Database
                         ResultSet table = st.executeQuery(sql);
-                        // step 3: get data from table 
                         if (table.next()) {
                               count = table.getInt(1);
                         }
@@ -93,17 +79,14 @@ public class UserDAO implements IUserDAO {
 
       @Override
       public List<User> getAll() {
-
+            List<User> users = new ArrayList<>(); 
             Connection cn = null;
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        // step 2: query and execute
-                        String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users];";
+                        String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users]; ";
                         Statement st = cn.createStatement();
-                        //ResultSet in OOP = table in Database
                         ResultSet table = st.executeQuery(sql);
-                        // step 3: get data from table 
                         while (table != null && table.next()) {
                               int id = table.getInt("id");
                               String name = table.getString("name");
@@ -132,14 +115,130 @@ public class UserDAO implements IUserDAO {
             return users;
       }
 
+      public List<User> getUserBySearch(String email, String name, int offset) {
+            List<User> userList = new ArrayList<>();
+            PreparedStatement pr = null;
+            ResultSet rs = null;
+            Connection cn = null;
+
+            String sql = "SELECT * FROM users WHERE 1=1 ";
+
+            if (name != null && !name.trim().isEmpty()) {
+                  sql += " AND name LIKE ?";
+            }
+            if (email != null && !email.trim().isEmpty()) {
+                  sql += " AND email LIKE ?";
+            }
+            sql += " ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        pr = cn.prepareStatement(sql);
+                        int paramIndex = 1;
+
+                        if (name != null && !name.trim().isEmpty()) {
+                              pr.setString(paramIndex++, "%" + name + "%");
+                        }
+                        if (email != null && !email.trim().isEmpty()) {
+                              pr.setString(paramIndex++, "%" + email + "%");
+                        }
+                        pr.setInt(paramIndex++, offset);
+                        pr.setInt(paramIndex, RECORDS_PER_LOAD);
+
+                        rs = pr.executeQuery();
+
+                        while (rs != null && rs.next()) {
+                              int id = rs.getInt("id");
+                              String userName = rs.getString("name");
+                              String userEmail = rs.getString("email");
+                              String password = rs.getString("password");
+                              String role = rs.getString("role");
+                              String status = rs.getString("status");
+                              userList.add(new User(id,
+                                      userName != null ? userName : "",
+                                      userEmail != null ? userEmail : "",
+                                      password != null ? password : "",
+                                      role != null ? role : "",
+                                      status != null ? status : ""));
+                        }
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (rs != null) {
+                              rs.close();
+                        }
+                        if (pr != null) {
+                              pr.close();
+                        }
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return userList;
+      }
+
+      public List<User> getUserLazyPageLoading(int offset) {
+            List<User> userList = new ArrayList<>();
+            Connection cn = null;
+            PreparedStatement pr = null;
+            ResultSet rs = null;
+
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        String sql = "SELECT * FROM users ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+                        pr = cn.prepareStatement(sql);
+                        pr.setInt(1, offset);
+                        pr.setInt(2, RECORDS_PER_LOAD);
+                        rs = pr.executeQuery();
+
+                        while (rs != null && rs.next()) {
+                              int id = rs.getInt("id");
+                              String name = rs.getString("name");
+                              String email = rs.getString("email");
+                              String password = rs.getString("password");
+                              String role = rs.getString("role");
+                              String status = rs.getString("status");
+                              userList.add(new User(id,
+                                      name != null ? name : "",
+                                      email != null ? email : "",
+                                      password != null ? password : "",
+                                      role != null ? role : "",
+                                      status != null ? status : ""));
+                        }
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (rs != null) {
+                              rs.close();
+                        }
+                        if (pr != null) {
+                              pr.close();
+                        }
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return userList; 
+      }
+
       public User getUser(String email, String password) {
             User result = null;
-            //buoc 1: ket noi
             Connection cn = null;
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        //b2: viet query va execute
                         String sql = "select id,name,email,password,role,status\n"
                                 + "from dbo.users\n"
                                 + "where email=? and password=?  COLLATE Latin1_General_CS_AS";
@@ -148,12 +247,9 @@ public class UserDAO implements IUserDAO {
                         st.setString(2, password);
 
                         ResultSet table = st.executeQuery();
-                        //bc3:lay data trong bien table
                         if (table != null && table.next()) {
                               int id = table.getInt("id");
                               String name = table.getString("name");
-                              //String email=table.getString("email");
-                              //String password = table.getString("password");
                               String role = table.getString("role");
                               String status = table.getString("status");
                               result = new User(id, name, email, password, role, status);
@@ -180,14 +276,10 @@ public class UserDAO implements IUserDAO {
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        // step 2: query and execute
-                        String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users]"
-                                + "where  [id] = ?";
+                        String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users] where [id] = ?";
                         PreparedStatement pst = cn.prepareStatement(sql);
                         pst.setInt(1, id);
-                        //ResultSet in OOP = table in Database
                         ResultSet table = pst.executeQuery();
-                        // step 3: get data from table 
                         if (table != null && table.next()) {
                               String name = table.getString("name");
                               String email = table.getString("email");
@@ -218,14 +310,10 @@ public class UserDAO implements IUserDAO {
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        // step 2: query and execute
-                        String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users]"
-                                + "where  [name] = ?";
+                        String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users] where [name] = ?";
                         PreparedStatement pst = cn.prepareStatement(sql);
-                        pst.setString(2, name);
-                        //ResultSet in OOP = table in Database
+                        pst.setString(1, name); 
                         ResultSet table = pst.executeQuery();
-                        // step 3: get data from table 
                         if (table != null && table.next()) {
                               int id = table.getInt("id");
                               String email = table.getString("email");
@@ -252,22 +340,17 @@ public class UserDAO implements IUserDAO {
       @Override
       public User getEmail(String email) {
             User result = null;
-            //buoc 1: ket noi
             Connection cn = null;
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        //b2: viet query va execute
-                        String sql = "select id,name,email,password,role,status\n"
-                                + "from dbo.users\n"
-                                + "where email='" + email + "'";
-                        Statement st = cn.createStatement();
-                        ResultSet table = st.executeQuery(sql);
-                        //bc3:lay data trong bien table
+                        String sql = "select id,name,email,password,role,status from dbo.users where email=?";
+                        PreparedStatement st = cn.prepareStatement(sql);
+                        st.setString(1, email);
+                        ResultSet table = st.executeQuery();
                         if (table != null && table.next()) {
                               int id = table.getInt("id");
                               String name = table.getString("name");
-                              //String email=table.getString("email");
                               String password = table.getString("password");
                               String role = table.getString("role");
                               String status = table.getString("status");
@@ -334,9 +417,7 @@ public class UserDAO implements IUserDAO {
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        String sql = "update dbo.users\n"
-                                + "set name=? , password=?\n"
-                                + "where id=?";
+                        String sql = "update dbo.users set name=? , password=? where id=?";
                         PreparedStatement st = cn.prepareStatement(sql);
                         st.setString(1, name);
                         st.setString(2, password);
@@ -354,7 +435,6 @@ public class UserDAO implements IUserDAO {
                         e.printStackTrace();
                   }
             }
-
             return result;
       }
 

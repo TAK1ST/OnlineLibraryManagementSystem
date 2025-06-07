@@ -15,6 +15,7 @@ import service.interfaces.IUpdateInventoryService;
  *
  * @author asus
  */
+
 public class UpdateInventoryService implements IUpdateInventoryService {
 
       private final IBookDAO bookDAO = new BookDAO();
@@ -26,20 +27,12 @@ public class UpdateInventoryService implements IUpdateInventoryService {
 
       @Override
       public int getTotalBook() {
-            int count = 0;
-            for (Book book : bookList) {
-                  count++;
-            }
-            return count;
+            return 0;
       }
 
       @Override
       public int getTotalBookAvailable() {
-            int count = 0;
-            for (Book book : bookList) {
-                  count++;
-            }
-            return count;
+            return 0;
       }
 
       @Override

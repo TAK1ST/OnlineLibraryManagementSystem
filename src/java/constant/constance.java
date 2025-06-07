@@ -8,6 +8,7 @@ package constant;
  *
  * @author asus
  */
-public class ServletURL {
-    
+public class constance {
+      // Lazy loading
+      public static int RECORDS_PER_LOAD = 10;
 }

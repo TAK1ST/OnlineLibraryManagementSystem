@@ -52,9 +52,9 @@ public class LoginServlet extends HttpServlet {
                s.setAttribute("loginedUser", us);               
                
                if(us.getRole().equalsIgnoreCase("admin")){
-                   response.sendRedirect("AdminDashboard.jsp");
+                   request.getRequestDispatcher("admindashboard").forward(request, response);
                }else{
-                    response.sendRedirect(request.getContextPath() + "/UserDashboard");
+                    request.getRequestDispatcher("UserDashboard").forward(request, response);
                }
            }
        }

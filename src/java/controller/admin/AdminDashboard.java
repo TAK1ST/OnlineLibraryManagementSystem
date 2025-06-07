@@ -5,7 +5,7 @@
 package controller.admin;
 
 import constant.ViewURL;
-import entity.User;
+import dto.BorrowedBookDTO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -33,8 +33,10 @@ public class AdminDashboard extends HttpServlet {
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
-            PrintWriter out = response.getWriter();
             StatisticService statisticService = new StatisticService();
+            
+            List<BorrowedBookDTO> bookList = statisticService.getTop5BorrowedBooks();
+            int[] monthlyData = statisticService.getMonthlyData();
             int totalUser = statisticService.getTotalUser();
             int totalBook = statisticService.getTotalBook();
             int currentlyBorrowed = statisticService.getTotalCurrentBorrowPerWeek();
@@ -44,7 +46,8 @@ public class AdminDashboard extends HttpServlet {
             request.setAttribute("totalBooksCount", totalBook);
             request.setAttribute("currentlyBorrowed", currentlyBorrowed);
             request.setAttribute("avgDuration", avgDuration);
-
+            request.setAttribute("bookList", bookList);
+            request.setAttribute("monthlyData", monthlyData);
             request.getRequestDispatcher(ViewURL.ADMIN_DASHBOARD).forward(request, response);
       }
 

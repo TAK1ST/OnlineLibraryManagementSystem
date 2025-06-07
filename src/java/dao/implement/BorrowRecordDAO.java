@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import util.DBConnection;
 
 /**
@@ -62,42 +61,6 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   }
             }
             return records;
-      }
-
-      @Override
-      public Optional<BorrowRecord> getBorrowRecordById(int id) {
-            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE id = ?";
-            PreparedStatement prst = null;
-            ResultSet rs = null;
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  if (cn == null) {
-                        System.err.println("Cannot connect database.");
-                        return Optional.empty();
-                  }
-                  prst = cn.prepareStatement(sql);
-                  prst.setInt(1, id);
-                  rs = prst.executeQuery();
-                  if (rs.next()) {
-                        return Optional.of(mapRowToBorrowRecord(rs));
-                  }
-            } catch (Exception e) {
-                  System.err.println("Error: " + e.getMessage());
-                  e.printStackTrace();
-            } finally {
-                  try {
-                        if (rs != null) {
-                              rs.close();
-                        }
-                        if (prst != null) {
-                              prst.close();
-                        }
-                  } catch (SQLException e) {
-                        e.printStackTrace();
-                  }
-            }
-            return Optional.empty();
       }
 
       @Override
@@ -177,7 +140,9 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
 
       @Override
       public boolean updateReturnStatus(int id, LocalDate returnDate, String status) {
-            String sql = "UPDATE [dbo].[borrow_records] SET return_date = ?, status = ? WHERE id = ?";
+            String sql = "UPDATE [dbo].[borrow_records] "
+                    + "SET return_date = ?, status = ? "
+                    + "WHERE id = ?";
             PreparedStatement prst = null;
             Connection cn = null;
             try {
@@ -221,7 +186,8 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       @Override
       public List<BorrowRecord> getCurrentBorrowedBooks() {
             List<BorrowRecord> records = new ArrayList<>();
-            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE return_date IS NULL AND (status = 'borrowed' OR status = 'overdue')";
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] "
+                    + "WHERE return_date IS NULL AND (status = 'borrowed' OR status = 'overdue')";
 
             PreparedStatement prst = null;
             ResultSet rs = null;
@@ -259,7 +225,8 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
       @Override
       public List<BorrowRecord> getOverdueBooks() {
             List<BorrowRecord> records = new ArrayList<>();
-            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE status = 'overdue'";
+            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] "
+                    + "WHERE status = 'overdue'";
             PreparedStatement prst = null;
             ResultSet rs = null;
             Connection cn = null;
@@ -293,42 +260,33 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
             return records;
       }
 
-      @Override
-      public List<BorrowRecord> getBorrowRecordsByUserIdAndStatus(int userId, String status) {
-            List<BorrowRecord> records = new ArrayList<>();
-            String sql = "select [id],[user_id],[book_id],[borrow_date], [due_date],[return_date],[status] from [dbo].[borrow_records] WHERE user_id = ? AND status = ?";
-            PreparedStatement prst = null;
-            ResultSet rs = null;
+      public int[] getBookBorrowMonthlyTotal() {
             Connection cn = null;
+            String sql = "SELECT MONTH(borrow_date) AS month, COUNT(*) AS total "
+                    + "FROM borrow_records "
+                    + "GROUP BY MONTH(borrow_date)";
+
+            int [] ls = new int[12];
             try {
                   cn = DBConnection.getConnection();
-                  if (cn == null) {
-                        System.err.println("Cannot connect database.");
-                        return records;
-                  }
-                  prst = cn.prepareStatement(sql);
-                  prst.setInt(1, userId);
-                  prst.setString(2, status);
-                  rs = prst.executeQuery();
+                  PreparedStatement pr = cn.prepareStatement(sql);
+                  ResultSet rs = pr.executeQuery();
                   while (rs.next()) {
-                        records.add(mapRowToBorrowRecord(rs));
+                        int month = rs.getInt("month");
+                        int total = rs.getInt("total");
+                        ls[month - 1] = total;
                   }
             } catch (Exception e) {
-                  System.err.println("Error: " + e.getMessage());
-                  e.printStackTrace();
             } finally {
                   try {
-                        if (rs != null) {
-                              rs.close();
+                        if (cn != null) {
+                              cn.close();
                         }
-                        if (prst != null) {
-                              prst.close();
-                        }
-                  } catch (SQLException e) {
+                  } catch (Exception e) {
                         e.printStackTrace();
                   }
             }
-            return records;
+            return ls;
       }
 
       @Override
@@ -371,7 +329,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
             int uniqueUserCount = 0;
 
             LocalDate today = LocalDate.now();
-            
+
             LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
             String sql = "SELECT COUNT(DISTINCT user_id) FROM [dbo].[borrow_records] WHERE borrow_date BETWEEN ? AND ?";
@@ -390,7 +348,6 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                   prst = cn.prepareStatement(sql);
                   prst.setDate(1, Date.valueOf(startOfWeek));
                   prst.setDate(2, Date.valueOf(today));
-
                   rs = prst.executeQuery();
                   if (rs.next()) {
                         uniqueUserCount = rs.getInt(1);
