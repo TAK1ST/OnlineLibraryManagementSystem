@@ -3,6 +3,12 @@
     Created on : May 24, 2025, 7:36:38 PM
     Author     : asus
 --%>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="entity.User" %>
+
 <!DOCTYPE html>
 <html lang="en">
       <head>
@@ -31,8 +37,8 @@
                         <a href="usermanagement" class="nav-link active">
                               <i class="fas fa-users me-2"></i>User Management
                         </a>
-                        <a href="overduebook" class="nav-link">
-                              <i class="fas fa-exclamation-triangle me-2"></i>Overdue Books
+                        <a href="statusrequestborrowbook" class="nav-link">
+                              <i class="fas fa-exclamation-triangle me-2"></i>View Request Books
                         </a>
                         <a href="bookmanagement" class="nav-link">
                               <i class="fas fa-book me-2"></i>Book Management
@@ -60,32 +66,36 @@
                                           <i class="fas fa-search"></i>
                                           Search Users
                                     </h2>
-                                    <div class="search-form">
-                                          <div class="form-group">
-                                                <label for="searchName" class="form-label">
-                                                      <i class="fas fa-user me-2"></i>Name
-                                                </label>
-                                                <input type="text" class="form-control" id="searchName" placeholder="Enter name to search...">
+                                    <form action="searchUser" method="GET">
+                                          <div class="search-form">
+                                                <div class="form-group">
+                                                      <label for="searchName" class="form-label">
+                                                            <i class="fas fa-user me-2"></i>Name
+                                                      </label>
+                                                      <input type="text" class="form-control" id="searchName" name="searchName" 
+                                                             value="${param.searchName}" placeholder="Enter name to search...">
+                                                </div>
+                                                <div class="form-group">
+                                                      <label for="searchEmail" class="form-label">
+                                                            <i class="fas fa-envelope me-2"></i>Email
+                                                      </label>
+                                                      <input type="email" class="form-control" id="searchEmail" name="searchEmail" 
+                                                             value="${param.searchEmail}" placeholder="Enter email to search...">
+                                                </div>
+                                                <div class="form-group">      
+                                                      <button type="submit" class="search-btn" id="searchBtn">
+                                                            <i class="fas fa-search me-2"></i>Search
+                                                      </button>
+                                                      <button type="button" class="clear-btn" id="clearBtn">
+                                                            <i class="fas fa-times me-2"></i>Clear
+                                                      </button>
+                                                </div>
                                           </div>
-                                          <div class="form-group">
-                                                <label for="searchEmail" class="form-label">
-                                                      <i class="fas fa-envelope me-2"></i>Email
-                                                </label>
-                                                <input type="email" class="form-control" id="searchEmail" placeholder="Enter email to search...">
-                                          </div>
-                                          <div class="form-group">
-                                                <button class="search-btn" id="searchBtn">
-                                                      <i class="fas fa-search me-2"></i>Search
-                                                </button>
-                                          </div>
-                                          <div class="form-group">
-                                                <button class="clear-btn" id="clearBtn">
-                                                      <i class="fas fa-times me-2"></i>Clear
-                                                </button>
-                                          </div>
-                                    </div>
-                              </div>
+                                    </form>
 
+                                    <div id="loading" style="display: none;">Loading...</div>
+
+                              </div>
                               <!-- User Table -->
                               <div class="user-table">
                                     <div class="table-header">
@@ -113,17 +123,34 @@
                                           </div>
                                     </div>
                                     <div class="table-body" id="tableBody">
+                                          <%
+                                           List <User> userList = (List<User>) request.getAttribute("userList");
+                                           if (userList != null && !userList.isEmpty())
+                                           {
+                                                for (User u : userList) {
+                                          %>
+                                          <div class="user-row">
+                                                <div class="col-3"> <div class="user-cell"><%=u.getName()%></div></div>
+                                                <div class="col-3"><div class="user-cell"><%=u.getEmail()%></div></div>
+                                                <div class="col-3"><div class="user-cell"><%=u.getRole()%></div></div>
+                                                <div class="col-3"><div class="user-cell"><%=u.getStatus()%></div></div>
+                                          </div>
+                                          <%}
+                                          } else {%>
                                           <div class="empty-state">
                                                 <i class="fas fa-users"></i>
                                                 <p>Enter search criteria to find users</p>
                                           </div>
+                                          <%
+                                                }
+                                          %>
                                     </div>
                               </div>
                         </div>
 
                         <!-- Footer -->
                         <div class="footer">
-                              ©Copyright Group 7
+                              Â©Copyright Group 7
                         </div>
                   </div>
             </div>
@@ -153,7 +180,7 @@
                                                       <input type="text" class="modal-input" id="modalName" value="">
                                                 </div>
                                                 <div class="form-row">
-                                                      <label for="modalPassword" class="modal-label">Password</label>
+                                                      <label for="modalPassword" class="modal-label" name="password">Password</label>
                                                       <input type="password" class="modal-input" id="modalPassword" placeholder="Enter new password">
                                                 </div>
                                                 <div class="form-row">
@@ -186,5 +213,114 @@
                         </div>
                   </div>
             </div>
+            <script>
+                  let offset = ${requestScope.offset != null ? requestScope.offset : 0};
+                  let isLoading = false;
+                  let hasMoreData = true;
+                  let searchName = "${param.searchName != null ? param.searchName : ''}";
+                  let searchEmail = "${param.searchEmail != null ? param.searchEmail : ''}";
+                  let isSearchMode = false; 
+
+                  function updateSearchMode() {
+                        isSearchMode = (searchName.trim() !== '' || searchEmail.trim() !== '');
+                  }
+
+                  updateSearchMode();
+
+                  window.addEventListener('scroll', function () {
+                        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50 && !isLoading && hasMoreData) {
+                              loadMoreUsers();
+                        }
+                  });
+
+                  document.getElementById('searchBtn').addEventListener('click', function (e) {
+                        e.preventDefault();
+                        searchName = document.getElementById('searchName').value.trim();
+                        searchEmail = document.getElementById('searchEmail').value.trim();
+
+                        offset = 0;
+                        hasMoreData = true;
+                        updateSearchMode();
+
+                        document.getElementById('tableBody').innerHTML = '';
+                        loadMoreUsers();
+                  });
+
+                  document.getElementById('clearBtn').addEventListener('click', function () {
+                        document.getElementById('searchName').value = '';
+                        document.getElementById('searchEmail').value = '';
+
+                        searchName = '';
+                        searchEmail = '';
+                        offset = 0;
+                        hasMoreData = true;
+                        updateSearchMode();
+
+                        document.getElementById('tableBody').innerHTML = '';
+                        loadMoreUsers();
+                  });
+
+                  function loadMoreUsers() {
+                        if (isLoading)
+                              return;
+
+                        isLoading = true;
+                        document.getElementById('loading').style.display = 'block';
+
+                        let url = 'searchUser?ajax=true&offset=' + offset;
+
+                        if (searchName && searchName.trim() !== '') {
+                              url += '&searchName=' + encodeURIComponent(searchName);
+                        }
+                        if (searchEmail && searchEmail.trim() !== '') {
+                              url += '&searchEmail=' + encodeURIComponent(searchEmail);
+                        }
+
+                        console.log("Fetching URL: " + url);
+
+                        fetch(url)
+                                .then(response => response.text())
+                                .then(html => {
+                                      console.log("Response HTML:", html.substring(0, 200) + "...");
+
+                                      const trimmedHtml = html.trim();
+
+                                      if (trimmedHtml.includes('class="empty-state"') || trimmedHtml.includes('No users found')) {
+                                            if (offset === 0) {
+                                                  document.getElementById('tableBody').innerHTML = trimmedHtml;
+                                            }
+                                            hasMoreData = false;
+                                      } else if (trimmedHtml === '' || trimmedHtml.length < 50) {
+                                            hasMoreData = false;
+                                            if (offset === 0) {
+                                                  document.getElementById('tableBody').innerHTML =
+                                                          '<div class="empty-state"><i class="fas fa-users"></i><p>No users found</p></div>';
+                                            }
+                                      } else {
+                                            if (offset === 0) {
+                                                  document.getElementById('tableBody').innerHTML = trimmedHtml;
+                                            } else {
+                                                  document.getElementById('tableBody').insertAdjacentHTML('beforeend', trimmedHtml);
+                                            }
+
+                                            offset += ${requestScope.recordsPerPage != null ? requestScope.recordsPerPage : 10};
+
+                                            const userRows = trimmedHtml.match(/class="user-row"/g);
+                                            const recordCount = userRows ? userRows.length : 0;
+                                            if (recordCount < ${requestScope.recordsPerPage != null ? requestScope.recordsPerPage : 10}) {
+                                                  hasMoreData = false;
+                                            }
+                                      }
+
+                                      isLoading = false;
+                                      document.getElementById('loading').style.display = 'none';
+                                })
+                                .catch(error => {
+                                      console.error('Error:', error);
+                                      isLoading = false;
+                                      document.getElementById('loading').style.display = 'none';
+                                });
+                  }
+            </script>
       </body>
 </html>

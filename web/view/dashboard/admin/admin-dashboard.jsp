@@ -3,6 +3,10 @@
     Created on : May 18, 2025, 2:32:43 PM
     Author     : asus
 --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="dto.BorrowedBookDTO" %>
 <!DOCTYPE html>
 <html lang="en">
       <head>
@@ -18,6 +22,10 @@
       </head>
       <body>
             <div class="container-fluid">
+                  <%
+            List<BorrowedBookDTO> bookList = (List<BorrowedBookDTO>) request.getAttribute("bookList");
+            int[] monthlyData = (int[]) request.getAttribute("monthlyData");
+                  %>
                   <!-- Sidebar -->
                   <div class="sidebar">
                         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
@@ -31,8 +39,8 @@
                         <a href="usermanagement" class="nav-link">
                               <i class="fas fa-users"></i> User Management
                         </a>
-                        <a href="overduebook" class="nav-link">
-                              <i class="fas fa-clock"></i> Overdue Books
+                        <a href="statusrequestborrowbook" class="nav-link">
+                              <i class="fas fa-clock"></i> View Request Books
                         </a>
                         <a href="bookmanagement" class="nav-link">
                               <i class="fas fa-book"></i> Book Management
@@ -110,49 +118,26 @@
                                                 <canvas id="monthlyChart"></canvas>
                                           </div>
                                     </div>
-
                                     <!-- Most Borrowed Books -->
                                     <div class="chart-card">
                                           <div class="chart-title">
-                                                <i class="fas fa-trophy"></i>
-                                                Top 5 Most Borrowed Books
+                                                <i class="fas fa-trophy"></i> Top 5 borrowed books
                                           </div>
                                           <div class="books-list" id="mostBorrowedBooks">
+                                                <% if (bookList == null || bookList.isEmpty()) { %>
+                                                <p>Not Books.</p>
+                                                <% } else { %>
+                                                <% int index = 1; %>
+                                                <% for (BorrowedBookDTO book : bookList) { %>
                                                 <div class="book-item">
-                                                      <div class="book-rank">1</div>
+                                                      <div class="book-rank"><%= index++ %></div>
                                                       <div class="book-info">
-                                                            <div class="book-title">The Great Gatsby</div>
-                                                            <div class="book-count">156 times borrowed</div>
+                                                            <div class="book-title"><%= book.getBookName() %></div>
+                                                            <div class="book-count"><%= book.getBorrowCount() %> borrowed</div>
                                                       </div>
                                                 </div>
-                                                <div class="book-item">
-                                                      <div class="book-rank">2</div>
-                                                      <div class="book-info">
-                                                            <div class="book-title">To Kill a Mockingbird</div>
-                                                            <div class="book-count">142 times borrowed</div>
-                                                      </div>
-                                                </div>
-                                                <div class="book-item">
-                                                      <div class="book-rank">3</div>
-                                                      <div class="book-info">
-                                                            <div class="book-title">1984</div>
-                                                            <div class="book-count">138 times borrowed</div>
-                                                      </div>
-                                                </div>
-                                                <div class="book-item">
-                                                      <div class="book-rank">4</div>
-                                                      <div class="book-info">
-                                                            <div class="book-title">Pride and Prejudice</div>
-                                                            <div class="book-count">127 times borrowed</div>
-                                                      </div>
-                                                </div>
-                                                <div class="book-item">
-                                                      <div class="book-rank">5</div>
-                                                      <div class="book-info">
-                                                            <div class="book-title">The Catcher in the Rye</div>
-                                                            <div class="book-count">119 times borrowed</div>
-                                                      </div>
-                                                </div>
+                                                <% } %>
+                                                <% } %>
                                           </div>
                                     </div>
                               </div>
@@ -161,59 +146,57 @@
 
                   <!-- Footer -->
                   <div class="footer">
-                        ©Copyright Group 7 - Library Management System
+                        Â©Copyright Group 7 - Library Management System
                   </div>
             </div>
-
             <script>
+                  const monthlyData = [
+                  <% if (monthlyData != null) {
+                for (int i = 0; i < monthlyData.length; i++) {
+                    out.print(monthlyData[i]);
+                    if (i < monthlyData.length - 1) out.print(",");
+                }
+            } %>
+                  ];
+                  console.log("monthlyData:", monthlyData);
                   const ctx = document.getElementById('monthlyChart').getContext('2d');
-                  const monthlyChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                              labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                              datasets: [{
-                                          label: 'Books Borrowed',
-                                          data: [245, 189, 276, 312, 298, 334, 356, 342, 287, 298, 276, 189],
-                                          backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                                          borderColor: 'rgba(102, 126, 234, 1)',
-                                          borderWidth: 2,
-                                          borderRadius: 8,
-                                          borderSkipped: false,
-                                    }]
-                        },
-                        options: {
-                              responsive: true,
-                              maintainAspectRatio: false,
-                              plugins: {
-                                    legend: {
-                                          display: false
-                                    }
+                  if (monthlyData.every(val => val === 0)) {
+                        document.getElementById('monthlyChart').parentElement.innerHTML = '<p>No borrowing data available for this year.</p>';
+                  } else {
+                        const monthlyChart = new Chart(ctx, {
+                              type: 'bar',
+                              data: {
+                                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                                    datasets: [{
+                                                label: 'Books Borrowed',
+                                                data: monthlyData,
+                                                backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                                                borderColor: 'rgba(102, 126, 234, 1)',
+                                                borderWidth: 2,
+                                                borderRadius: 8,
+                                                borderSkipped: false,
+                                          }]
                               },
-                              scales: {
-                                    y: {
-                                          beginAtZero: true,
-                                          grid: {
-                                                color: 'rgba(0,0,0,0.1)'
-                                          }
+                              options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                          legend: {display: false}
                                     },
-                                    x: {
-                                          grid: {
-                                                display: false
-                                          }
+                                    scales: {
+                                          y: {beginAtZero: true, grid: {color: 'rgba(0,0,0,0.1)'}},
+                                          x: {grid: {display: false}}
                                     }
                               }
-                        }
-                  });
-
-                  // Add some interactive animations
+                        });
+                  }
+                  // Animation code unchanged
                   document.addEventListener('DOMContentLoaded', function () {
-                        // Animate stat values on load
                         const statValues = document.querySelectorAll('.stat-value');
                         statValues.forEach(value => {
                               const finalValue = parseInt(value.textContent);
                               let currentValue = 0;
                               const increment = finalValue / 50;
-
                               const updateValue = () => {
                                     if (currentValue < finalValue) {
                                           currentValue += increment;
@@ -223,17 +206,13 @@
                                           value.textContent = finalValue;
                                     }
                               };
-
                               setTimeout(updateValue, Math.random() * 500);
                         });
-
-                        // Add hover effects to stat cards
                         const statCards = document.querySelectorAll('.stat-card');
                         statCards.forEach(card => {
                               card.addEventListener('mouseenter', function () {
                                     this.style.background = 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)';
                               });
-
                               card.addEventListener('mouseleave', function () {
                                     this.style.background = 'white';
                               });

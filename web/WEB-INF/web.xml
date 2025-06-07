@@ -66,6 +66,18 @@
         <servlet-name>SaveProfileServlet</servlet-name>
         <servlet-class>controller.auth.SaveProfileServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminUpdateInventory</servlet-name>
+        <servlet-class>controller.admin.AdminUpdateInventory</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminStatusRequestBorrowBook</servlet-name>
+        <servlet-class>controller.admin.AdminStatusRequestBorrowBook</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminSearchUser</servlet-name>
+        <servlet-class>controller.admin.AdminSearchUser</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AdminDashboard</servlet-name>
         <url-pattern>/admindashboard</url-pattern>
@@ -129,6 +141,18 @@
     <servlet-mapping>
         <servlet-name>SaveProfileServlet</servlet-name>
         <url-pattern>/SaveProfileServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminUpdateInventory</servlet-name>
+        <url-pattern>/updateinventory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminStatusRequestBorrowBook</servlet-name>
+        <url-pattern>/statusrequestborrowbook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminSearchUser</servlet-name>
+        <url-pattern>/searchUser</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
