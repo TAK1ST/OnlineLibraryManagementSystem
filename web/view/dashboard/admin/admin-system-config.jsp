@@ -36,7 +36,9 @@
                         <!-- Header -->
                         <div class="header">
                               <h1>System Configuration</h1>
-                              <button class="logout-btn" onclick="logout()">Logout</button>
+                              <button class="logout-btn" onclick="logout()">
+                                  <a href="LogoutServlet" class="nav-link">Logout</a>
+                              </button>
                         </div>
 
                         <!-- Message Display -->

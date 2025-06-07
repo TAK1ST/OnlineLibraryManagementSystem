@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebServlet(name = "SearchBookServlet", urlPatterns = {"/search"})
+@WebServlet(name = "SearchBook", urlPatterns = {"/search"})
 public class SearchBookServlet extends HttpServlet {
 
     @Override

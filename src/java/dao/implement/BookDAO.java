@@ -22,7 +22,6 @@ import util.DBConnection;
  */
 public class BookDAO implements IBookDAO {
 
-
     //ham nay De lay tat ca quyen sach 
     @Override
     public ArrayList<Book> getBookByTitle(String title) {
@@ -34,10 +33,10 @@ public class BookDAO implements IBookDAO {
                 System.out.println("connect successfully");
             }
 
-            String sql = "select [id],[title],[isbn],[author],[category],[published_year]," +
-                        "[total_copies],[available_copies],[status]\n" +
-                        "from [dbo].[books]\n" +
-                        "where title like ?";
+            String sql = "select [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "from [dbo].[books]\n"
+                    + "where title like ?";
             PreparedStatement st = cn.prepareStatement(sql);
             st.setString(1, "%" + title + "%");
             ResultSet table = st.executeQuery();
@@ -69,6 +68,50 @@ public class BookDAO implements IBookDAO {
         }
         return result;
     }
+    
+    public Book getBookById(int id) {
+    Book book = null;
+    Connection cn = null;
+    try {
+        cn = DBConnection.getConnection();
+        if (cn != null) {
+            System.out.println("Connect successfully");
+        }
+
+        String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year],"
+                   + "[total_copies], [available_copies], [status] "
+                   + "FROM [dbo].[books] "
+                   + "WHERE id = ?";
+        PreparedStatement st = cn.prepareStatement(sql);
+        st.setInt(1, id);
+        ResultSet rs = st.executeQuery();
+
+        if (rs != null && rs.next()) {
+            String title = rs.getString("title");
+            String isbn = rs.getString("isbn");
+            String author = rs.getString("author");
+            String category = rs.getString("category");
+            int year = rs.getInt("published_year");
+            int total = rs.getInt("total_copies");
+            int available = rs.getInt("available_copies");
+            String status = rs.getString("status");
+
+            book = new Book(id, title, isbn, author, category, year, total, available, status);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        if (cn != null) {
+            try {
+                cn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    return book;
+}
+
 
     @Override
     public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
@@ -76,10 +119,10 @@ public class BookDAO implements IBookDAO {
         Connection cn = null;
         try {
             cn = DBConnection.getConnection();
-            String sql = "SELECT TOP 4 [id],[title],[isbn],[author],[category],[published_year]," +
-                        "[total_copies],[available_copies],[status]\n" +
-                        "FROM [dbo].[books]\n" +
-                        "ORDER BY [published_year] DESC, [id] DESC";
+            String sql = "SELECT TOP 4 [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "FROM [dbo].[books]\n"
+                    + "ORDER BY [published_year] DESC, [id] DESC";
 
             PreparedStatement st = cn.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
@@ -112,11 +155,11 @@ public class BookDAO implements IBookDAO {
         Connection cn = null;
         try {
             cn = DBConnection.getConnection();
-            String sql = "SELECT TOP (?) [id],[title],[isbn],[author],[category],[published_year]," +
-                        "[total_copies],[available_copies],[status]\n" +
-                        "FROM [dbo].[books]\n" +
-                        "WHERE [status] = 'active'\n" +
-                        "ORDER BY [id] DESC";
+            String sql = "SELECT TOP (?) [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "FROM [dbo].[books]\n"
+                    + "WHERE [status] = 'active'\n"
+                    + "ORDER BY [id] DESC";
             PreparedStatement st = cn.prepareStatement(sql);
             st.setInt(1, limit);
             ResultSet table = st.executeQuery();
@@ -149,9 +192,9 @@ public class BookDAO implements IBookDAO {
         Connection cn = null;
         try {
             cn = DBConnection.getConnection();
-            String sql = "SELECT [id],[title],[isbn],[author],[category],[published_year]," +
-                        "[total_copies],[available_copies],[status]\n" +
-                        "FROM [dbo].[books]";
+            String sql = "SELECT [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "FROM [dbo].[books]";
 
             PreparedStatement st = cn.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
@@ -179,18 +222,16 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-
     @Override
     public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books WHERE status = 'active' AND " + searchBy + " LIKE ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, "%" + searchTerm + "%");
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     books.add(extractBookFromResultSet(rs));
                 }
@@ -244,10 +285,10 @@ public class BookDAO implements IBookDAO {
         Connection cn = null;
         try {
             cn = DBConnection.getConnection();
-            String sql = "select [id],[title],[isbn],[author],[category],[published_year],[total_copies]," +
-                        "[available_copies],[status]\n" +
-                        "from [dbo].[books]\n" +
-                        "where category like ?";
+            String sql = "select [id],[title],[isbn],[author],[category],[published_year],[total_copies],"
+                    + "[available_copies],[status]\n"
+                    + "from [dbo].[books]\n"
+                    + "where category like ?";
             PreparedStatement st = cn.prepareStatement(sql);
             st.setString(1, "%" + category + "%");
             ResultSet table = st.executeQuery();
@@ -285,10 +326,10 @@ public class BookDAO implements IBookDAO {
         Connection cn = null;
         try {
             cn = DBConnection.getConnection();
-            String sql = "select [id],[title],[isbn],[author],[category],[published_year],[total_copies]," +
-                        "[available_copies],[status]\n" +
-                        "from [dbo].[books]\n" +
-                        "where author like ?";
+            String sql = "select [id],[title],[isbn],[author],[category],[published_year],[total_copies],"
+                    + "[available_copies],[status]\n"
+                    + "from [dbo].[books]\n"
+                    + "where author like ?";
             PreparedStatement st = cn.prepareStatement(sql);
             st.setString(1, "%" + author + "%");
             ResultSet table = st.executeQuery();
@@ -354,36 +395,36 @@ public class BookDAO implements IBookDAO {
         try {
             cn = DBConnection.getConnection();
             StringBuilder sql = new StringBuilder(
-                "SELECT [id],[title],[isbn],[author],[category],[published_year]," +
-                "[total_copies],[available_copies],[status]\n" +
-                "FROM [dbo].[books]\n" +
-                "WHERE 1=1"
+                    "SELECT [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "FROM [dbo].[books]\n"
+                    + "WHERE 1=1"
             );
-            
+
             ArrayList<String> params = new ArrayList<>();
-            
+
             if (title != null && !title.trim().isEmpty()) {
                 sql.append(" AND title LIKE ?");
                 params.add("%" + title + "%");
             }
-            
+
             if (author != null && !author.trim().isEmpty()) {
                 sql.append(" AND author LIKE ?");
                 params.add("%" + author + "%");
             }
-            
+
             if (category != null && !category.trim().isEmpty()) {
                 sql.append(" AND category LIKE ?");
                 params.add("%" + category + "%");
             }
-            
+
             PreparedStatement st = cn.prepareStatement(sql.toString());
-            
+
             // Set parameters
             for (int i = 0; i < params.size(); i++) {
                 st.setString(i + 1, params.get(i));
             }
-            
+
             ResultSet table = st.executeQuery();
             if (table != null) {
                 while (table.next()) {
@@ -410,30 +451,16 @@ public class BookDAO implements IBookDAO {
 
     private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
         return new Book(
-            rs.getInt("id"),
-            rs.getString("title"),
-            rs.getString("isbn"),
-            rs.getString("author"),
-            rs.getString("category"),
-            rs.getInt("published_year"),
-            rs.getInt("total_copies"),
-            rs.getInt("available_copies"),
-            rs.getString("status")
+                rs.getInt("id"),
+                rs.getString("title"),
+                rs.getString("isbn"),
+                rs.getString("author"),
+                rs.getString("category"),
+                rs.getInt("published_year"),
+                rs.getInt("total_copies"),
+                rs.getInt("available_copies"),
+                rs.getString("status")
         );
-    }
-
-      public int getTotalBooks() {
-            Connection cn = null;
-            int count = 0;
-            try {
-                if (cn != null) {
-                    cn.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
     }
 
     public int getTotalBooks() {

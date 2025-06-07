@@ -81,7 +81,7 @@ public class RegisterServlet extends HttpServlet {
         
         if (!password.equals(password)) {
             out.print("<p style='color:red;'>Passwords do not match!</p>");
-            out.print("<p><a href='view/auth/register.jsp'>Back</a></p>");
+            out.print("<p><a href='${pageContext.request.contextPath}/view/auth/register.jsp'>Back</a></p>");
             return;
         }
 
@@ -92,14 +92,14 @@ public class RegisterServlet extends HttpServlet {
                   int result = d.insertNewUser(name, email, password);
                   if (result == 1) {
                         out.print("<p>Add user successully</p>");
-                        out.print("<p><a href='register.jsp'>Home</a></p>");
+                        out.print("<p><a href='LoginServlet'>Home</a></p>");
                   } else {
                         out.print("<p>Not Insert</p>");
-                        out.print("<p><a href='register.jsp'>Home</a></p>");
+                        out.print("<p><a href='RegisterServlet'>Home</a></p>");
                   }
             } else {
                   out.print("<p>duplicate email</p>");
-                  out.print("<p><a href='register.jsp'>Home</a></p>");
+                  out.print("<p><a href='RegisterServlet'>Home</a></p>");
             }
     }
 
