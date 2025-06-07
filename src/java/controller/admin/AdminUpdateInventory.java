@@ -4,20 +4,21 @@
  */
 package controller.admin;
 
-import service.implement.UpdateInventoryService;
 import constant.ViewURL;
+import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.sql.SQLException;
+import service.implement.UpdateInventoryService;
 import service.interfaces.IUpdateInventoryService;
 
 /**
  *
  * @author asus
  */
+
 public class AdminUpdateInventory extends HttpServlet {
 
       private final IUpdateInventoryService inventoryService;
@@ -36,4 +37,9 @@ public class AdminUpdateInventory extends HttpServlet {
       protected void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
       }
+
+      @Override
+      public String getServletInfo() {
+            return "Short description";
+      }// </editor-fold>
 }

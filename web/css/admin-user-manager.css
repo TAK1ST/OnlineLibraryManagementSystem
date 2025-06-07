@@ -81,7 +81,6 @@ body {
       flex: 1;
       padding: 40px;
 }
-
 /* Search Section */
 .search-section {
       background: white;
@@ -116,19 +115,28 @@ body {
 .search-form {
       display: flex;
       gap: 20px;
-      align-items: end;
+      align-items: stretch;
+      justify-content: space-between;
+      flex-wrap: wrap;
 }
 
 .form-group {
       flex: 1;
+      min-width: 200px;
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 5px; 
 }
 
 .form-label {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 18px;
+      font-weight: bold;
       color: #2C3E50;
       margin-bottom: 8px;
-      display: block;
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      margin: 10px;
 }
 
 .form-control {
@@ -138,6 +146,8 @@ body {
       font-size: 16px;
       transition: all 0.3s ease;
       background: #f8f9fa;
+      width: 100%;
+      flex-grow: 1;
 }
 
 .form-control:focus {
@@ -159,6 +169,7 @@ body {
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
       min-width: 120px;
+      align-self: flex-end;
 }
 
 .search-btn:hover {
@@ -177,13 +188,13 @@ body {
       cursor: pointer;
       transition: all 0.3s ease;
       min-width: 100px;
+      align-self: flex-end;
 }
 
 .clear-btn:hover {
       background: #d0d0d0;
       transform: translateY(-1px);
 }
-
 /* Table Styles */
 .user-table {
       background: white;
@@ -242,19 +253,11 @@ body {
 }
 
 .user-cell {
+      font-size: 20px;
+      font-weight: 600;
       flex: 1;
       text-align: center;
-      font-size: 15px;
       color: #2C3E50;
-}
-
-.user-name {
-      font-weight: 600;
-      color: #16A085;
-}
-
-.user-email {
-      font-weight: 500;
 }
 
 .user-role {
@@ -385,7 +388,7 @@ body {
 .form-row {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 20px;
 }
 
 .modal-label {
