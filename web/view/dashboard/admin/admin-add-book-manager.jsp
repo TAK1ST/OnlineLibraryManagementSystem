@@ -26,7 +26,7 @@
                         <a href="admindashboard" class="nav-link">Dashboard</a>
                         <a href="systemconfig" class="nav-link">System Config</a>
                         <a href="usermanagement" class="nav-link">User Management</a>
-                        <a href="overduebook" class="nav-link">Overdue Books</a>
+                        <a href="statusrequestborrowbook" class="nav-link">View Request Books</a>
                         <a href="bookmanagement" class="nav-link active">Book Management</a>
                         <a href="updateinventory" class="nav-link">Update Inventory</a>
                   </div>

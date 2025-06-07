@@ -26,7 +26,7 @@
                         <a href="admindashboard" class="nav-link">Dashboard</a>
                         <a href="systemconfig" class="nav-link active">System Config</a>
                         <a href="usermanagement" class="nav-link">User Management</a>
-                        <a href="overduebook" class="nav-link">Overdue Books</a>
+                        <a href="statusrequestborrowbook" class="nav-link">View Request Books</a>
                         <a href="bookmanagement" class="nav-link">Book Management</a>
                         <a href="updateinventory" class="nav-link">Update Inventory</a>
                   </div>
@@ -54,21 +54,21 @@
                                     <div class="form-group mb-3">
                                           <label class="form-label" for="overdueFine">Overdue Fine (per day)</label>
                                           <input type="number" class="form-control" id="overdueFine" name="overdueFine" 
-                                                 min="0" placeholder="Enter overdue fine amount">
+                                                 min="0" step="0.01" placeholder="Enter overdue fine amount">
                                           <small class="form-text text-muted">Leave empty if you don't want to update this value</small>
                                     </div>
 
                                     <div class="form-group mb-3">
                                           <label class="form-label" for="returnFine">Default Borrow Duration (days)</label>
                                           <input type="number" class="form-control" id="returnFine" name="returnFine" 
-                                                 min="0" placeholder="Enter default borrow duration">
+                                                 min="0" step="0.01" placeholder="Enter default borrow duration">
                                           <small class="form-text text-muted">Leave empty if you don't want to update this value</small>
                                     </div>
 
                                     <div class="form-group mb-3">
                                           <label class="form-label" for="borrowUnitPrice">Unit Price per Book</label>
                                           <input type="number" class="form-control" id="borrowUnitPrice" name="borrowUnitPrice" 
-                                                 min="0" placeholder="Enter unit price per book">
+                                                 min="0" step="0.01" placeholder="Enter unit price per book">
                                           <small class="form-text text-muted">Leave empty if you don't want to update this value</small>
                                     </div>
 
