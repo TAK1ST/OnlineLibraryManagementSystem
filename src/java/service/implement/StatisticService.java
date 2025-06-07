@@ -8,6 +8,7 @@ import dao.implement.BookDAO;
 import dao.implement.BookRequestDAO;
 import dao.implement.BorrowRecordDAO;
 import dao.implement.UserDAO;
+import dto.BorrowedBookDTO;
 import entity.Book;
 import entity.BorrowRecord;
 import java.time.LocalDate;
@@ -45,6 +46,14 @@ public class StatisticService {
 
       public int getTotalCurrentBorrowPerWeek() {
             return (int) borrowRecordDAO.countUniqueUsersBorrowedThisWeek();
+      }
+
+      public List<BorrowedBookDTO> getTop5BorrowedBooks() {
+            return bookDAO.getTop5BorrowedBooks();
+      }
+
+      public int[] getMonthlyData() {
+            return borrowRecordDAO.getBookBorrowMonthlyTotal();
       }
 
       public int calculateAverageBorrowPerDay() {
