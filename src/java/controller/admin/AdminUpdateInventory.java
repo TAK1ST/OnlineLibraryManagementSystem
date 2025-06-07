@@ -42,3 +42,4 @@ public class AdminUpdateInventory extends HttpServlet {
             return "Short description";
       }
 }
+

@@ -97,7 +97,8 @@
 
             <input type="submit" value="Login">
         </form>
-        <p>Don't have an account? <a href="register.jsp">Register</a></p>
+        <!--<p>Don't have an account? <a href="${pageContext.request.contextPath}/view/auth/register.jsp">Register</a></p>-->
+        <p>Don't have an account? <a href="RegisterServlet">Register</a></p>
     </div>
     <%
        if(request.getAttribute("ERROR")!=null){

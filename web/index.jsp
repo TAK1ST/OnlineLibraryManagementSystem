@@ -4,39 +4,53 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Online Library - Home</title>
+        <title>Library Dashboard</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
             .book-card {
                 height: 100%;
                 transition: transform 0.2s;
                 margin-bottom: 20px;
+                border: none;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             }
             .book-card:hover {
                 transform: scale(1.02);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             }
             .search-form {
-                background-color: #f8f9fa;
-                padding: 20px;
-                border-radius: 8px;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                padding: 25px;
+                border-radius: 15px;
                 margin-bottom: 30px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            }
+            .section-title {
+                border-left: 5px solid #0d6efd;
+                padding-left: 15px;
+                margin-bottom: 25px;
+            }
+            .badge-new {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background-color: #198754;
+                padding: 5px 10px;
+                border-radius: 5px;
+                color: white;
             }
         </style>
     </head>
-    <body>
+    <body class="bg-light">
         <!-- Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="home">Online Library</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="home">Home</a>
-                        </li>
-                    </ul>
+                <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
+                    <i class="fas fa-book-reader me-2"></i>Online Library
+                </a>
+                <div class="d-flex">
+                    <a href="${pageContext.request.contextPath}/LoginServlet" class="btn btn-outline-light">Login</a>
                 </div>
             </div>
         </nav>
@@ -44,15 +58,20 @@
         <div class="container mt-4">
             <!-- Search Form -->
             <div class="search-form">
-                <form action="search" method="GET" class="row g-3">
-                    <div class="col-md-6">
-                        <input type="text" name="txtsearch" class="form-control" placeholder="Enter search term...">
-                    </div>
+                <h4 class="mb-4 section-title">Search Books</h4>
+                <form action="${pageContext.request.contextPath}/search" method="GET" class="row g-3">
                     <div class="col-md-4">
-                        <select name="searchBy" class="form-select">
-                            <option value="title">Title</option>
-                            <option value="author">Author</option>
-                            <option value="category">Category</option>
+                        <input type="text" class="form-control" name="title" placeholder="Book Title" value="${title}">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="author" placeholder="Author" value="${author}">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="category">
+                            <option value="">Select Category</option>
+                            <c:forEach items="${categories}" var="cat">
+                                <option value="${cat}" ${cat eq category ? 'selected' : ''}>${cat}</option>
+                            </c:forEach>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -61,78 +80,60 @@
                 </form>
             </div>
 
-            <!-- Error Messages -->
-            <c:if test="${not empty error}">
-                <div class="alert alert-danger" role="alert">
-                    ${error}
+            <!-- New Arrivals Section -->
+            <c:if test="${empty param.title and empty param.author and empty param.category}">
+                <h4 class="mb-4 section-title">New Arrivals</h4>
+                <div class="row">
+                    <c:forEach items="${newBooks}" var="book">
+                        <div class="col-md-3">
+                            <div class="card book-card">
+                                <div class="badge-new">New</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">${book.title}</h5>
+                                    <p class="card-text">
+                                        <small class="text-muted">By ${book.author}</small><br>
+                                        <span class="badge bg-info">${book.category}</span>
+                                    </p>
+                                    <p class="card-text">
+                                        <small class="text-muted">Available Copies: ${book.availableCopies}</small>
+                                    </p>
+                                    <a href="book-detail?id=${book.id}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
                 </div>
             </c:if>
 
-            <!-- New Books Section -->
-            <section class="mb-5">
-                <h2 class="mb-4">New Arrivals</h2>
+            <!-- Search Results or All Books -->
+            <c:if test="${not empty books}">
+                <h4 class="mb-4 section-title">${empty param.title and empty param.author and empty param.category ? 'All Books' : 'Search Results'}</h4>
                 <div class="row">
-                    <c:forEach items="${newBooks}" var="book">
-                        <div class="col-md-6 col-lg-3">
+                    <c:forEach items="${books}" var="book">
+                        <div class="col-md-3">
                             <div class="card book-card">
                                 <div class="card-body">
                                     <h5 class="card-title">${book.title}</h5>
                                     <p class="card-text">
-                                        <strong>Author:</strong> ${book.author}<br>
-                                        <strong>Category:</strong> ${book.category}<br>
-                                        <strong>Published Year:</strong> ${book.publishedYear}<br>
-                                        <strong>Available:</strong> ${book.availableCopies}/${book.totalCopies}
+                                        <small class="text-muted">By ${book.author}</small><br>
+                                        <span class="badge bg-info">${book.category}</span>
                                     </p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-${book.availableCopies > 0 ? 'success' : 'danger'}">
-                                            ${book.availableCopies > 0 ? 'Available' : 'Not Available'}
-                                        </span>
-                                        <c:if test="${book.availableCopies > 0}">
-                                            <form action="borrow" method="POST" style="display: inline;">
-                                                <input type="hidden" name="bookId" value="${book.id}">
-                                                <button type="submit" class="btn btn-sm btn-primary">Borrow</button>
-                                            </form>
-                                        </c:if>
-                                    </div>
+                                    <p class="card-text">
+                                        <small class="text-muted">Available Copies: ${book.availableCopies}</small>
+                                    </p>
+                                    <a href="book-detail?id=${book.id}" class="btn btn-outline-primary btn-sm">View Details</a>
                                 </div>
                             </div>
                         </div>
                     </c:forEach>
                 </div>
-            </section>
+            </c:if>
 
-            <!-- All Books Section -->
-            <section>
-                <h2 class="mb-4">All Books</h2>
-                <div class="row">
-                    <c:forEach items="${allBooks}" var="book">
-                        <div class="col-md-6 col-lg-3">
-                            <div class="card book-card">
-                                <div class="card-body">
-                                    <h5 class="card-title">${book.title}</h5>
-                                    <p class="card-text">
-                                        <strong>Author:</strong> ${book.author}<br>
-                                        <strong>Category:</strong> ${book.category}<br>
-                                        <strong>Published Year:</strong> ${book.publishedYear}<br>
-                                        <strong>Available:</strong> ${book.availableCopies}/${book.totalCopies}
-                                    </p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-${book.availableCopies > 0 ? 'success' : 'danger'}">
-                                            ${book.availableCopies > 0 ? 'Available' : 'Not Available'}
-                                        </span>
-                                        <c:if test="${book.availableCopies > 0}">
-                                            <form action="borrow" method="POST" style="display: inline;">
-                                                <input type="hidden" name="bookId" value="${book.id}">
-                                                <button type="submit" class="btn btn-sm btn-primary">Borrow</button>
-                                            </form>
-                                        </c:if>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </c:forEach>
+            <c:if test="${empty books and (not empty param.title or not empty param.author or not empty param.category)}">
+                <div class="alert alert-info">
+                    No books found matching your search criteria.
                 </div>
-            </section>
+            </c:if>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

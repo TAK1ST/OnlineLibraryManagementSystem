@@ -14,14 +14,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.DBConnection;
 
 /**
- *
  * @author Admin
  */
 public class BookDAO implements IBookDAO {
-
       //ham nay De lay tat ca quyen sach 
       @Override
       public ArrayList<Book> getBookByTitle(String title) {
@@ -433,4 +433,47 @@ public class BookDAO implements IBookDAO {
             }
             return count;
       }
+
+    public Book getBookById(int id) {
+    Book book = null;
+    Connection cn = null;
+    try {
+        cn = DBConnection.getConnection();
+        if (cn != null) {
+            System.out.println("Connect successfully");
+        }
+
+        String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year],"
+                   + "[total_copies], [available_copies], [status] "
+                   + "FROM [dbo].[books] "
+                   + "WHERE id = ?";
+        PreparedStatement st = cn.prepareStatement(sql);
+        st.setInt(1, id);
+        ResultSet rs = st.executeQuery();
+
+        if (rs != null && rs.next()) {
+            String title = rs.getString("title");
+            String isbn = rs.getString("isbn");
+            String author = rs.getString("author");
+            String category = rs.getString("category");
+            int year = rs.getInt("published_year");
+            int total = rs.getInt("total_copies");
+            int available = rs.getInt("available_copies");
+            String status = rs.getString("status");
+
+            book = new Book(id, title, isbn, author, category, year, total, available, status);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        if (cn != null) {
+            try {
+                cn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    return book;
+  }
 }

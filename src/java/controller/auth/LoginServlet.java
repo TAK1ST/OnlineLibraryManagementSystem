@@ -25,6 +25,7 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        response.setContentType("text/html;charset=UTF-8");
+    request.getRequestDispatcher("/view/auth/login.jsp").forward(request, response);
     }
 
     /**
@@ -45,15 +46,15 @@ public class LoginServlet extends HttpServlet {
            User us=d.getUser(email, password);
            if(us==null || !us.getStatus().equalsIgnoreCase("active")){
                request.setAttribute("ERROR", "email or password is invalid");
-               request.getRequestDispatcher("login.jsp").forward(request, response);
+               request.getRequestDispatcher("/view/auth/login.jsp").forward(request, response);
            }else{
                HttpSession s=request.getSession();
                s.setAttribute("loginedUser", us);               
                
                if(us.getRole().equalsIgnoreCase("admin")){
-                   response.sendRedirect("AdminDashboard.jsp");
+                   request.getRequestDispatcher("admindashboard").forward(request, response);
                }else{
-                    response.sendRedirect(request.getContextPath() + "/UserDashboard");
+                    request.getRequestDispatcher("UserDashboard").forward(request, response);
                }
            }
        }
