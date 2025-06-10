@@ -1,0 +1,643 @@
+<%-- 
+    Document   : admin-overdue-book
+    Created on : Jun 9, 2025, 9:19:28 PM
+    Author     : CAU_TU
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overdue Books Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --secondary: #34495E;
+            --accent: #1ABC9C;
+            --success: #16A085;
+            --warning: #ECFOF1;
+            --danger: #34495E;
+            --light: #ECFOF1;
+            --border: #34495E;
+            --text-muted: #64748b;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #FFF8F4 0%, #1ABC9C 100%);
+            min-height: 100vh;
+            font-size: 14px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header h4 {
+            color: white;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #06b6d4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar .nav-link {
+            color: #cbd5e1;
+            padding: 0.875rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar .nav-link:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            transform: translateX(4px);
+        }
+
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, var(--accent), #34495E);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        /* Main Content */
+        .main-content {
+            background: #FFF8F4;
+            border-radius: 24px;
+            margin: 1.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            min-height: calc(100vh - 3rem);
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--accent) 0%, #1ABC9C 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Cards */
+        .stats-card {
+            border: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stats-card .card-body { padding: 2rem; }
+
+        .card-danger { background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); color: #7f1d1d; }
+        .card-warning { background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); color: #92400e; }
+        .card-info { background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%); color: #065f46; }
+
+        .stats-card .card-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .stats-card .card-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Table */
+        .overdue-table {
+            background: #FFF8F4;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 2rem;
+        }
+
+        .table-header h5 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .table thead th {
+            background: #f1f5f9;
+            color: var(--primary);
+            border: none;
+            padding: 1.25rem 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody td {
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .overdue-row {
+            background: linear-gradient(90deg, #fef2f2, #fef7f7);
+            transition: all 0.3s ease;
+        }
+
+        .overdue-row:hover {
+            background: linear-gradient(90deg, #fee2e2, #fecaca);
+            transform: scale(1.005);
+            box-shadow: var(--shadow);
+        }
+
+        /* Badges */
+        .overdue-days {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .fine-amount {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-overdue {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* Buttons */
+        .btn-custom {
+            border-radius: 12px;
+            padding: 0.625rem 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-warning-custom { background: linear-gradient(135deg, var(--warning), #d97706); color: white; }
+        .btn-primary-custom { background: linear-gradient(135deg, var(--accent), #2563eb); color: white; }
+        .btn-info-custom { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, var(--success), #059669);
+            border: none;
+            color: white;
+            border-radius: 16px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        /* Alerts */
+        .alert-custom {
+            border-radius: 16px;
+            border: none;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success-custom {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+            color: #065f46;
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-danger-custom {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+            color: #7f1d1d;
+            border-left: 4px solid var(--danger);
+        }
+
+        /* No Data */
+        .no-data-container {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(6, 182, 212, 0.03));
+            border-radius: 20px;
+            border: 2px dashed #a7f3d0;
+        }
+
+        .no-data-container i {
+            margin-bottom: 1.5rem;
+            color: var(--success);
+        }
+
+        .no-data-container h4 {
+            color: #065f46;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                margin: 1rem;
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .stats-card .card-text {
+                font-size: 2rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .btn-group .btn {
+                margin-right: 0;
+                margin-bottom: 0.25rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading { animation: pulse 2s ease-in-out infinite; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--accent), #06b6d4);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <nav class="col-md-2 sidebar">
+                <div class="sidebar-sticky">
+                    <div class="sidebar-header">
+                        <h4>
+                            <div class="brand-icon">
+                                <i class="fas fa-book-reader"></i>
+                            </div>
+                            Library Admin
+                        </h4>
+                    </div>
+                    <div class="p-3">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="admindashboard">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="overduebook">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>Overdue Books</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="bookmanagement">
+                                    <i class="fas fa-book"></i>
+                                    <span>Books</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="usermanagement">
+                                    <i class="fas fa-users"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-10">
+                <div class="main-content">
+                    <!-- Header -->
+                    <div class="page-header">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                            <div>
+                                <h1>
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Overdue Books Management
+                                </h1>
+                                <p class="mb-0">Monitor and manage overdue library books with ease</p>
+                            </div>
+                            <button class="refresh-btn" onclick="window.location.reload()">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    <c:if test="${not empty successMessage}">
+                        <div class="alert alert-success-custom alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i>
+                            <span>${successMessage}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </c:if>
+
+                    <c:if test="${not empty errorMessage}">
+                        <div class="alert alert-danger-custom alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>${errorMessage}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </c:if>
+
+                    <!-- Summary Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card stats-card card-danger">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h5 class="card-title">Total Overdue</h5>
+                                            <h2 class="card-text mb-0">${totalOverdueBooks}</h2>
+                                            <small class="opacity-75">Books past due date</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <i class="fas fa-exclamation-triangle fa-3x opacity-25"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stats-card card-warning">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h5 class="card-title">Total Fines</h5>
+                                            <h2 class="card-text mb-0">
+                                                <fmt:formatNumber value="${totalFines}" type="currency"/>
+                                            </h2>
+                                            <small class="opacity-75">Outstanding penalties</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <i class="fas fa-dollar-sign fa-3x opacity-25"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stats-card card-info">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h5 class="card-title">Avg. Days Overdue</h5>
+                                            <h2 class="card-text mb-0">${avgOverdueDays}</h2>
+                                            <small class="opacity-75">Average delay period</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <i class="fas fa-calendar-times fa-3x opacity-25"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overdue Books Table -->
+                    <div class="overdue-table">
+                        <div class="table-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list"></i>
+                                <span>Overdue Books List</span>
+                            </h5>
+                        </div>
+                        <div class="p-3">
+                            <c:choose>
+                                <c:when test="${empty overdueBookDetails}">
+                                    <div class="no-data-container">
+                                        <i class="fas fa-check-circle fa-4x"></i>
+                                        <h4>No Overdue Books</h4>
+                                        <p>All books are returned on time! Great job managing the library.</p>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th><i class="fas fa-hashtag me-2"></i>ID</th>
+                                                    <th><i class="fas fa-book me-2"></i>Book</th>
+                                                    <th><i class="fas fa-user me-2"></i>Borrower</th>
+                                                    <th><i class="fas fa-calendar-plus me-2"></i>Borrow Date</th>
+                                                    <th><i class="fas fa-calendar-times me-2"></i>Due Date</th>
+                                                    <th><i class="fas fa-clock me-2"></i>Days Overdue</th>
+                                                    <th><i class="fas fa-dollar-sign me-2"></i>Fine Amount</th>
+                                                    <th><i class="fas fa-flag me-2"></i>Status</th>
+                                                    <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="detail" items="${overdueBookDetails}">
+                                                    <tr class="overdue-row">
+                                                        <td>
+                                                            <div class="fw-bold text-primary">#${detail.borrowRecord.id}</div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="fw-bold text-dark">${detail.book.title}</div>
+                                                            <small class="text-muted d-block">by ${detail.book.author}</small>
+                                                            <small class="text-muted d-block">ISBN: ${detail.book.isbn}</small>
+                                                        </td>
+                                                        <td>
+                                                            <div class="fw-bold text-dark">${detail.user.name}</div>
+                                                            <small class="text-muted d-block">${detail.user.email}</small>
+                                                        </td>
+                                                        <td>
+                                                            <i class="fas fa-calendar me-2 text-muted"></i>
+                                                            <fmt:formatDate value="${detail.borrowRecord.borrowDate}" pattern="yyyy-MM-dd"/>
+                                                        </td>
+                                                        <td class="text-danger fw-bold">
+                                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                                            <fmt:formatDate value="${detail.borrowRecord.dueDate}" pattern="yyyy-MM-dd"/>
+                                                        </td>
+                                                        <td>
+                                                            <span class="overdue-days">
+                                                                <i class="fas fa-clock me-1"></i>
+                                                                ${detail.overdueDays} days
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="fine-amount">
+                                                                <i class="fas fa-dollar-sign me-1"></i>
+                                                                <fmt:formatNumber value="${detail.fineAmount}" type="currency"/>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge status-overdue">
+                                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                                ${detail.borrowRecord.status}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="btn-group" role="group">
+                                                                <button type="button" class="btn btn-warning-custom btn-custom btn-sm" 
+                                                                        title="Send Reminder">
+                                                                    <i class="fas fa-bell"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary-custom btn-custom btn-sm" 
+                                                                        title="View Details">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-info-custom btn-custom btn-sm" 
+                                                                        title="Mark as Returned">
+                                                                    <i class="fas fa-check"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -124,7 +124,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BookDetailServlet</servlet-name>
-        <url-pattern>/BookDetailServlet</url-pattern>
+        <url-pattern>/bookdetail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UserDashboard</servlet-name>
@@ -149,6 +149,10 @@
     <servlet-mapping>
         <servlet-name>AdminSearchUser</servlet-name>
         <url-pattern>/searchUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminDashboard</servlet-name>
+        <url-pattern>/admindashboard</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
