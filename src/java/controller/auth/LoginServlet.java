@@ -5,27 +5,32 @@
 package controller.auth;
 
 import dao.implement.UserDAO;
+import dao.implement.BookDAO;
 import entity.User;
+import entity.Book;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author asus
  */
+@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
 
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        response.setContentType("text/html;charset=UTF-8");
-    request.getRequestDispatcher("/view/auth/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/auth/login.jsp").forward(request, response);
     }
 
     /**
@@ -39,25 +44,52 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String email=request.getParameter("txtemail");
-       String password=request.getParameter("txtpassword");
-       if(email!=null && password!=null){
-           UserDAO d=new UserDAO();
-           User us=d.getUser(email, password);
-           if(us==null || !us.getStatus().equalsIgnoreCase("active")){
-               request.setAttribute("ERROR", "email or password is invalid");
-               request.getRequestDispatcher("/view/auth/login.jsp").forward(request, response);
-           }else{
-               HttpSession s=request.getSession();
-               s.setAttribute("loginedUser", us);               
-               
-               if(us.getRole().equalsIgnoreCase("admin")){
-                   request.getRequestDispatcher("admindashboard").forward(request, response);
-               }else{
-                    request.getRequestDispatcher("UserDashboard").forward(request, response);
-               }
-           }
-       }
+        String email = request.getParameter("txtemail");
+        String password = request.getParameter("txtpassword");
+        
+        if(email != null && password != null) {
+            UserDAO d = new UserDAO();
+            User us = d.getUser(email, password);
+            
+            if(us == null || !us.getStatus().equalsIgnoreCase("active")) {
+                request.setAttribute("ERROR", "Email or password is invalid");
+                request.getRequestDispatcher("/view/auth/login.jsp").forward(request, response);
+            } else {
+                HttpSession session = request.getSession();
+                session.setAttribute("loginedUser", us);
+                
+                try {
+                    // Lấy dữ liệu sách
+                    BookDAO bookDAO = new BookDAO();
+                    List<Book> allBooks = bookDAO.getAllBook();
+                    List<Book> newBooks = bookDAO.getNewBooks();
+                    ArrayList<String> categories = bookDAO.getAllCategories();
+
+                    request.setAttribute("books", allBooks);
+                    request.setAttribute("newBooks", newBooks);
+                    request.setAttribute("categories", categories);
+
+                    // Kiểm tra xem có URL redirect không
+                    String redirectUrl = (String) session.getAttribute("redirectUrl");
+                    if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                        session.removeAttribute("redirectUrl");
+                        response.sendRedirect(redirectUrl);
+                        return;
+                    }
+
+                    // Nếu không có URL redirect, chuyển hướng theo role
+                    if(us.getRole().equalsIgnoreCase("admin")) {
+                        response.sendRedirect(request.getContextPath() + "/admindashboard");
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/home");
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    request.setAttribute("error", "Error loading books: " + ex.getMessage());
+                    request.getRequestDispatcher("/user-dashboard.jsp").forward(request, response);
+                }
+            }
+        }
     }
 
     /**

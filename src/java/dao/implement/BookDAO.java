@@ -476,4 +476,40 @@ public class BookDAO implements IBookDAO {
     }
     return book;
   }
+
+      @Override
+      public boolean updateBook(Book book) throws SQLException, ClassNotFoundException {
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  String sql = "UPDATE [dbo].[books] SET "
+                          + "[title] = ?, "
+                          + "[isbn] = ?, "
+                          + "[author] = ?, "
+                          + "[category] = ?, "
+                          + "[published_year] = ?, "
+                          + "[total_copies] = ?, "
+                          + "[available_copies] = ?, "
+                          + "[status] = ? "
+                          + "WHERE [id] = ?";
+
+                  PreparedStatement st = cn.prepareStatement(sql);
+                  st.setString(1, book.getTitle());
+                  st.setString(2, book.getIsbn());
+                  st.setString(3, book.getAuthor());
+                  st.setString(4, book.getCategory());
+                  st.setInt(5, book.getPublishedYear());
+                  st.setInt(6, book.getTotalCopies());
+                  st.setInt(7, book.getAvailableCopies());
+                  st.setString(8, book.getStatus());
+                  st.setInt(9, book.getId());
+
+                  int rowsAffected = st.executeUpdate();
+                  return rowsAffected > 0;
+            } finally {
+                  if (cn != null && !cn.isClosed()) {
+                        cn.close();
+                  }
+            }
+      }
 }
