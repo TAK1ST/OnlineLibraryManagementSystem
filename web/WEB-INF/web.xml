@@ -78,6 +78,10 @@
         <servlet-name>AdminSearchUser</servlet-name>
         <servlet-class>controller.admin.AdminSearchUser</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminUserDetail</servlet-name>
+        <servlet-class>controller.admin.AdminUserDetail</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -149,6 +153,14 @@
     <servlet-mapping>
         <servlet-name>AdminSearchUser</servlet-name>
         <url-pattern>/searchUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminDashboard</servlet-name>
+        <url-pattern>/admindashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminUserDetail</servlet-name>
+        <url-pattern>/userdetail</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

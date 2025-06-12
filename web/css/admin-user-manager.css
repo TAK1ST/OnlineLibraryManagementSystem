@@ -125,7 +125,7 @@ body {
       min-width: 200px;
       display: flex;
       justify-content: space-around;
-      margin-bottom: 5px; 
+      margin-bottom: 5px;
 }
 
 .form-label {
@@ -233,7 +233,11 @@ body {
       min-height: 400px;
       background: white;
 }
-
+.user-link
+{
+      text-decoration: none;
+      color: black;
+}
 .user-row {
       display: flex;
       align-items: center;
@@ -296,16 +300,13 @@ body {
 .status-active {
       background: rgba(46, 204, 113, 0.1);
       color: #2ecc71;
+      text-decoration: none;
 }
 
 .status-inactive {
       background: rgba(149, 165, 166, 0.1);
       color: #95a5a6;
-}
-
-.status-suspended {
-      background: rgba(231, 76, 60, 0.1);
-      color: #e74c3c;
+      text-decoration: none;
 }
 
 .empty-state {
@@ -423,6 +424,11 @@ body {
       background-position: right 12px center;
       background-repeat: no-repeat;
       background-size: 16px 12px;
+}
+
+.status-btn
+{
+      text-decoration: none;
 }
 
 .button-row {

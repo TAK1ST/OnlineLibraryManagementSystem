@@ -23,7 +23,7 @@
 
       </head>
       <body>
-            <div class="container-fluid p-0">
+            <div class="container-fluid p-0"> 
                   <!-- Sidebar -->
                   <div class="sidebar">
                         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
@@ -47,7 +47,6 @@
                               <i class="fas fa-boxes me-2"></i>Update Inventory
                         </a>
                   </div>
-
                   <!-- Main Content -->
                   <div class="main-content">
                         <!-- Header -->
@@ -86,9 +85,11 @@
                                                       <button type="submit" class="search-btn" id="searchBtn">
                                                             <i class="fas fa-search me-2"></i>Search
                                                       </button>
-                                                      <button type="button" class="clear-btn" id="clearBtn">
-                                                            <i class="fas fa-times me-2"></i>Clear
-                                                      </button>
+                                                      <a href="usermanagement">
+                                                            <button type="button" class="clear-btn" id="clearBtn">
+                                                                  <i class="fas fa-times me-2"></i>Clear
+                                                            </button>
+                                                      </a>
                                                 </div>
                                           </div>
                                     </form>
@@ -105,7 +106,7 @@
                                                             <i class="fas fa-user me-2"></i>Name
                                                       </div>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-4">
                                                       <div class="th">
                                                             <i class="fas fa-envelope me-2"></i>Email
                                                       </div>
@@ -115,212 +116,145 @@
                                                             <i class="fas fa-user-tag me-2"></i>Role
                                                       </div>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-2">
                                                       <div class="th">
                                                             <i class="fas fa-toggle-on me-2"></i>Status
                                                       </div>
                                                 </div>
                                           </div>
                                     </div>
-                                    <div class="table-body" id="tableBody">
-                                          <%
-                                           List <User> userList = (List<User>) request.getAttribute("userList");
-                                           if (userList != null && !userList.isEmpty())
-                                           {
-                                                for (User u : userList) {
-                                          %>
-                                          <div class="user-row">
-                                                <div class="col-3"> <div class="user-cell"><%=u.getName()%></div></div>
-                                                <div class="col-3"><div class="user-cell"><%=u.getEmail()%></div></div>
-                                                <div class="col-3"><div class="user-cell"><%=u.getRole()%></div></div>
-                                                <div class="col-3"><div class="user-cell"><%=u.getStatus()%></div></div>
-                                          </div>
-                                          <%}
-                                          } else {%>
-                                          <div class="empty-state">
-                                                <i class="fas fa-users"></i>
-                                                <p>Enter search criteria to find users</p>
-                                          </div>
-                                          <%
-                                                }
-                                          %>
-                                    </div>
                               </div>
-                        </div>
-
-                        <!-- Footer -->
-                        <div class="footer">
-                              ©Copyright Group 7
-                        </div>
-                  </div>
-            </div>
-
-            <!-- User Modal -->
-            <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
-                  <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                              <div class="modal-header">
-                                    <h5 class="modal-title" id="userModalLabel">
-                                          <i class="fas fa-user-edit me-2"></i>Edit User Profile
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              <!-- User Table -->
+                              <div class="table-body" id="tableBody">
+                                    <jsp:include page="/view/dashboard/admin/user-list-fragment.jsp"/>
                               </div>
-                              <div class="modal-body">
-                                    <div class="modal-user-section">
-                                          <div class="user-modal-avatar">
-                                                <i class="fas fa-user"></i>
-                                          </div>
-                                          <form class="modal-form" id="userForm">
-                                                <div class="form-row">
-                                                      <label for="modalEmail" class="modal-label">Email</label>
-                                                      <input type="email" class="modal-input" id="modalEmail" value="">
-                                                </div>
-                                                <div class="form-row">
-                                                      <label for="modalName" class="modal-label">Name</label>
-                                                      <input type="text" class="modal-input" id="modalName" value="">
-                                                </div>
-                                                <div class="form-row">
-                                                      <label for="modalPassword" class="modal-label" name="password">Password</label>
-                                                      <input type="password" class="modal-input" id="modalPassword" placeholder="Enter new password">
-                                                </div>
-                                                <div class="form-row">
-                                                      <label for="modalRole" class="modal-label">Role</label>
-                                                      <select class="modal-select" id="modalRole">
-                                                            <option value="user">User</option>
-                                                            <option value="admin">Administrator</option>
-                                                            <option value="moderator">Moderator</option>
-                                                      </select>
-                                                </div>
-                                                <div class="form-row">
-                                                      <label for="modalStatus" class="modal-label">Status</label>
-                                                      <select class="modal-select" id="modalStatus">
-                                                            <option value="active">Active</option>
-                                                            <option value="inactive">Inactive</option>
-                                                            <option value="suspended">Suspended</option>
-                                                      </select>
-                                                </div>
-                                                <div class="button-row">
-                                                      <button type="button" class="btn-update" id="updateBtn">
-                                                            <i class="fas fa-save me-2"></i>Update
-                                                      </button>
-                                                      <button type="button" class="btn-delete" id="deleteBtn">
-                                                            <i class="fas fa-trash me-2"></i>Delete
-                                                      </button>
-                                                </div>
-                                          </form>
-                                    </div>
+
+                              <!-- Footer -->
+                              <div class="footer">
+                                    ©Copyright Group 7
                               </div>
                         </div>
                   </div>
-            </div>
-            <script>
-                  let offset = ${requestScope.offset != null ? requestScope.offset : 0};
-                  let isLoading = false;
-                  let hasMoreData = true;
-                  let searchName = "${param.searchName != null ? param.searchName : ''}";
-                  let searchEmail = "${param.searchEmail != null ? param.searchEmail : ''}";
-                  let isSearchMode = false; 
+                  <!-- Include Modal -->
+                  <jsp:include page="/view/dashboard/admin/user-modal-fragment.jsp"/>
 
-                  function updateSearchMode() {
-                        isSearchMode = (searchName.trim() !== '' || searchEmail.trim() !== '');
-                  }
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+                  <script>
+                        let offset = ${requestScope.offset != null ? requestScope.offset : 0};
+                        let isLoading = false;
+                        let hasMoreData = true;
+                        let searchName = "${param.searchName != null ? param.searchName : ''}";
+                        let searchEmail = "${param.searchEmail != null ? param.searchEmail : ''}";
+                        let isSearchMode = false;
+                        function updateSearchMode() {
+                              isSearchMode = (searchName.trim() !== '' || searchEmail.trim() !== '');
+                        }
 
-                  updateSearchMode();
+                        updateSearchMode();
+                        window.addEventListener('scroll', function () {
+                              if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50 && !isLoading && hasMoreData) {
+                                    loadMoreUsers();
+                              }
+                        });
 
-                  window.addEventListener('scroll', function () {
-                        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50 && !isLoading && hasMoreData) {
+                        document.getElementById('searchBtn').addEventListener('click', function (e) {
+                              e.preventDefault();
+                              searchName = document.getElementById('searchName').value.trim();
+                              searchEmail = document.getElementById('searchEmail').value.trim();
+                              offset = 0;
+                              hasMoreData = true;
+                              updateSearchMode();
+                              document.getElementById('tableBody').innerHTML = '';
                               loadMoreUsers();
-                        }
-                  });
+                        });
 
-                  document.getElementById('searchBtn').addEventListener('click', function (e) {
-                        e.preventDefault();
-                        searchName = document.getElementById('searchName').value.trim();
-                        searchEmail = document.getElementById('searchEmail').value.trim();
+                        function loadMoreUsers() {
+                              if (isLoading)
+                                    return;
+                              isLoading = true;
+                              document.getElementById('loading').style.display = 'block';
+                              let url = 'searchUser?ajax=true&offset=' + offset;
+                              if (searchName && searchName.trim() !== '') {
+                                    url += '&searchName=' + encodeURIComponent(searchName);
+                              }
+                              if (searchEmail && searchEmail.trim() !== '') {
+                                    url += '&searchEmail=' + encodeURIComponent(searchEmail);
+                              }
 
-                        offset = 0;
-                        hasMoreData = true;
-                        updateSearchMode();
-
-                        document.getElementById('tableBody').innerHTML = '';
-                        loadMoreUsers();
-                  });
-
-                  document.getElementById('clearBtn').addEventListener('click', function () {
-                        document.getElementById('searchName').value = '';
-                        document.getElementById('searchEmail').value = '';
-
-                        searchName = '';
-                        searchEmail = '';
-                        offset = 0;
-                        hasMoreData = true;
-                        updateSearchMode();
-
-                        document.getElementById('tableBody').innerHTML = '';
-                        loadMoreUsers();
-                  });
-
-                  function loadMoreUsers() {
-                        if (isLoading)
-                              return;
-
-                        isLoading = true;
-                        document.getElementById('loading').style.display = 'block';
-
-                        let url = 'searchUser?ajax=true&offset=' + offset;
-
-                        if (searchName && searchName.trim() !== '') {
-                              url += '&searchName=' + encodeURIComponent(searchName);
-                        }
-                        if (searchEmail && searchEmail.trim() !== '') {
-                              url += '&searchEmail=' + encodeURIComponent(searchEmail);
-                        }
-
-                        console.log("Fetching URL: " + url);
-
-                        fetch(url)
-                                .then(response => response.text())
-                                .then(html => {
-                                      console.log("Response HTML:", html.substring(0, 200) + "...");
-
-                                      const trimmedHtml = html.trim();
-
-                                      if (trimmedHtml.includes('class="empty-state"') || trimmedHtml.includes('No users found')) {
-                                            if (offset === 0) {
-                                                  document.getElementById('tableBody').innerHTML = trimmedHtml;
+                              fetch(url)
+                                      .then(response => {
+                                            if (!response.ok) {
+                                                  throw new Error('Network response was not ok');
                                             }
-                                            hasMoreData = false;
-                                      } else if (trimmedHtml === '' || trimmedHtml.length < 50) {
-                                            hasMoreData = false;
-                                            if (offset === 0) {
-                                                  document.getElementById('tableBody').innerHTML =
-                                                          '<div class="empty-state"><i class="fas fa-users"></i><p>No users found</p></div>';
-                                            }
-                                      } else {
-                                            if (offset === 0) {
-                                                  document.getElementById('tableBody').innerHTML = trimmedHtml;
-                                            } else {
-                                                  document.getElementById('tableBody').insertAdjacentHTML('beforeend', trimmedHtml);
-                                            }
-
-                                            offset += ${requestScope.recordsPerPage != null ? requestScope.recordsPerPage : 10};
-
-                                            const userRows = trimmedHtml.match(/class="user-row"/g);
-                                            const recordCount = userRows ? userRows.length : 0;
-                                            if (recordCount < ${requestScope.recordsPerPage != null ? requestScope.recordsPerPage : 10}) {
+                                            return response.text();
+                                      })
+                                      .then(html => {
+                                            console.log('Received HTML length:', html.length);
+                                            const trimmedHtml = html.trim();
+                                            if (trimmedHtml.includes('class="empty-state"') || trimmedHtml.includes('No users found')) {
+                                                  if (offset === 0) {
+                                                        document.getElementById('tableBody').innerHTML = trimmedHtml;
+                                                  }
                                                   hasMoreData = false;
-                                            }
-                                      }
+                                            } else if (trimmedHtml === '' || trimmedHtml.length < 50) {
+                                                  hasMoreData = false;
+                                                  if (offset === 0) {
+                                                        document.getElementById('tableBody').innerHTML =
+                                                                '<div class="empty-state"><i class="fas fa-users"></i><p>No users found</p></div>';
+                                                  }
+                                            } else {
+                                                  if (offset === 0) {
+                                                        document.getElementById('tableBody').innerHTML = trimmedHtml;
+                                                  } else {
+                                                        document.getElementById('tableBody').insertAdjacentHTML('beforeend', trimmedHtml);
+                                                  }
 
-                                      isLoading = false;
-                                      document.getElementById('loading').style.display = 'none';
-                                })
-                                .catch(error => {
-                                      console.error('Error:', error);
-                                      isLoading = false;
-                                      document.getElementById('loading').style.display = 'none';
-                                });
-                  }
-            </script>
+                                                  offset += ${requestScope.recordsPerPage != null ? requestScope.recordsPerPage : 10};
+                                                  const userRows = trimmedHtml.match(/class="user-row"/g);
+                                                  const recordCount = userRows ? userRows.length : 0;
+                                                  if (recordCount < ${requestScope.recordsPerPage != null ? requestScope.recordsPerPage : 10}) {
+                                                        hasMoreData = false;
+                                                  }
+                                            }
+
+                                            isLoading = false;
+                                            document.getElementById('loading').style.display = 'none';
+                                      })
+                                      .catch(error => {
+                                            console.error('Error loading users:', error);
+                                            isLoading = false;
+                                            document.getElementById('loading').style.display = 'none';
+                                      });
+                        }
+
+//                               Open Motal
+                        window.addEventListener('DOMContentLoaded', function () {
+                        <% if (request.getAttribute("selectedUser") != null) { 
+                               User selectedUser = (User) request.getAttribute("selectedUser");
+                               if (!"admin".equalsIgnoreCase(selectedUser.getRole())) { %>
+                              var userModal = new bootstrap.Modal(document.getElementById('userModal'));
+                              userModal.show();
+                        <% } } %>
+                        });
+
+//                      Update Motal Notification
+                        window.addEventListener('DOMContentLoaded', function () {
+                        <% 
+                        String successMessage = (String) session.getAttribute("successMessage");
+                        if (successMessage != null) { 
+                        session.removeAttribute("successMessage");
+                        %>
+                              alert("<%= successMessage %>");
+                        <% } %>
+
+                        <% 
+                        String errorMessage = (String) session.getAttribute("errorMessage");
+                        if (errorMessage != null) { 
+                        session.removeAttribute("errorMessage");
+                        %>
+                              alert("<%= errorMessage %>");
+                        <% } %>
+                        });
+                  </script>
       </body>
 </html>

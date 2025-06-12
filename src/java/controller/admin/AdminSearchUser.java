@@ -45,30 +45,21 @@ public class AdminSearchUser extends HttpServlet {
             String action = request.getParameter("action");
             String ajax = request.getParameter("ajax");
 
-            // Xử lý hành động "clear"
             if ("clear".equalsIgnoreCase(action)) {
                   searchName = null;
                   searchEmail = null;
             }
 
-            // Chuẩn hóa input - chuyển chuỗi rỗng thành null
             searchName = (searchName != null && !searchName.trim().isEmpty()) ? searchName.trim() : null;
             searchEmail = (searchEmail != null && !searchEmail.trim().isEmpty()) ? searchEmail.trim() : null;
 
-            // Debug log
-            System.out.println("Search params - Name: " + searchName + ", Email: " + searchEmail + ", Offset: " + offset);
-
-            // Lấy danh sách người dùng
             List<User> userList = userManagerService.getAllUserLazyLoading(searchEmail, searchName, offset);
-
-            // Debug log
-            System.out.println("Found " + (userList != null ? userList.size() : 0) + " users");
 
             request.setAttribute("userList", userList);
             request.setAttribute("offset", offset);
             request.setAttribute("recordsPerPage", RECORDS_PER_LOAD);
 
-            // Xử lý yêu cầu AJAX
+            // handler AJAX
             if ("true".equalsIgnoreCase(ajax)) {
                   response.setContentType("text/html; charset=UTF-8");
                   response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");

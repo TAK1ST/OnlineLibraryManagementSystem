@@ -79,7 +79,7 @@ public class UserDAO implements IUserDAO {
 
       @Override
       public List<User> getAll() {
-            List<User> users = new ArrayList<>(); 
+            List<User> users = new ArrayList<>();
             Connection cn = null;
             try {
                   cn = DBConnection.getConnection();
@@ -120,7 +120,6 @@ public class UserDAO implements IUserDAO {
             PreparedStatement pr = null;
             ResultSet rs = null;
             Connection cn = null;
-
             String sql = "SELECT * FROM users WHERE 1=1 ";
 
             if (name != null && !name.trim().isEmpty()) {
@@ -230,7 +229,7 @@ public class UserDAO implements IUserDAO {
                         e.printStackTrace();
                   }
             }
-            return userList; 
+            return userList;
       }
 
       public User getUser(String email, String password) {
@@ -312,7 +311,7 @@ public class UserDAO implements IUserDAO {
                   if (cn != null) {
                         String sql = "select [id],[name],[email], [password],[role],[status] from [dbo].[users] where [name] = ?";
                         PreparedStatement pst = cn.prepareStatement(sql);
-                        pst.setString(1, name); 
+                        pst.setString(1, name);
                         ResultSet table = pst.executeQuery();
                         if (table != null && table.next()) {
                               int id = table.getInt("id");
@@ -410,34 +409,7 @@ public class UserDAO implements IUserDAO {
                   }
             }
       }
-
-      public int updateUser(int id, String name, String password) {
-            int result = 0;
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  if (cn != null) {
-                        String sql = "update dbo.users set name=? , password=? where id=?";
-                        PreparedStatement st = cn.prepareStatement(sql);
-                        st.setString(1, name);
-                        st.setString(2, password);
-                        st.setInt(3, id);
-                        result = st.executeUpdate();
-                  }
-            } catch (Exception e) {
-                  e.printStackTrace();
-            } finally {
-                  try {
-                        if (cn != null) {
-                              cn.close();
-                        }
-                  } catch (Exception e) {
-                        e.printStackTrace();
-                  }
-            }
-            return result;
-      }
-
+      
       @Override
       public void delete(int userId) {
             Connection cn = null;
@@ -471,5 +443,60 @@ public class UserDAO implements IUserDAO {
                         e.printStackTrace();
                   }
             }
+      }
+
+      public int updateUser(int userId, String username, String password, String status) {
+            int result = 0;
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        StringBuilder sql = new StringBuilder("UPDATE [dbo].[users] SET ");
+                        List<Object> parameters = new ArrayList<>();
+
+                        if (username != null) {
+                              sql.append("[name] = ?, ");
+                              parameters.add(username);
+                        }
+                        if (password != null) {
+                              sql.append("[password] = ?, ");
+                              parameters.add(password);
+                        }
+                        if (status != null) {
+                              sql.append("[status] = ?, ");
+                              parameters.add(status);
+                        }
+
+                        if (parameters.isEmpty()) {
+                              return 0; 
+                        }
+
+                        // remove the ',' at last
+                        sql.setLength(sql.length() - 2);
+
+                        sql.append(" WHERE id = ?");
+                        parameters.add(userId);
+
+                        PreparedStatement st = cn.prepareStatement(sql.toString()); 
+                        
+                        // get object in list
+                        for (int i = 0; i < parameters.size(); i++) {
+                              st.setObject(i + 1, parameters.get(i));
+                        }
+
+                        result = st.executeUpdate();
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return result;
       }
 }

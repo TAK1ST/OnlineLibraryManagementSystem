@@ -50,7 +50,7 @@ public class LoginServlet extends HttpServlet {
            }else{
                HttpSession s=request.getSession();
                s.setAttribute("loginedUser", us);               
-               
+                 System.out.println(us.getRole());
                if(us.getRole().equalsIgnoreCase("admin")){
                    request.getRequestDispatcher("admindashboard").forward(request, response);
                }else{

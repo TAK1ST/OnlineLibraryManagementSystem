@@ -52,4 +52,9 @@ public class UserManagerService implements IUserService {
             }
             return userList;
       }
+      
+      public int updateUser(int userId, String username, String password, String status) 
+      {
+            return userDAO.updateUser(userId, username, password, status);
+      }
 }
