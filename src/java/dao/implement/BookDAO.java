@@ -22,458 +22,697 @@ import util.DBConnection;
  * @author Admin
  */
 public class BookDAO implements IBookDAO {
-      //ham nay De lay tat ca quyen sach 
-      @Override
-      public ArrayList<Book> getBookByTitle(String title) {
-            ArrayList<Book> result = new ArrayList<>();
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  if (cn != null) {
-                        System.out.println("connect successfully");
-                  }
-                  String sql = "select [id],[title],[isbn],[author],[category],[published_year],"
-                          + "[total_copies],[available_copies],[status]\n"
-                          + "from [dbo].[books]\n"
-                          + "where title like ?";
-                  PreparedStatement st = cn.prepareStatement(sql);
-                  st.setString(1, "%" + title + "%");
-                  ResultSet table = st.executeQuery();
-                  if (table != null) {
-                        while (table.next()) {
-                              int id = table.getInt("id");
-                              title = table.getString("title");
-                              String isbn = table.getString("isbn");
-                              String author = table.getString("author");
-                              String category = table.getString("category");
-                              int year = table.getInt("published_year");
-                              int total = table.getInt("total_copies");
-                              int avaCopies = table.getInt("available_copies");
-                              String status = table.getString("status");
-                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
-                              result.add(book);
-                        }
-                  }
-            } catch (Exception e) {
-                  e.printStackTrace();
-            } finally {
-                  if (cn != null) {
-                        try {
-                              cn.close();
-                        } catch (SQLException e) {
-                              e.printStackTrace();
-                        }
-                  }
+    //ham nay De lay tat ca quyen sach 
+
+    @Override
+    public ArrayList<Book> getBookByTitle(String title) {
+        ArrayList<Book> result = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                System.out.println("connect successfully");
             }
-            return result;
-      }
-
-      public List<BorrowedBookDTO> getTop5BorrowedBooks() {
-            List<BorrowedBookDTO> bookList = new ArrayList<>();
-            String sql = "SELECT TOP 5 "
-                    + "b.id, b.title AS book_name, b.author, "
-                    + "COUNT(br.book_id) AS borrow_count "
-                    + "FROM [dbo].[books] AS b "
-                    + "LEFT JOIN [dbo].[borrow_records] AS br ON b.id = br.book_id "
-                    + "GROUP BY b.id, b.title, b.author "
-                    + "ORDER BY borrow_count DESC, b.title";
-
-            try {
-                  Connection cn = DBConnection.getConnection();
-                  PreparedStatement pr = cn.prepareStatement(sql);
-                  ResultSet rs = pr.executeQuery();
-                  while (rs.next()) {
-                        BorrowedBookDTO book = new BorrowedBookDTO();
-                        book.setId(rs.getInt("id"));
-                        book.setBookName(rs.getString("book_name"));
-                        book.setAuthor(rs.getString("author"));
-                        book.setBorrowCount(rs.getInt("borrow_count"));
-                        bookList.add(book);
-                  }
-            } catch (Exception e) {
-                  e.printStackTrace();
+            String sql = "select [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "from [dbo].[books]\n"
+                    + "where title like ?";
+            PreparedStatement st = cn.prepareStatement(sql);
+            st.setString(1, "%" + title + "%");
+            ResultSet table = st.executeQuery();
+            if (table != null) {
+                while (table.next()) {
+                    int id = table.getInt("id");
+                    title = table.getString("title");
+                    String isbn = table.getString("isbn");
+                    String author = table.getString("author");
+                    String category = table.getString("category");
+                    int year = table.getInt("published_year");
+                    int total = table.getInt("total_copies");
+                    int avaCopies = table.getInt("available_copies");
+                    String status = table.getString("status");
+                    Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
+                    result.add(book);
+                }
             }
-            return bookList;
-      }
-
-      @Override
-      public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
-            List<Book> newBooks = new ArrayList<>();
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  String sql = "SELECT TOP 4 [id],[title],[isbn],[author],[category],[published_year],"
-                          + "[total_copies],[available_copies],[status]\n"
-                          + "FROM [dbo].[books]\n"
-                          + "ORDER BY [published_year] DESC, [id] DESC";
-
-                  PreparedStatement st = cn.prepareStatement(sql);
-                  ResultSet rs = st.executeQuery();
-
-                  while (rs.next()) {
-                        Book book = new Book();
-                        book.setId(rs.getInt("id"));
-                        book.setTitle(rs.getString("title"));
-                        book.setIsbn(rs.getString("isbn"));
-                        book.setAuthor(rs.getString("author"));
-                        book.setCategory(rs.getString("category"));
-                        book.setPublishedYear(rs.getInt("published_year"));
-                        book.setTotalCopies(rs.getInt("total_copies"));
-                        book.setAvailableCopies(rs.getInt("available_copies"));
-                        book.setStatus(rs.getString("status"));
-                        newBooks.add(book);
-                  }
-            } finally {
-                  if (cn != null) {
-                        cn.close();
-                  }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cn != null) {
+                try {
+                    cn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-            return newBooks;
-      }
+        }
+        return result;
+    }
 
-      @Override
-      public List<Book> getAllBook() throws SQLException, ClassNotFoundException {
-            List<Book> books = new ArrayList<>();
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  String sql = "SELECT [id],[title],[isbn],[author],[category],[published_year],"
-                          + "[total_copies],[available_copies],[status]\n"
-                          + "FROM [dbo].[books]";
+    public List<BorrowedBookDTO> getTop5BorrowedBooks() {
+        List<BorrowedBookDTO> bookList = new ArrayList<>();
+        String sql = "SELECT TOP 5 "
+                + "b.id, b.title AS book_name, b.author, "
+                + "COUNT(br.book_id) AS borrow_count "
+                + "FROM [dbo].[books] AS b "
+                + "LEFT JOIN [dbo].[borrow_records] AS br ON b.id = br.book_id "
+                + "GROUP BY b.id, b.title, b.author "
+                + "ORDER BY borrow_count DESC, b.title";
 
-                  PreparedStatement st = cn.prepareStatement(sql);
-                  ResultSet rs = st.executeQuery();
-
-                  while (rs.next()) {
-                        Book book = new Book();
-                        book.setId(rs.getInt("id"));
-                        book.setTitle(rs.getString("title"));
-                        book.setIsbn(rs.getString("isbn"));
-                        book.setAuthor(rs.getString("author"));
-                        book.setCategory(rs.getString("category"));
-                        book.setPublishedYear(rs.getInt("published_year"));
-                        book.setTotalCopies(rs.getInt("total_copies"));
-                        book.setAvailableCopies(rs.getInt("available_copies"));
-                        book.setStatus(rs.getString("status"));
-                        books.add(book);
-                  }
-            } finally {
-                  if (cn != null) {
-                        cn.close();
-                  }
+        try {
+            Connection cn = DBConnection.getConnection();
+            PreparedStatement pr = cn.prepareStatement(sql);
+            ResultSet rs = pr.executeQuery();
+            while (rs.next()) {
+                BorrowedBookDTO book = new BorrowedBookDTO();
+                book.setId(rs.getInt("id"));
+                book.setBookName(rs.getString("book_name"));
+                book.setAuthor(rs.getString("author"));
+                book.setBorrowCount(rs.getInt("borrow_count"));
+                bookList.add(book);
             }
-            return books;
-      }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bookList;
+    }
 
-      @Override
-      public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
-            List<Book> books = new ArrayList<>();
-            String sql = "SELECT * FROM books WHERE status = 'active' AND " + searchBy + " LIKE ?";
+    @Override
+    public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
+        List<Book> newBooks = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            String sql = "SELECT TOP 4 [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "FROM [dbo].[books]\n"
+                    + "ORDER BY [published_year] DESC, [id] DESC";
 
-            try ( Connection conn = DBConnection.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            PreparedStatement st = cn.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
 
-                  ps.setString(1, "%" + searchTerm + "%");
-
-                  try ( ResultSet rs = ps.executeQuery()) {
-                        while (rs.next()) {
-                              books.add(extractBookFromResultSet(rs));
-                        }
-                  }
+            while (rs.next()) {
+                Book book = new Book();
+                book.setId(rs.getInt("id"));
+                book.setTitle(rs.getString("title"));
+                book.setIsbn(rs.getString("isbn"));
+                book.setAuthor(rs.getString("author"));
+                book.setCategory(rs.getString("category"));
+                book.setPublishedYear(rs.getInt("published_year"));
+                book.setTotalCopies(rs.getInt("total_copies"));
+                book.setAvailableCopies(rs.getInt("available_copies"));
+                book.setStatus(rs.getString("status"));
+                newBooks.add(book);
             }
-            return books;
-      }
-
-      public List<Book> getAllBooksWithAvailability() throws SQLException, Exception {
-            List<Book> books = new ArrayList<>();
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  if (cn != null) {
-                        String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year], "
-                                + "[total_copies], [available_copies], [status] FROM [dbo].[books] "
-                                + "ORDER BY available_copies DESC";
-
-                        PreparedStatement st = cn.prepareStatement(sql);
-                        ResultSet rs = st.executeQuery();
-
-                        while (rs.next()) {
-                              Book book = new Book();
-                              book.setId(rs.getInt("id"));
-                              book.setTitle(rs.getString("title"));
-                              book.setIsbn(rs.getString("isbn"));
-                              book.setAuthor(rs.getString("author"));
-                              book.setCategory(rs.getString("category"));
-                              book.setPublishedYear(rs.getInt("published_year"));
-                              book.setTotalCopies(rs.getInt("total_copies"));
-                              book.setAvailableCopies(rs.getInt("available_copies"));
-                              book.setStatus(rs.getString("status"));
-                              books.add(book);
-                        }
-                  }
-            } catch (Exception e) {
-                  e.printStackTrace();
-                  throw e;
-            } finally {
-                  if (cn != null && !cn.isClosed()) {
-                        cn.close();
-                  }
+        } finally {
+            if (cn != null) {
+                cn.close();
             }
-            return books;
-      }
+        }
+        return newBooks;
+    }
 
-      public ArrayList<Book> getBooksByCategory(String category) throws ClassNotFoundException {
-            ArrayList<Book> result = new ArrayList<>();
-            Connection cn = null;
+    @Override
+    public List<Book> getAllBook() throws SQLException, ClassNotFoundException {
+        List<Book> books = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            String sql = "SELECT [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "FROM [dbo].[books]";
+
+            PreparedStatement st = cn.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                Book book = new Book();
+                book.setId(rs.getInt("id"));
+                book.setTitle(rs.getString("title"));
+                book.setIsbn(rs.getString("isbn"));
+                book.setAuthor(rs.getString("author"));
+                book.setCategory(rs.getString("category"));
+                book.setPublishedYear(rs.getInt("published_year"));
+                book.setTotalCopies(rs.getInt("total_copies"));
+                book.setAvailableCopies(rs.getInt("available_copies"));
+                book.setStatus(rs.getString("status"));
+                books.add(book);
+            }
+        } finally {
+            if (cn != null) {
+                cn.close();
+            }
+        }
+        return books;
+    }
+
+    @Override
+    public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
+        List<Book> books = new ArrayList<>();
+        String sql = "SELECT * FROM books WHERE status = 'active' AND " + searchBy + " LIKE ?";
+
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "%" + searchTerm + "%");
+
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    books.add(extractBookFromResultSet(rs));
+                }
+            }
+        }
+        return books;
+    }
+
+    public List<Book> getAllBooksWithAvailability() throws SQLException, Exception {
+        List<Book> books = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year], "
+                        + "[total_copies], [available_copies], [status] FROM [dbo].[books] "
+                        + "ORDER BY available_copies DESC";
+
+                PreparedStatement st = cn.prepareStatement(sql);
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    Book book = new Book();
+                    book.setId(rs.getInt("id"));
+                    book.setTitle(rs.getString("title"));
+                    book.setIsbn(rs.getString("isbn"));
+                    book.setAuthor(rs.getString("author"));
+                    book.setCategory(rs.getString("category"));
+                    book.setPublishedYear(rs.getInt("published_year"));
+                    book.setTotalCopies(rs.getInt("total_copies"));
+                    book.setAvailableCopies(rs.getInt("available_copies"));
+                    book.setStatus(rs.getString("status"));
+                    books.add(book);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (cn != null && !cn.isClosed()) {
+                cn.close();
+            }
+        }
+        return books;
+    }
+
+    public ArrayList<Book> getBooksByCategory(String category) throws ClassNotFoundException {
+        ArrayList<Book> result = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            String sql = "select [id],[title],[isbn],[author],[category],[published_year],[total_copies],"
+                    + "[available_copies],[status]\n"
+                    + "from [dbo].[books]\n"
+                    + "where category like ?";
+            PreparedStatement st = cn.prepareStatement(sql);
+            st.setString(1, "%" + category + "%");
+            ResultSet table = st.executeQuery();
+            if (table != null) {
+                while (table.next()) {
+                    int id = table.getInt("id");
+                    String title = table.getString("title");
+                    String isbn = table.getString("isbn");
+                    String author = table.getString("author");
+                    category = table.getString("category");
+                    int year = table.getInt("published_year");
+                    int total = table.getInt("total_copies");
+                    int avaCopies = table.getInt("available_copies");
+                    String status = table.getString("status");
+                    Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
+                    result.add(book);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
             try {
-                  cn = DBConnection.getConnection();
-                  String sql = "select [id],[title],[isbn],[author],[category],[published_year],[total_copies],"
-                          + "[available_copies],[status]\n"
-                          + "from [dbo].[books]\n"
-                          + "where category like ?";
-                  PreparedStatement st = cn.prepareStatement(sql);
-                  st.setString(1, "%" + category + "%");
-                  ResultSet table = st.executeQuery();
-                  if (table != null) {
-                        while (table.next()) {
-                              int id = table.getInt("id");
-                              String title = table.getString("title");
-                              String isbn = table.getString("isbn");
-                              String author = table.getString("author");
-                              category = table.getString("category");
-                              int year = table.getInt("published_year");
-                              int total = table.getInt("total_copies");
-                              int avaCopies = table.getInt("available_copies");
-                              String status = table.getString("status");
-                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
-                              result.add(book);
-                        }
-                  }
+                if (cn != null) {
+                    cn.close();
+                }
             } catch (SQLException e) {
-                  e.printStackTrace();
-            } finally {
-                  try {
-                        if (cn != null) {
-                              cn.close();
-                        }
-                  } catch (SQLException e) {
-                        e.printStackTrace();
-                  }
+                e.printStackTrace();
             }
-            return result;
-      }
+        }
+        return result;
+    }
 
-      public ArrayList<Book> getBooksByAuthor(String author) throws ClassNotFoundException {
-            ArrayList<Book> result = new ArrayList<>();
-            Connection cn = null;
+    public ArrayList<Book> getBooksByAuthor(String author) throws ClassNotFoundException {
+        ArrayList<Book> result = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            String sql = "select [id],[title],[isbn],[author],[category],[published_year],[total_copies],"
+                    + "[available_copies],[status]\n"
+                    + "from [dbo].[books]\n"
+                    + "where author like ?";
+            PreparedStatement st = cn.prepareStatement(sql);
+            st.setString(1, "%" + author + "%");
+            ResultSet table = st.executeQuery();
+            if (table != null) {
+                while (table.next()) {
+                    int id = table.getInt("id");
+                    String title = table.getString("title");
+                    String isbn = table.getString("isbn");
+                    author = table.getString("author");
+                    String category = table.getString("category");
+                    int year = table.getInt("published_year");
+                    int total = table.getInt("total_copies");
+                    int avaCopies = table.getInt("available_copies");
+                    String status = table.getString("status");
+                    Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
+                    result.add(book);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
             try {
-                  cn = DBConnection.getConnection();
-                  String sql = "select [id],[title],[isbn],[author],[category],[published_year],[total_copies],"
-                          + "[available_copies],[status]\n"
-                          + "from [dbo].[books]\n"
-                          + "where author like ?";
-                  PreparedStatement st = cn.prepareStatement(sql);
-                  st.setString(1, "%" + author + "%");
-                  ResultSet table = st.executeQuery();
-                  if (table != null) {
-                        while (table.next()) {
-                              int id = table.getInt("id");
-                              String title = table.getString("title");
-                              String isbn = table.getString("isbn");
-                              author = table.getString("author");
-                              String category = table.getString("category");
-                              int year = table.getInt("published_year");
-                              int total = table.getInt("total_copies");
-                              int avaCopies = table.getInt("available_copies");
-                              String status = table.getString("status");
-                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
-                              result.add(book);
-                        }
-                  }
+                if (cn != null) {
+                    cn.close();
+                }
             } catch (SQLException e) {
-                  e.printStackTrace();
-            } finally {
-                  try {
-                        if (cn != null) {
-                              cn.close();
-                        }
-                  } catch (SQLException e) {
-                        e.printStackTrace();
-                  }
+                e.printStackTrace();
             }
-            return result;
-      }
+        }
+        return result;
+    }
 
-      public ArrayList<String> getAllCategories() throws ClassNotFoundException {
-            ArrayList<String> categories = new ArrayList<>();
-            Connection cn = null;
+    public ArrayList<String> getAllCategories() throws ClassNotFoundException {
+        ArrayList<String> categories = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            String sql = "SELECT DISTINCT category FROM books ORDER BY category";
+            PreparedStatement st = cn.prepareStatement(sql);
+            ResultSet table = st.executeQuery();
+            if (table != null) {
+                while (table.next()) {
+                    categories.add(table.getString("category"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
             try {
-                  cn = DBConnection.getConnection();
-                  String sql = "SELECT DISTINCT category FROM books ORDER BY category";
-                  PreparedStatement st = cn.prepareStatement(sql);
-                  ResultSet table = st.executeQuery();
-                  if (table != null) {
-                        while (table.next()) {
-                              categories.add(table.getString("category"));
-                        }
-                  }
+                if (cn != null) {
+                    cn.close();
+                }
             } catch (SQLException e) {
-                  e.printStackTrace();
-            } finally {
-                  try {
-                        if (cn != null) {
-                              cn.close();
-                        }
-                  } catch (SQLException e) {
-                        e.printStackTrace();
-                  }
+                e.printStackTrace();
             }
-            return categories;
-      }
+        }
+        return categories;
+    }
 
-      public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException {
-            ArrayList<Book> result = new ArrayList<>();
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  StringBuilder sql = new StringBuilder(
-                          "SELECT [id],[title],[isbn],[author],[category],[published_year],"
-                          + "[total_copies],[available_copies],[status]\n"
-                          + "FROM [dbo].[books]\n"
-                          + "WHERE 1=1"
-                  );
-
-                  ArrayList<String> params = new ArrayList<>();
-
-                  if (title != null && !title.trim().isEmpty()) {
-                        sql.append(" AND title LIKE ?");
-                        params.add("%" + title + "%");
-                  }
-
-                  if (author != null && !author.trim().isEmpty()) {
-                        sql.append(" AND author LIKE ?");
-                        params.add("%" + author + "%");
-                  }
-
-                  if (category != null && !category.trim().isEmpty()) {
-                        sql.append(" AND category LIKE ?");
-                        params.add("%" + category + "%");
-                  }
-
-                  PreparedStatement st = cn.prepareStatement(sql.toString());
-
-                  // Set parameters
-                  for (int i = 0; i < params.size(); i++) {
-                        st.setString(i + 1, params.get(i));
-                  }
-
-                  ResultSet table = st.executeQuery();
-                  if (table != null) {
-                        while (table.next()) {
-                              int id = table.getInt("id");
-                              String bookTitle = table.getString("title");
-                              String isbn = table.getString("isbn");
-                              String bookAuthor = table.getString("author");
-                              String bookCategory = table.getString("category");
-                              int year = table.getInt("published_year");
-                              int total = table.getInt("total_copies");
-                              int avaCopies = table.getInt("available_copies");
-                              String status = table.getString("status");
-                              Book book = new Book(id, bookTitle, isbn, bookAuthor, bookCategory, year, total, avaCopies, status);
-                              result.add(book);
-                        }
-                  }
-            } finally {
-                  if (cn != null) {
-                        cn.close();
-                  }
-            }
-            return result;
-      }
-
-      private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
-            return new Book(
-                    rs.getInt("id"),
-                    rs.getString("title"),
-                    rs.getString("isbn"),
-                    rs.getString("author"),
-                    rs.getString("category"),
-                    rs.getInt("published_year"),
-                    rs.getInt("total_copies"),
-                    rs.getInt("available_copies"),
-                    rs.getString("status")
+    public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException {
+        ArrayList<Book> result = new ArrayList<>();
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            StringBuilder sql = new StringBuilder(
+                    "SELECT [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status]\n"
+                    + "FROM [dbo].[books]\n"
+                    + "WHERE 1=1"
             );
-      }
 
-      public int getTotalBooks() {
-            Connection cn = null;
-            int count = 0;
-            try {
-                  cn = DBConnection.getConnection();
-                  if (cn != null) {
-                        // step 2: query and execute
-                        String sql = "select COUNT([id]) from [dbo].[books];";
-                        Statement st = cn.createStatement();
-                        //ResultSet in OOP = table in Database
-                        ResultSet table = st.executeQuery(sql);
-                        // step 3: get data from table 
-                        if (table.next()) {
-                              count = table.getInt(1);
-                        }
-                  }
-            } catch (Exception e) {
-                  e.printStackTrace();
-            } finally {
-                  try {
-                        if (cn != null) {
-                              cn.close();
-                        }
-                  } catch (Exception e) {
-                        e.printStackTrace();
-                  }
+            ArrayList<String> params = new ArrayList<>();
+
+            if (title != null && !title.trim().isEmpty()) {
+                sql.append(" AND title LIKE ?");
+                params.add("%" + title + "%");
             }
-            return count;
-      }
+
+            if (author != null && !author.trim().isEmpty()) {
+                sql.append(" AND author LIKE ?");
+                params.add("%" + author + "%");
+            }
+
+            if (category != null && !category.trim().isEmpty()) {
+                sql.append(" AND category LIKE ?");
+                params.add("%" + category + "%");
+            }
+
+            PreparedStatement st = cn.prepareStatement(sql.toString());
+
+            // Set parameters
+            for (int i = 0; i < params.size(); i++) {
+                st.setString(i + 1, params.get(i));
+            }
+
+            ResultSet table = st.executeQuery();
+            if (table != null) {
+                while (table.next()) {
+                    int id = table.getInt("id");
+                    String bookTitle = table.getString("title");
+                    String isbn = table.getString("isbn");
+                    String bookAuthor = table.getString("author");
+                    String bookCategory = table.getString("category");
+                    int year = table.getInt("published_year");
+                    int total = table.getInt("total_copies");
+                    int avaCopies = table.getInt("available_copies");
+                    String status = table.getString("status");
+                    Book book = new Book(id, bookTitle, isbn, bookAuthor, bookCategory, year, total, avaCopies, status);
+                    result.add(book);
+                }
+            }
+        } finally {
+            if (cn != null) {
+                cn.close();
+            }
+        }
+        return result;
+    }
+
+    private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
+        return new Book(
+                rs.getInt("id"),
+                rs.getString("title"),
+                rs.getString("isbn"),
+                rs.getString("author"),
+                rs.getString("category"),
+                rs.getInt("published_year"),
+                rs.getInt("total_copies"),
+                rs.getInt("available_copies"),
+                rs.getString("status")
+        );
+    }
+
+    public int getTotalBooks() {
+        Connection cn = null;
+        int count = 0;
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                // step 2: query and execute
+                String sql = "select SUM([total_copies]) from [dbo].[books];";
+                Statement st = cn.createStatement();
+                //ResultSet in OOP = table in Database
+                ResultSet table = st.executeQuery(sql);
+                // step 3: get data from table 
+                if (table.next()) {
+                    count = table.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return count;
+    }
 
     public Book getBookById(int id) {
-    Book book = null;
-    Connection cn = null;
-    try {
-        cn = DBConnection.getConnection();
-        if (cn != null) {
-            System.out.println("Connect successfully");
+        Book book = null;
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                System.out.println("Connect successfully");
+            }
+
+            String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year],"
+                    + "[total_copies], [available_copies], [status] "
+                    + "FROM [dbo].[books] "
+                    + "WHERE id = ?";
+            PreparedStatement st = cn.prepareStatement(sql);
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+
+            if (rs != null && rs.next()) {
+                String title = rs.getString("title");
+                String isbn = rs.getString("isbn");
+                String author = rs.getString("author");
+                String category = rs.getString("category");
+                int year = rs.getInt("published_year");
+                int total = rs.getInt("total_copies");
+                int available = rs.getInt("available_copies");
+                String status = rs.getString("status");
+
+                book = new Book(id, title, isbn, author, category, year, total, available, status);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cn != null) {
+                try {
+                    cn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return book;
+    }
+    // Thêm method này vào BookDAO.java
+
+    public boolean updateBookQuantity(int bookId, int newQuantity) {
+        Connection cn = null;
+        try {
+            cn = DBConnection.getConnection();
+            String sql = "UPDATE [dbo].[books] SET [available_copies] = ? WHERE [id] = ?";
+            PreparedStatement st = cn.prepareStatement(sql);
+            st.setInt(1, newQuantity);
+            st.setInt(2, bookId);
+
+            int rowsAffected = st.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (cn != null) {
+                try {
+                    cn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+// Phần nay Tuan them
+    public List<Book> searchByTitle(String title) {
+        List<Book> books = new ArrayList<>();
+        String query = "SELECT * FROM books WHERE title LIKE ? AND status = 'active'";
+
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, "%" + title + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                books.add(createBookFromResultSet(rs));
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
-        String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year],"
-                   + "[total_copies], [available_copies], [status] "
-                   + "FROM [dbo].[books] "
-                   + "WHERE id = ?";
-        PreparedStatement st = cn.prepareStatement(sql);
-        st.setInt(1, id);
-        ResultSet rs = st.executeQuery();
+        return books;
+    }
 
-        if (rs != null && rs.next()) {
-            String title = rs.getString("title");
-            String isbn = rs.getString("isbn");
-            String author = rs.getString("author");
-            String category = rs.getString("category");
-            int year = rs.getInt("published_year");
-            int total = rs.getInt("total_copies");
-            int available = rs.getInt("available_copies");
-            String status = rs.getString("status");
+    public List<Book> searchByAuthor(String author) {
+        List<Book> books = new ArrayList<>();
+        String query = "SELECT * FROM books WHERE author LIKE ? AND status = 'active'";
 
-            book = new Book(id, title, isbn, author, category, year, total, available, status);
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, "%" + author + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                books.add(createBookFromResultSet(rs));
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        if (cn != null) {
+
+        return books;
+    }
+
+    public List<Book> searchByCategory(String category) {
+        List<Book> books = new ArrayList<>();
+        String query = "SELECT * FROM books WHERE category LIKE ? AND status = 'active'";
+
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, "%" + category + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                books.add(createBookFromResultSet(rs));
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return books;
+    }
+
+    public List<Book> getAllBooks() {
+        List<Book> books = new ArrayList<>();
+        String query = "SELECT * FROM books WHERE status = 'active'";
+
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                books.add(createBookFromResultSet(rs));
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return books;
+    }
+
+    // 
+    public boolean updateTotalCopies(int bookId, int totalCopies) {
+        String query = "UPDATE books SET total_copies = ?, available_copies = ? - (SELECT COUNT(*) FROM borrow_records WHERE book_id = ? AND status = 'borrowed') WHERE id = ? AND status = 'active'";
+
+        try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, totalCopies);
+            stmt.setInt(2, totalCopies);
+            stmt.setInt(3, bookId);
+            stmt.setInt(4, bookId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+// 
+    public boolean updateTotalCopiesAlternative(int bookId, int totalCopies) {
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false); // Bắt đầu transaction
+
+            // Đếm số sách đang được mượn
+            String countQuery = "SELECT COUNT(*) FROM borrow_records WHERE book_id = ? AND status = 'borrowed'";
+            int borrowedCount = 0;
+
+            try ( PreparedStatement countStmt = conn.prepareStatement(countQuery)) {
+                countStmt.setInt(1, bookId);
+                ResultSet rs = countStmt.executeQuery();
+                if (rs.next()) {
+                    borrowedCount = rs.getInt(1);
+                }
+            }
+
+            // Tính available_copies = total_copies - borrowed_count
+            int availableCopies = totalCopies - borrowedCount;
+
+            // Kiểm tra logic: available_copies không được âm
+            if (availableCopies < 0) {
+                conn.rollback();
+                System.out.println("Error: Total copies (" + totalCopies + ") is less than borrowed books (" + borrowedCount + ")");
+                return false;
+            }
+
+            // Cập nhật cả total_copies và available_copies
+            String updateQuery = "UPDATE books SET total_copies = ?, available_copies = ? WHERE id = ? AND status = 'active'";
+            try ( PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                updateStmt.setInt(1, totalCopies);
+                updateStmt.setInt(2, availableCopies);
+                updateStmt.setInt(3, bookId);
+
+                int rowsAffected = updateStmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    conn.commit();
+                    return true;
+                } else {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
             try {
-                cn.close();
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
-    return book;
-  }
+
+    private Book createBookFromResultSet(ResultSet rs) throws SQLException {
+        Book book = new Book();
+        book.setId(rs.getInt("id"));
+        book.setTitle(rs.getString("title"));
+        book.setAuthor(rs.getString("author"));
+        book.setIsbn(rs.getString("isbn"));
+        book.setCategory(rs.getString("category"));
+        book.setPublishedYear(rs.getInt("published_year"));
+        book.setTotalCopies(rs.getInt("total_copies"));
+        book.setAvailableCopies(rs.getInt("available_copies"));
+        return book;
+    }
+
+    public int getBorrowBooks() {
+        Connection cn = null;
+        int count = 0;
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                // step 2: query and execute
+                String sql = "SELECT COUNT([id]) FROM [dbo].[borrow_records]";
+                Statement st = cn.createStatement();
+                //ResultSet in OOP = table in Database
+                ResultSet table = st.executeQuery(sql);
+                // step 3: get data from table 
+                if (table.next()) {
+                    count = table.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return count;
+    }
 }
