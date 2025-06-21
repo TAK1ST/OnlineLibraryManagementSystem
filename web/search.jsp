@@ -13,12 +13,12 @@
                 --primary-light: #34495E;
                 --accent-dark: #16A085;
                 --accent-light: #1ABC9C;
-                --light-bg: #ECFDF1;
+                --light-bg: #F0F0F0;
                 --white: #ffffff;
             }
 
             body {
-                background-color: var(--light-bg);
+                background-color: #F0F0F0;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
 
@@ -51,68 +51,64 @@
             }
 
             /* Hero section */
-            .hero-section {
-                background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent-dark) 100%);
-                color: white;
-                padding: 4rem 0;
-                margin-bottom: 2rem;
+            .banner{
+                background-image: url('${pageContext.request.contextPath}/hinh/thu-vien-truong-dai-hoc-fpt-943111.jpg');
+                background-size: cover;
+                background-position: center;
+                height: 40vh;
                 position: relative;
-                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #1ABC9C;
             }
-
-            .hero-section::before {
-                content: '';
+            .banner::before{
+                content: "";
                 position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-                opacity: 0.1;
+                inset : 0;
+                background-color: rgba(0, 0, 0, 0.4);
+                z-index: 0;
             }
-
-            .hero-section .container {
+            
+            .banner .content{
                 position: relative;
-                z-index: 2;
+                z-index: 1;
+                text-align: center;
             }
-
-            .hero-section h1 {
-                font-weight: 700;
-                margin-bottom: 1.5rem;
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            
+            .header{
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: white;
+                font-weight: 600;
             }
-
-            .hero-section p {
-                font-size: 1.2rem;
-                margin-bottom: 0;
-                opacity: 0.95;
+            
+            .header2{
+                font-size: 1.1rem;
+                font-weight: bold;
+                line-height: 1.4;
+                color: white;
             }
 
             /* Search section */
-            .search-section {
-                background-color: white;
-                padding: 2.5rem 0;
-                margin-bottom: 2rem;
-                box-shadow: 0 2px 15px rgba(44, 62, 80, 0.1);
-                border-radius: 20px;
-                margin: 0 1rem 2rem 1rem;
-            }
-
             .search-section .form-control,
             .search-section .form-select {
-                border: 2px solid var(--light-bg);
+                margin-top: 30px;
+                border: 1px solid black;
                 border-radius: 15px;
                 padding: 0.75rem 1rem;
                 font-size: 1rem;
                 transition: all 0.3s ease;
-                background-color: var(--light-bg);
+                background-color: var(--white);
             }
 
             .search-section .form-control:focus,
             .search-section .form-select:focus {
-                border-color: var(--accent-light);
+                margin-top: 30px;
+                border: 1px solid black;
                 box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
-                background-color: white;
+                background-color: var(--white);
             }
 
             /* Buttons */
@@ -131,6 +127,22 @@
                 background: linear-gradient(135deg, var(--accent-dark) 0%, var(--primary-light) 100%);
                 transform: translateY(-3px);
                 box-shadow: 0 6px 20px rgba(26, 188, 156, 0.4);
+            }
+
+            .btn-outline-primary {
+                border: 2px solid var(--accent-light);
+                color: var(--accent-dark);
+                padding: 0.6rem 1.5rem;
+                border-radius: 15px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .btn-outline-primary:hover {
+                background: linear-gradient(135deg, var(--accent-light), var(--accent-dark));
+                border-color: var(--accent-dark);
+                color: white;
+                transform: translateY(-2px);
             }
 
             /* Section title */
@@ -154,7 +166,11 @@
                 background: linear-gradient(90deg, var(--accent-light), var(--accent-dark));
                 border-radius: 2px;
             }
-
+            
+            .btn-search{
+                margin-top: 30px;
+            }    
+            
             /* Book cards */
             .book-card {
                 border: none;
@@ -223,7 +239,7 @@
             /* Results section */
             .results-section {
                 padding: 3rem 0;
-                background-color: var(--light-bg);
+                background-color: #F0F0F0;
             }
 
             /* Empty results */
@@ -276,8 +292,12 @@
 
             /* Responsive styles */
             @media (max-width: 768px) {
-                .hero-section {
-                    padding: 2.5rem 0;
+                .banner {
+                    height: 30vh;
+                }
+                
+                .header {
+                    font-size: 2rem;
                 }
                 
                 .search-section {
@@ -347,12 +367,12 @@
         </nav>
 
         <!-- Phần Hero -->
-        <section class="hero-section text-center">
-            <div class="container">
-                <h1 class="display-4">Tìm kiếm sách</h1>
-                <p class="lead">Khám phá và tìm kiếm những cuốn sách yêu thích của bạn</p>
+        <div class="banner">
+            <div class="content">
+                <p class="header">Tìm kiếm sách</p>
+                <p class="header2">Khám phá và tìm kiếm những cuốn sách yêu thích của bạn</p>
             </div>
-        </section>
+        </div>
 
         <!-- Phần tìm kiếm -->
         <section class="search-section">
@@ -373,7 +393,7 @@
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <button type="submit" class="btn btn-primary w-100">
+                        <button type="submit" class="btn btn-primary w-100 btn-search">
                             <i class="fas fa-search me-2"></i> Tìm kiếm
                         </button>
                     </div>

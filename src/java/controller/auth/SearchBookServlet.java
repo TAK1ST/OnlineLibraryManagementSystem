@@ -60,9 +60,9 @@ public class SearchBookServlet extends HttpServlet {
         
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("loginedUser") != null) {
-            request.getRequestDispatcher("user-dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("search.jsp").forward(request, response);
         } else {
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+            request.getRequestDispatcher("home.jsp").forward(request, response);
         }
     }
 
