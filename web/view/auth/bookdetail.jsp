@@ -9,6 +9,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -280,15 +281,16 @@
                 <a href="${pageContext.request.contextPath}/home" class="btn btn-primary">
                     <i class="fas fa-arrow-left"></i> Quay lại
                 </a>
-                <% if (book.getAvailableCopies() > 0) { %>
-                <a href="borrow?id=<%= book.getId() %>" class="btn btn-primary">
-                    <i class="fas fa-hand-holding-heart"></i> Mượn sách
-                </a>
-                <% } else { %>
-                <button class="btn" disabled>
-                    <i class="fas fa-clock"></i> Hết sách
-                </button>
-                <% } %>
+                <c:if test="${book.availableCopies > 0}">
+                    <a href="AddToCartServlet?bookId=${book.id}" class="btn btn-primary">
+                        <i class="fas fa-hand-holding-heart"></i>Add to Cart
+                    </a>
+                </c:if>
+                <c:if test="${book.availableCopies == 0}">
+                    <button class="btn" disabled>
+                        <i class="fas fa-clock"></i>Not Available
+                    </button>
+                </c:if>
             </div>
         </div>
         <% } else { %>

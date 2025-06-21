@@ -131,6 +131,41 @@ public class BookDAO implements IBookDAO {
             return newBooks;
       }
 
+      public List<Book> getNewBooks(int limit) throws SQLException, ClassNotFoundException {
+            List<Book> newBooks = new ArrayList<>();
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  String sql = "SELECT TOP ? [id],[title],[isbn],[author],[category],[published_year],"
+                          + "[total_copies],[available_copies],[status]\n"
+                          + "FROM [dbo].[books]\n"
+                          + "ORDER BY [published_year] DESC, [id] DESC";
+
+                  PreparedStatement st = cn.prepareStatement(sql);
+                  st.setInt(1, limit);
+                  ResultSet rs = st.executeQuery();
+
+                  while (rs.next()) {
+                        Book book = new Book();
+                        book.setId(rs.getInt("id"));
+                        book.setTitle(rs.getString("title"));
+                        book.setIsbn(rs.getString("isbn"));
+                        book.setAuthor(rs.getString("author"));
+                        book.setCategory(rs.getString("category"));
+                        book.setPublishedYear(rs.getInt("published_year"));
+                        book.setTotalCopies(rs.getInt("total_copies"));
+                        book.setAvailableCopies(rs.getInt("available_copies"));
+                        book.setStatus(rs.getString("status"));
+                        newBooks.add(book);
+                  }
+            } finally {
+                  if (cn != null) {
+                        cn.close();
+                  }
+            }
+            return newBooks;
+      }
+
       @Override
       public List<Book> getAllBook() throws SQLException, ClassNotFoundException {
             List<Book> books = new ArrayList<>();

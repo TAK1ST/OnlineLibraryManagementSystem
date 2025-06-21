@@ -1,9 +1,12 @@
 package controller.cart;
 
+import dao.implement.BookDAO;
+import entity.Book;
 import entity.CartItem;
 import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-public class RemoveFromCartServlet extends HttpServlet {
+public class UpdateCartServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -26,27 +29,50 @@ public class RemoveFromCartServlet extends HttpServlet {
         
         try {
             int bookId = Integer.parseInt(request.getParameter("bookId"));
-            List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+            int change = Integer.parseInt(request.getParameter("change"));
             
+            List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
             if (cart == null) {
-                sendJsonResponse(response, false, "Giỏ sách trống");
+                cart = new ArrayList<>();
+            }
+            
+            BookDAO bookDAO = new BookDAO();
+            Book book = bookDAO.getBookById(bookId);
+            
+            if (book == null) {
+                sendJsonResponse(response, false, "Không tìm thấy sách");
                 return;
             }
             
-            CartItem itemToRemove = null;
+            CartItem existingItem = null;
             for (CartItem item : cart) {
                 if (item.getBook().getId() == bookId) {
-                    itemToRemove = item;
+                    existingItem = item;
                     break;
                 }
             }
             
-            if (itemToRemove != null) {
-                cart.remove(itemToRemove);
-                session.setAttribute("cart", cart);
-                sendJsonResponse(response, true, "Đã xóa sách khỏi giỏ");
+            if (existingItem == null) {
+                if (change > 0) {
+                    cart.add(new CartItem(book, 1));
+                    session.setAttribute("cart", cart);
+                    sendJsonResponse(response, true, "Đã thêm sách vào giỏ");
+                } else {
+                    sendJsonResponse(response, false, "Sách không có trong giỏ");
+                }
             } else {
-                sendJsonResponse(response, false, "Không tìm thấy sách trong giỏ");
+                int newQuantity = existingItem.getQuantity() + change;
+                if (newQuantity <= 0) {
+                    cart.remove(existingItem);
+                    session.setAttribute("cart", cart);
+                    sendJsonResponse(response, true, "Đã xóa sách khỏi giỏ");
+                } else if (newQuantity <= book.getAvailableCopies()) {
+                    existingItem.setQuantity(newQuantity);
+                    session.setAttribute("cart", cart);
+                    sendJsonResponse(response, true, "Đã cập nhật số lượng");
+                } else {
+                    sendJsonResponse(response, false, "Số lượng yêu cầu vượt quá số sách có sẵn");
+                }
             }
             
         } catch (NumberFormatException e) {

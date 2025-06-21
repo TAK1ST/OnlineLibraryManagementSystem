@@ -53,7 +53,7 @@
                 <div class="d-flex align-items-center">
                     <c:choose>
                         <c:when test="${not empty sessionScope.loginedUser}">
-                            <a href="ViewCartServlet" class="btn btn-outline-light me-3">
+                            <a href="${pageContext.request.contextPath}/cart" class="btn btn-outline-light me-3">
                                 <i class="fas fa-shopping-cart"></i>
                                 <span class="ms-1">Cart</span>
                             </a>
@@ -79,24 +79,24 @@
             
             <!-- Search Form -->
             <div class="search-form">
-                <h4 class="mb-4 section-title">Search Books</h4>
+                <h4 class="mb-4 section-title">Tìm kiếm sách</h4>
                 <form action="${pageContext.request.contextPath}/search" method="GET" class="row g-3">
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="title" placeholder="Book Title" value="${title}">
+                        <input type="text" class="form-control" name="title" placeholder="Tên sách" value="${title}">
                     </div>
                     <div class="col-md-3">
-                        <input type="text" class="form-control" name="author" placeholder="Author" value="${author}">
+                        <input type="text" class="form-control" name="author" placeholder="Tác giả" value="${author}">
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" name="category">
-                            <option value="">Select Category</option>
+                            <option value="">Chọn thể loại</option>
                             <c:forEach items="${categories}" var="cat">
                                 <option value="${cat}" ${cat eq category ? 'selected' : ''}>${cat}</option>
                             </c:forEach>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
                     </div>
                 </form>
             </div>

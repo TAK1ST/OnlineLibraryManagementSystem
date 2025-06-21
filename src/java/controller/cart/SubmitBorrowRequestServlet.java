@@ -10,13 +10,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet(name = "SubmitBorrowRequestServlet", urlPatterns = {"/SubmitBorrowRequestServlet"})
 public class SubmitBorrowRequestServlet extends HttpServlet {
 
     @Override
@@ -63,7 +61,6 @@ public class SubmitBorrowRequestServlet extends HttpServlet {
                         loginedUser.getId(),
                         currentBook.getId(),
                         Date.valueOf(today),
-                        Date.valueOf(today.plusDays(14)),
                         "pending"
                     );
                     

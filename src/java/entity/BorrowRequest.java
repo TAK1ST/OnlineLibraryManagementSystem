@@ -7,21 +7,17 @@ public class BorrowRequest {
     private int userId;
     private int bookId;
     private Date requestDate;
-    private Date dueDate;
-    private String status; // pending, approved, rejected, returned
-    private String note;
+    private String status; // pending, approved, rejected
 
     public BorrowRequest() {
     }
 
-    public BorrowRequest(int id, int userId, int bookId, Date requestDate, Date dueDate, String status, String note) {
+    public BorrowRequest(int id, int userId, int bookId, Date requestDate, String status) {
         this.id = id;
         this.userId = userId;
         this.bookId = bookId;
         this.requestDate = requestDate;
-        this.dueDate = dueDate;
         this.status = status;
-        this.note = note;
     }
 
     // Getters and Setters
@@ -57,27 +53,11 @@ public class BorrowRequest {
         this.requestDate = requestDate;
     }
 
-    public Date getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
-    }
-
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
     }
 } 

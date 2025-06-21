@@ -7,19 +7,19 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
-      <head>
+    <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Update Inventory</title>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-update-inventory.css"/>
-      </head>
-      <body>
+    </head>
+    <body>
             <!-- Header -->
             <div class="header">
                   <div class="header-left">
                         <button class="back-btn" onclick="goBack()">←</button>
                         <h1 class="page-title">Update Inventory</h1>
-                  </div>
+                 </div>
                   <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
 
@@ -31,20 +31,20 @@
                               <div class="stat-card">
                                     <div class="stat-number">1,247</div>
                                     <div class="stat-label">Total Books</div>
-                              </div>
+                     </div>
                               <div class="stat-card">
                                     <div class="stat-number">892</div>
                                     <div class="stat-label">Available</div>
-                              </div>
+                 </div>
                               <div class="stat-card">
                                     <div class="stat-number">355</div>
                                     <div class="stat-label">Borrowed</div>
-                              </div>
+                     </div>
                               <div class="stat-card">
                                     <div class="stat-number">23</div>
                                     <div class="stat-label">Low Stock</div>
-                              </div>
-                        </div>
+                 </div>
+             </div>
 
                         <!-- Search and Filter -->
                         <div class="search-section">
@@ -52,24 +52,24 @@
                                     <div class="form-group">
                                           <label for="searchTitle">Search by Title</label>
                                           <input type="text" id="searchTitle" class="form-input" placeholder="Enter book title...">
-                                    </div>
+                     </div>
                                     <div class="form-group">
                                           <label for="searchAuthor">Search by Author</label>
                                           <input type="text" id="searchAuthor" class="form-input" placeholder="Enter author name...">
-                                    </div>
+                     </div>
                                     <button class="search-btn" onclick="searchBooks()">
                                           <span id="searchText">Search</span>
                                           <span id="searchLoading" class="loading" style="display: none;"></span>
-                                    </button>
+                         </button>
                                     <button class="reset-btn" onclick="resetSearch()">Reset</button>
-                              </div>
-                        </div>
+                     </div>
+             </div>
 
-                        <!-- Books Table -->
+             <!-- Books Table -->
                         <div class="table-container">
                               <table class="books-table">
-                                    <thead>
-                                          <tr>
+                     <thead>
+                         <tr>
                                                 <th>Book ID</th>
                                                 <th>Title</th>
                                                 <th>Author</th>
@@ -78,10 +78,10 @@
                                                 <th>Current Stock</th>
                                                 <th>Update Quantity</th>
                                                 <th>Actions</th>
-                                          </tr>
-                                    </thead>
+                         </tr>
+                     </thead>
                                     <tbody id="booksTableBody">
-                                          <tr>
+                             <tr>
                                                 <td>BK001</td>
                                                 <td>The Great Gatsby</td>
                                                 <td>F. Scott Fitzgerald</td>
@@ -94,8 +94,8 @@
                                                             <input type="number" class="qty-input" value="5" min="0" id="qty-BK001">
                                                             <button class="qty-btn" onclick="updateQuantity('BK001', 1)">+</button>
                                                       </div>
-                                                </td>
-                                                <td>
+                                </td>
+                                <td>
                                                       <div class="action-buttons">
                                                             <button class="action-btn btn-update" onclick="saveQuantity('BK001')">Update</button>
                                                             <button class="action-btn btn-details" onclick="viewDetails('BK001')">Details</button>
@@ -115,14 +115,14 @@
                                                             <input type="number" class="qty-input" value="2" min="0" id="qty-BK002">
                                                             <button class="qty-btn" onclick="updateQuantity('BK002', 1)">+</button>
                                                       </div>
-                                                </td>
-                                                <td>
+                                </td>
+                                <td>
                                                       <div class="action-buttons">
                                                             <button class="action-btn btn-update" onclick="saveQuantity('BK002')">Update</button>
                                                             <button class="action-btn btn-details" onclick="viewDetails('BK002')">Details</button>
                                                       </div>
-                                                </td>
-                                          </tr>
+                                </td>
+                             </tr>
                                           <tr>
                                                 <td>BK003</td>
                                                 <td>1984</td>
@@ -186,13 +186,13 @@
                                                       </div>
                                                 </td>
                                           </tr>
-                                    </tbody>
-                              </table>
+                     </tbody>
+                 </table>
                         </div>
-                  </div>
-            </div>
+             </div>
+         </div>
 
-            <script>
+         <script>
                   // Quantity update functions
                   function updateQuantity(bookId, change) {
                         const input = document.getElementById(`qty-${bookId}`);
@@ -203,7 +203,7 @@
                         // Update minus button state
                         const minusBtn = input.previousElementSibling;
                         minusBtn.disabled = newValue === 0;
-                  }
+                }
 
                   // Save quantity changes
                   function saveQuantity(bookId) {
@@ -298,6 +298,6 @@
                               minusBtn.disabled = parseInt(input.value) === 0;
                         });
                   });
-            </script>
-      </body>
+         </script>
+    </body>
 </html>
