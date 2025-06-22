@@ -16,16 +16,18 @@ public class BookRequest {
       private int userId;
       private int bookId;
       private LocalDate requestDate;
+      private String requestType;
       private String status;
 
       public BookRequest() {
       }
 
-      public BookRequest(int id, int userId, int bookId, LocalDate requestDate, String status) {
+      public BookRequest(int id, int userId, int bookId, LocalDate requestDate, String requestType, String status) {
             this.id = id;
             this.userId = userId;
             this.bookId = bookId;
             this.requestDate = requestDate;
+            this.requestType = requestType;
             this.status = status;
       }
 
@@ -59,6 +61,14 @@ public class BookRequest {
 
       public void setRequestDate(LocalDate requestDate) {
             this.requestDate = requestDate;
+      }
+
+      public String getRequestType() {
+            return requestType;
+      }
+
+      public void setRequestType(String requestType) {
+            this.requestType = requestType;
       }
 
       public String getStatus() {

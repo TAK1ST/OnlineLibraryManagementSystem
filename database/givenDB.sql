@@ -1,4 +1,6 @@
--- Create the database
+﻿-- Create the database
+DROP DATABASE library_system
+GO
 CREATE DATABASE library_system;
 GO
 USE library_system;
@@ -23,6 +25,7 @@ CREATE TABLE books (
     published_year INT,
     total_copies INT DEFAULT 1,
     available_copies INT DEFAULT 1,
+	image_url VARCHAR(255) DEFAULT NULL,
     status varchar(20) default 'active' -- active/inactive
 );
 GO
@@ -54,6 +57,7 @@ CREATE TABLE book_requests (
     user_id INT NOT NULL,
     book_id INT NOT NULL,
     request_date DATE ,
+	request_type VARCHAR(20) NOT NULL DEFAULT 'borrow' CHECK (request_type IN ('borrow', 'return')),
     status varchar(20) default 'pending',-- 'approved', 'rejected' 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
@@ -67,44 +71,53 @@ CREATE TABLE system_config (
     description TEXT
 );
 GO
--- Insert default configuration values
-INSERT INTO system_config (config_key, config_value, description) VALUES
-('overdue_fine_per_day', '0.50', 'Fine amount per day for overdue books (in dollars)'),
-('default_borrow_duration_days', '14', 'Default number of days a book can be borrowed'),
-('unit_price_per_book', '10.00', 'Default unit price used for book replacement or reference');
+
+--Trigger update overdue
+DROP TRIGGER IF EXISTS trg_UpdateOverdueStatus;
 GO
+
+CREATE TRIGGER trg_UpdateOverdueStatus
+ON borrow_records
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    UPDATE br
+    SET status = 'overdue'
+    FROM borrow_records br
+    INNER JOIN inserted i ON br.id = i.id
+    WHERE br.return_date IS NULL 
+      AND br.due_date < CAST(GETDATE() AS DATE)
+      AND br.status = 'borrowed';
+END;
+GO
+
+-- Users
 INSERT INTO users (name, email, password, role, status) VALUES
-('Alice Admin', 'alice.admin@example.com', 'admin123', 'admin', 'active'),
-('Thi No', 'No@example.com', 'no123', 'user', 'active'),
-('Emma Reader', 'emma.user@example.com', 'user123', 'user', 'active'),
-('Noah Reader', 'noah.user@example.com', 'user456', 'user', 'active'),
-('Olivia Reader', 'olivia.user@example.com', 'user789', 'user', 'blocked');
-GO
-INSERT INTO books (title, author, isbn, category, published_year, total_copies, available_copies) VALUES
-('Effective Java', 'Joshua Bloch', '9780134685991', 'Programming', 2018, 5, 3),
-('Clean Code', 'Robert C. Martin', '9780132350884', 'Software Engineering', 2008, 4, 4),
-('Java: The Complete Reference', 'Herbert Schildt', '9781260440232', 'Programming', 2020, 6, 5),
-('Design Patterns', 'Erich Gamma', '9780201633610', 'Architecture', 1994, 3, 2),
-('Head First Java', 'Kathy Sierra', '9780596009205', 'Beginner', 2005, 2, 1);
-GO
+('Admin User', 'admin@example.com', 'adminpassword', 'admin', 'active'),
+('John Doe', 'john@example.com', 'password123', 'user', 'active'),
+('Jane Smith', 'jane@example.com', 'password456', 'user', 'active');
+
+-- Books
+INSERT INTO books (title, author, isbn, category, published_year, total_copies, available_copies, image_url, status) VALUES
+('The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 'Fiction', 1925, 5, 5, 'https://example.com/gatsby.jpg', 'active'),
+('To Kill a Mockingbird', 'Harper Lee', '9780446310789', 'Fiction', 1960, 3, 3, 'https://example.com/mockingbird.jpg', 'active'),
+('1984', 'George Orwell', '9780451524935', 'Dystopian', 1949, 4, 4, 'https://example.com/1984.jpg', 'active'),
+('Pride and Prejudice', 'Jane Austen', '9780141439518', 'Romance', 1813, 2, 2, 'https://example.com/pride.jpg', 'active'),
+('The Catcher in the Rye', 'J.D. Salinger', '9780316769488', 'Fiction', 1951, 1, 1, 'https://example.com/catcher.jpg', 'active');
+
+-- Borrow Records
 INSERT INTO borrow_records (user_id, book_id, borrow_date, due_date, return_date, status) VALUES
-(3, 1, '2025-04-25', '2025-05-09', NULL, 'borrowed'),
-(4, 2, '2025-04-20', '2025-05-04', '2025-05-03', 'returned'),
-(5, 3, '2025-04-10', '2025-04-24', NULL, 'overdue'),
-(3, 4, '2025-04-15', '2025-04-29', '2025-05-01', 'returned'),
-(4, 5, '2025-05-01', '2025-05-15', NULL, 'borrowed');
-GO
+(2, 3, '2025-06-01', '2025-06-15', NULL, 'borrowed'),  -- John mượn 1984, chưa trả
+(3, 1, '2025-05-20', '2025-06-03', '2025-06-05', 'returned'),  -- Jane mượn The Great Gatsby, trả muộn
+(3, 2, '2025-06-10', '2025-06-24', NULL, 'borrowed');  -- Jane mượn To Kill a Mockingbird, chưa trả
+
+-- Fines
 INSERT INTO fines (borrow_id, fine_amount, paid_status) VALUES
-(3, 5.00, 'unpaid'),
-(4, 1.00, 'paid'),
-(1, 0.00, 'paid'),
-(5, 0.00, 'unpaid'),
-(2, 0.00, 'paid');
-GO
-INSERT INTO book_requests (user_id, book_id, request_date, status) VALUES
-(3, 1, '2025-05-01', 'pending'),
-(4, 2, '2025-04-30', 'approved'),
-(5, 3, '2025-04-28', 'rejected'),
-(3, 5, '2025-05-05', 'pending'),
-(4, 4, '2025-04-27', 'approved');
-GO
+(2, 2.00, 'unpaid');  -- Fine cho Jane, trả muộn 2 ngày, $1/ngày
+
+-- Book Requests (để khớp log: ID 2 approved borrow, ID 3 rejected return)
+INSERT INTO book_requests (user_id, book_id, request_date, request_type, status) VALUES
+(2, 4, '2025-06-20', 'borrow', 'approved'),  -- John mượn Pride and Prejudice, approved (ID 2)
+(3, 2, '2025-06-22', 'return', 'rejected');  -- Jane trả To Kill a Mockingbird, rejected (ID 3)

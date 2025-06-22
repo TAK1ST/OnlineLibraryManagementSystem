@@ -123,10 +123,10 @@
                                                 </div>
                                           </div>
                                     </div>
-                              </div>
-                              <!-- User Table -->
-                              <div class="table-body" id="tableBody">
-                                    <jsp:include page="/view/dashboard/admin/user-list-fragment.jsp"/>
+                                    <!-- User Table -->
+                                    <div class="table-body" id="tableBody">
+                                          <jsp:include page="/view/dashboard/admin/user-list-fragment.jsp"/>
+                                    </div>
                               </div>
 
                               <!-- Footer -->

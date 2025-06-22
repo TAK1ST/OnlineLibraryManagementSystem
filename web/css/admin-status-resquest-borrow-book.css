@@ -254,6 +254,26 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
       transform: translateY(-1px);
 }
 
+.dimmed {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.btn-borrow {
+      background-color: #4BB543;
+      border: none;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.3s;
+}
+
+.btn-borrow:hover {
+      background-color: #17a085;
+      transform: translateY(-1px);
+}
 .empty-state {
       text-align: center;
       padding: 60px 20px;

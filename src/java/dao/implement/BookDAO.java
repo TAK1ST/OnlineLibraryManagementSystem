@@ -14,14 +14,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.DBConnection;
 
 /**
  * @author Admin
  */
 public class BookDAO implements IBookDAO {
+
       //ham nay De lay tat ca quyen sach 
       @Override
       public ArrayList<Book> getBookByTitle(String title) {
@@ -50,7 +49,8 @@ public class BookDAO implements IBookDAO {
                               int total = table.getInt("total_copies");
                               int avaCopies = table.getInt("available_copies");
                               String status = table.getString("status");
-                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
+                              String imageUrl = table.getString("image_url");
+                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status, imageUrl);
                               result.add(book);
                         }
                   }
@@ -132,7 +132,7 @@ public class BookDAO implements IBookDAO {
       }
 
       @Override
-      public List<Book> getAllBook() throws SQLException, ClassNotFoundException {
+      public List<Book> getAllBook() {
             List<Book> books = new ArrayList<>();
             Connection cn = null;
             try {
@@ -157,9 +157,15 @@ public class BookDAO implements IBookDAO {
                         book.setStatus(rs.getString("status"));
                         books.add(book);
                   }
+            } catch (Exception e) {
+                  e.printStackTrace();
             } finally {
-                  if (cn != null) {
-                        cn.close();
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
                   }
             }
             return books;
@@ -214,7 +220,7 @@ public class BookDAO implements IBookDAO {
                   e.printStackTrace();
                   throw e;
             } finally {
-                  if (cn != null && !cn.isClosed()) {
+                  if (cn != null) {
                         cn.close();
                   }
             }
@@ -244,7 +250,8 @@ public class BookDAO implements IBookDAO {
                               int total = table.getInt("total_copies");
                               int avaCopies = table.getInt("available_copies");
                               String status = table.getString("status");
-                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
+                              String imageUrl = table.getString("image_url");
+                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status, imageUrl);
                               result.add(book);
                         }
                   }
@@ -285,7 +292,8 @@ public class BookDAO implements IBookDAO {
                               int total = table.getInt("total_copies");
                               int avaCopies = table.getInt("available_copies");
                               String status = table.getString("status");
-                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status);
+                              String imageUrl = table.getString("image_url");
+                              Book book = new Book(id, title, isbn, author, category, year, total, avaCopies, status, imageUrl);
                               result.add(book);
                         }
                   }
@@ -316,7 +324,7 @@ public class BookDAO implements IBookDAO {
                               categories.add(table.getString("category"));
                         }
                   }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                   e.printStackTrace();
             } finally {
                   try {
@@ -378,7 +386,8 @@ public class BookDAO implements IBookDAO {
                               int total = table.getInt("total_copies");
                               int avaCopies = table.getInt("available_copies");
                               String status = table.getString("status");
-                              Book book = new Book(id, bookTitle, isbn, bookAuthor, bookCategory, year, total, avaCopies, status);
+                              String imageUrl = table.getString("image_url");
+                              Book book = new Book(id, bookTitle, isbn, bookAuthor, bookCategory, year, total, avaCopies, status, imageUrl);
                               result.add(book);
                         }
                   }
@@ -400,7 +409,8 @@ public class BookDAO implements IBookDAO {
                     rs.getInt("published_year"),
                     rs.getInt("total_copies"),
                     rs.getInt("available_copies"),
-                    rs.getString("status")
+                    rs.getString("status"),
+                    rs.getString("image_url")
             );
       }
 
@@ -434,46 +444,78 @@ public class BookDAO implements IBookDAO {
             return count;
       }
 
-    public Book getBookById(int id) {
-    Book book = null;
-    Connection cn = null;
-    try {
-        cn = DBConnection.getConnection();
-        if (cn != null) {
-            System.out.println("Connect successfully");
-        }
-
-        String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year],"
-                   + "[total_copies], [available_copies], [status] "
-                   + "FROM [dbo].[books] "
-                   + "WHERE id = ?";
-        PreparedStatement st = cn.prepareStatement(sql);
-        st.setInt(1, id);
-        ResultSet rs = st.executeQuery();
-
-        if (rs != null && rs.next()) {
-            String title = rs.getString("title");
-            String isbn = rs.getString("isbn");
-            String author = rs.getString("author");
-            String category = rs.getString("category");
-            int year = rs.getInt("published_year");
-            int total = rs.getInt("total_copies");
-            int available = rs.getInt("available_copies");
-            String status = rs.getString("status");
-
-            book = new Book(id, title, isbn, author, category, year, total, available, status);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        if (cn != null) {
+      @Override
+      public Book getBookById(int id) {
+            Book book = null;
+            Connection cn = null;
+            PreparedStatement pr = null;
             try {
-                cn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+                  cn = DBConnection.getConnection();
+                  if (cn== null) {
+                        System.out.println("Cannot connect database.");
+                  }
+                  String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year],"
+                          + "[total_copies], [available_copies], [status], [image_url] "
+                          + "FROM [dbo].[books] "
+                          + "WHERE id = ?";
+                  pr = cn.prepareStatement(sql);
+                  pr.setInt(1, id);
+                  ResultSet rs = pr.executeQuery();
+
+                  if (rs != null && rs.next()) {
+                        String title = rs.getString("title");
+                        String isbn = rs.getString("isbn");
+                        String author = rs.getString("author");
+                        String category = rs.getString("category");
+                        int year = rs.getInt("published_year");
+                        int total = rs.getInt("total_copies");
+                        int available = rs.getInt("available_copies");
+                        String status = rs.getString("status");
+                        String imageUrl = rs.getString("image_url");
+                        book = new Book(id, title, isbn, author, category, year, total, available, status, imageUrl);
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  closeSouce(cn, pr);
             }
-        }
-    }
-    return book;
-  }
+            return book;
+      }
+
+      @Override
+      public boolean update(Book book) throws SQLException, ClassNotFoundException {
+            Connection cn = null;
+            PreparedStatement pr = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  String sql = "UPDATE [dbo].[books] SET title = ?, isbn = ?, author = ?, category = ?, "
+                          + "published_year = ?, total_copies = ?, available_copies = ?, status = ? "
+                          + "WHERE id = ?";
+                  pr = cn.prepareStatement(sql);
+                  pr.setString(1, book.getTitle());
+                  pr.setString(2, book.getIsbn());
+                  pr.setString(3, book.getAuthor());
+                  pr.setString(4, book.getCategory());
+                  pr.setInt(5, book.getPublishedYear());
+                  pr.setInt(6, book.getTotalCopies());
+                  pr.setInt(7, book.getAvailableCopies());
+                  pr.setString(8, book.getStatus());
+                  pr.setInt(9, book.getId());
+
+                  int rowsAffected = pr.executeUpdate();
+                  return rowsAffected > 0;
+            } finally {
+                  closeSouce(cn, pr);
+            }
+      }
+
+      private void closeSouce(Connection cn, PreparedStatement pr) {
+            try {
+                  pr.close();
+                  cn.close();
+            } catch (Exception e) {
+                  e.printStackTrace();
+            }
+      }
+
 }
