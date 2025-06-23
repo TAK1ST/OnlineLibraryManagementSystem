@@ -21,4 +21,5 @@ public class ViewURL {
       public static String                USER_LIST_FRAGMENT =                                                                                  "/view/dashboard/admin/user-list-fragment.jsp";
       public static String                ADMIN_CHANGE_PROFILE_USER =                                                      "/view/dashboard/admin/admin-change-profile-user.jsp";
       public static String                ADMIN_UPDATE_INVENTORY =                                                              "/view/dashboard/admin/admin-update-inventory.jsp";
+      public static String                ADMIN_OVER_BOOK =                                                              "/view/dashboard/admin/admin-overdue-book.jsp";
 }

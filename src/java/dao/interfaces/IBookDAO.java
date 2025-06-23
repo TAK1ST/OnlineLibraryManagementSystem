@@ -25,4 +25,8 @@ public interface IBookDAO {
       public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException;
       
       public boolean update(Book book) throws SQLException, ClassNotFoundException;
+      public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException;
+      public boolean updateBookQuantity(int bookId, int newQuantity);
+      public int getTotalBooks();
+      public int getBorrowBooks();
 }

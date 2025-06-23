@@ -15,33 +15,64 @@ import service.interfaces.IUpdateInventoryService;
  *
  * @author asus
  */
-
 public class UpdateInventoryService implements IUpdateInventoryService {
 
-      private final IBookDAO bookDAO = new BookDAO();
-      private final List<Book> bookList;
+    private final IBookDAO bookDAO;
 
-      public UpdateInventoryService() throws SQLException, ClassNotFoundException {
-            bookList = bookDAO.getAllBook();
-      }
+    public UpdateInventoryService() throws SQLException, ClassNotFoundException {
+        this.bookDAO = new BookDAO();
+    }
 
-      @Override
-      public int getTotalBook() {
+    @Override
+    public int getTotalBook() {
+        return bookDAO.getTotalBooks();
+    }
+
+    @Override
+    public int getTotalBookAvailable() {
+        try {
+            List<Book> books = bookDAO.getAllBook();
+            return books.stream()
+                    .mapToInt(Book::getAvailableCopies)
+                    .sum();
+        } catch (Exception e) {
+            e.printStackTrace();
             return 0;
-      }
+        }
+    }
 
-      @Override
-      public int getTotalBookAvailable() {
-            return 0;
-      }
+    @Override
+    public int getBorrowBook() {
+        return bookDAO.getBorrowBooks();
+    }
 
-      @Override
-      public int getBorrowBook() {
+    @Override
+    public int getBorrowLowStock() {
+        try {
+            List<Book> books = bookDAO.getAllBook();
+            return (int) books.stream()
+                    .filter(book -> book.getAvailableCopies() <= 2 && book.getAvailableCopies() > 0)
+                    .count();
+        } catch (Exception e) {
+            e.printStackTrace();
             return 0;
-      }
+        }
+    }
 
-      @Override
-      public int getBorrowLowStock() {
-            return 0;
-      }
+    public List<Book> getAllBooks() throws SQLException, ClassNotFoundException {
+        return bookDAO.getAllBook();
+    }
+
+    public List<Book> searchBooks(String title, String author, String category) throws SQLException, ClassNotFoundException {
+        return bookDAO.searchBooks(title, author, category);
+    }
+
+    public boolean updateBookQuantity(int bookId, int newQuantity) {
+        try {
+            return bookDAO.updateBookQuantity(bookId, newQuantity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
