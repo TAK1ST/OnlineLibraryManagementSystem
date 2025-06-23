@@ -4,6 +4,7 @@
  */
 package dao.interfaces;
 
+import dto.BookInforRequestStatusDTO;
 import entity.BookRequest;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,16 +14,11 @@ import java.util.Optional;
  *
  * @author asus
  */
-public interface IBookRequestDAO  extends IBaseDAO<BookRequest> {
+public interface IBookRequestDAO {
 
       Optional<BookRequest> getBookRequestById(int id);
 
-      List<BookRequest> getBookRequestsByUserId(int userId);
-
       boolean updateBookRequestStatus(int id, String newStatus);
 
-      List<BookRequest> getAllPendingRequests();
-
-      List<BookRequest> getBookRequestsByBookId(int bookId);
-
+      public List<BookInforRequestStatusDTO> getBookRequestStatusBySearch(String title, String status, int offset);
 }

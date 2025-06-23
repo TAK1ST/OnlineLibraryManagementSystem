@@ -1,0 +1,221 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : Jun 12, 2025, 10:58:34 AM
+    Author     : CAU_TU
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #ECF0F1 0%, #34495E 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #2C3E50;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.6s ease-out;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #1ABC9C, #16A085);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+}
+
+.header-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 5px;
+}
+
+.header-subtitle {
+    font-size: 0.9rem;
+    color: #34495E;
+    opacity: 0.8;
+}
+
+.book-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ECF0F1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.book-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 10px;
+}
+
+.book-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    background: #F9FAFB;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    color: #34495E;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: #2C3E50;
+    font-weight: 500;
+}
+
+.availability {
+    background: linear-gradient(135deg, #1ABC9C, #16A085);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.availability-count {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.status-available {
+    background: #1ABC9C;
+}
+.status-limited {
+    background: #F39C12;
+}
+.status-unavailable {
+    background: #E74C3C;
+}
+
+.book-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #1ABC9C, #16A085);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #16A085, #1ABC9C);
+}
+
+.btn:disabled {
+    background: #BDC3C7;
+    cursor: not-allowed;
+}
+
+.error-message {
+    background: #E74C3C;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #34495E;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.back-button:hover {
+    transform: translateX(-2px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    .book-detail {
+        grid-template-columns: 1fr;
+    }
+    .book-actions {
+        flex-direction: column;
+    }
+}

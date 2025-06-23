@@ -6,20 +6,20 @@ package controller.admin;
 
 import constant.ViewURL;
 import static constant.constance.RECORDS_PER_LOAD;
-import entity.User;
+import dto.BookInforRequestStatusDTO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import service.implement.UserManagerService;
+import service.implement.BookRequestStatusService;
 
 /**
  *
  * @author asus
  */
-public class AdminSearchUser extends HttpServlet {
+public class AdminSearchBook extends HttpServlet {
 
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -27,7 +27,7 @@ public class AdminSearchUser extends HttpServlet {
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
 
-            UserManagerService userManagerService = new UserManagerService();
+            BookRequestStatusService bookRequestStatusService = new BookRequestStatusService();
             int offset = 0;
 
             try {
@@ -40,36 +40,32 @@ public class AdminSearchUser extends HttpServlet {
                   offset = 0;
             }
 
-            String searchEmail = request.getParameter("searchEmail");
+            String searchTitle = request.getParameter("searchTitle");
             String searchName = request.getParameter("searchName");
             String action = request.getParameter("action");
             String ajax = request.getParameter("ajax");
 
             if ("clear".equalsIgnoreCase(action)) {
                   searchName = null;
-                  searchEmail = null;
+                  searchTitle = null;
             }
 
             searchName = (searchName != null && !searchName.trim().isEmpty()) ? searchName.trim() : null;
-            searchEmail = (searchEmail != null && !searchEmail.trim().isEmpty()) ? searchEmail.trim() : null;
+            searchTitle = (searchTitle != null && !searchTitle.trim().isEmpty()) ? searchTitle.trim() : null;
 
-            List<User> userList = userManagerService.getAllUserLazyLoading(searchEmail, searchName, offset);
+            List<BookInforRequestStatusDTO> bookRequestList = 
+                    bookRequestStatusService.getAllBookRequestStatusLazyLoading(searchTitle, searchName, offset);
 
-            request.setAttribute("userList", userList);
+            request.setAttribute("bookRequestList", bookRequestList);
             request.setAttribute("offset", offset);
             request.setAttribute("recordsPerPage", RECORDS_PER_LOAD);
 
-            // handler AJAX
-            if ("true".equalsIgnoreCase(ajax)) {
-                  response.setContentType("text/html; charset=UTF-8");
-                  response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-                  response.setHeader("Pragma", "no-cache");
-                  response.setDateHeader("Expires", 0);
-
-                  request.getRequestDispatcher(ViewURL.USER_LIST_FRAGMENT).include(request, response);
-            } else {
-                  request.getRequestDispatcher(ViewURL.ADMIN_USER_MANAGEMENT).forward(request, response);
-            }
+           if ("true".equalsIgnoreCase(ajax)) {
+    response.setContentType("text/html; charset=UTF-8");
+    request.getRequestDispatcher(ViewURL.BOOK_REQUEST_LIST_FRAGMENT).include(request, response);
+} else {
+    request.getRequestDispatcher(ViewURL.ADMIN_STATUS_REQUEST_BORROW_BOOK).forward(request, response);
+}
       }
 
       /**
@@ -83,7 +79,6 @@ public class AdminSearchUser extends HttpServlet {
       @Override
       protected void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
-            doGet(request, response);
       }
 
       /**

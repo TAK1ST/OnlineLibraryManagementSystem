@@ -37,6 +37,7 @@ public class SearchBookServlet extends HttpServlet {
                 books = new ArrayList<>(bookDAO.getAllBook());
                 // Get new books for the homepage
                 newBooks = new ArrayList<>(bookDAO.getNewBooks()); // Get top 5 new books
+
             } else {
                 books = bookDAO.searchBooks(title, author, category);
             }

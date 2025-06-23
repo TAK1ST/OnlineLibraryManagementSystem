@@ -1,303 +1,325 @@
-<%-- 
-    Document   : admin-update-inventory
-    Created on : May 30, 2025, 6:50:54 PM
-    Author     : asus
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Update Inventory</title>
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-update-inventory.css"/>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Update Inventory</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-update-inventory.css"/>
     </head>
     <body>
-            <!-- Header -->
-            <div class="header">
-                  <div class="header-left">
-                        <button class="back-btn" onclick="goBack()">←</button>
-                        <h1 class="page-title">Update Inventory</h1>
-                 </div>
-                  <button class="logout-btn" onclick="logout()">Logout</button>
+        <!-- Improved Header with Centered Layout -->
+        <div class="header">
+            <div class="header-container">
+                <div class="header-left">
+                    <button class="back-btn" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back</span>
+                    </button>
+                </div>
+                <div class="header-center">
+                    <div class="header-title">
+                        <h1>
+                            <i class="fas fa-warehouse"></i>
+                            Update Inventory
+                        </h1>
+                        <p class="header-subtitle">Manage your book collection efficiently</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <a href="LogoutServlet" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Main Content - Centered -->
+        <div class="main-container">
+            <!-- Statistics -->
+            <div class="stats-grid fade-in">
+                <div class="stat-card total">
+                    <div class="stat-icon"><i class="fas fa-book"></i></div>
+                    <div class="stat-number">${totalBooks != null ? totalBooks : 0}</div>
+                    <div class="stat-label">Total Books</div>
+                </div>
+                <div class="stat-card available">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-number">${availableBooks != null ? availableBooks : 0}</div>
+                    <div class="stat-label">Available</div>
+                </div>
+                <div class="stat-card borrowed">
+                    <div class="stat-icon"><i class="fas fa-hand-holding"></i></div>
+                    <div class="stat-number">${borrowedBooks != null ? borrowedBooks : 0}</div>
+                    <div class="stat-label">Borrowed</div>
+                </div>
+                <div class="stat-card low-stock">
+                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-number">${lowStockBooks != null ? lowStockBooks : 0}</div>
+                    <div class="stat-label">Low Stock</div>
+                </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="main-container">
-                  <div class="content-card">
-                        <!-- Stats Overview -->
-                        <div class="stats-container">
-                              <div class="stat-card">
-                                    <div class="stat-number">1,247</div>
-                                    <div class="stat-label">Total Books</div>
-                     </div>
-                              <div class="stat-card">
-                                    <div class="stat-number">892</div>
-                                    <div class="stat-label">Available</div>
-                 </div>
-                              <div class="stat-card">
-                                    <div class="stat-number">355</div>
-                                    <div class="stat-label">Borrowed</div>
-                     </div>
-                              <div class="stat-card">
-                                    <div class="stat-number">23</div>
-                                    <div class="stat-label">Low Stock</div>
-                 </div>
-             </div>
+            <!-- Search Section -->
+            <div class="search-section fade-in">
+                <h3 class="search-title">
+                    <i class="fas fa-search"></i>
+                    Search & Filter Books
+                </h3>
+                <form class="search-form" action="${pageContext.request.contextPath}/updateinventory" method="GET">
+                    <input type="text" name="searchTerm" placeholder="Enter search term..." value="${param.searchTerm}">
+                    <select name="searchType">
+                        <option value="title" ${param.searchType == 'title' ? 'selected' : ''}>Title</option>
+                        <option value="author" ${param.searchType == 'author' ? 'selected' : ''}>Author</option>
+                        <option value="category" ${param.searchType == 'category' ? 'selected' : ''}>Category</option>
+                        <option value="isbn" ${param.searchType == 'isbn' ? 'selected' : ''}>ISBN</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <a href="${pageContext.request.contextPath}/updateinventory" class="btn btn-secondary">
+                        <i class="fas fa-refresh"></i> Reset
+                    </a>
+                </form>
+            </div>
 
-                        <!-- Search and Filter -->
-                        <div class="search-section">
-                              <div class="search-row">
-                                    <div class="form-group">
-                                          <label for="searchTitle">Search by Title</label>
-                                          <input type="text" id="searchTitle" class="form-input" placeholder="Enter book title...">
-                     </div>
-                                    <div class="form-group">
-                                          <label for="searchAuthor">Search by Author</label>
-                                          <input type="text" id="searchAuthor" class="form-input" placeholder="Enter author name...">
-                     </div>
-                                    <button class="search-btn" onclick="searchBooks()">
-                                          <span id="searchText">Search</span>
-                                          <span id="searchLoading" class="loading" style="display: none;"></span>
-                         </button>
-                                    <button class="reset-btn" onclick="resetSearch()">Reset</button>
-                     </div>
-             </div>
+            <!-- Messages -->
+            <c:if test="${not empty message}">
+                <div class="${message.contains('failed') || message.contains('Invalid') || message.contains('negative') ? 'error' : 'message'} fade-in">
+                    <i class="fas ${message.contains('failed') || message.contains('Invalid') || message.contains('negative') ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                    ${message}
+                </div>
+            </c:if>
 
-             <!-- Books Table -->
-                        <div class="table-container">
-                              <table class="books-table">
-                     <thead>
-                         <tr>
-                                                <th>Book ID</th>
-                                                <th>Title</th>
-                                                <th>Author</th>
-                                                <th>Category</th>
-                                                <th>Status</th>
-                                                <th>Current Stock</th>
-                                                <th>Update Quantity</th>
-                                                <th>Actions</th>
-                         </tr>
-                     </thead>
-                                    <tbody id="booksTableBody">
-                             <tr>
-                                                <td>BK001</td>
-                                                <td>The Great Gatsby</td>
-                                                <td>F. Scott Fitzgerald</td>
-                                                <td>Classic Literature</td>
-                                                <td><span class="status-badge status-available">Available</span></td>
-                                                <td>5</td>
-                                                <td>
-                                                      <div class="quantity-control">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK001', -1)">−</button>
-                                                            <input type="number" class="qty-input" value="5" min="0" id="qty-BK001">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK001', 1)">+</button>
-                                                      </div>
-                                </td>
-                                <td>
-                                                      <div class="action-buttons">
-                                                            <button class="action-btn btn-update" onclick="saveQuantity('BK001')">Update</button>
-                                                            <button class="action-btn btn-details" onclick="viewDetails('BK001')">Details</button>
-                                                      </div>
-                                                </td>
-                                          </tr>
-                                          <tr>
-                                                <td>BK002</td>
-                                                <td>To Kill a Mockingbird</td>
-                                                <td>Harper Lee</td>
-                                                <td>Classic Literature</td>
-                                                <td><span class="status-badge status-borrowed">Borrowed</span></td>
-                                                <td>2</td>
-                                                <td>
-                                                      <div class="quantity-control">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK002', -1)">−</button>
-                                                            <input type="number" class="qty-input" value="2" min="0" id="qty-BK002">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK002', 1)">+</button>
-                                                      </div>
-                                </td>
-                                <td>
-                                                      <div class="action-buttons">
-                                                            <button class="action-btn btn-update" onclick="saveQuantity('BK002')">Update</button>
-                                                            <button class="action-btn btn-details" onclick="viewDetails('BK002')">Details</button>
-                                                      </div>
-                                </td>
-                             </tr>
-                                          <tr>
-                                                <td>BK003</td>
-                                                <td>1984</td>
-                                                <td>George Orwell</td>
-                                                <td>Dystopian Fiction</td>
-                                                <td><span class="status-badge status-available">Available</span></td>
-                                                <td>1</td>
-                                                <td>
-                                                      <div class="quantity-control">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK003', -1)">−</button>
-                                                            <input type="number" class="qty-input" value="1" min="0" id="qty-BK003">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK003', 1)">+</button>
-                                                      </div>
-                                                </td>
-                                                <td>
-                                                      <div class="action-buttons">
-                                                            <button class="action-btn btn-update" onclick="saveQuantity('BK003')">Update</button>
-                                                            <button class="action-btn btn-details" onclick="viewDetails('BK003')">Details</button>
-                                                      </div>
-                                                </td>
-                                          </tr>
-                                          <tr>
-                                                <td>BK004</td>
-                                                <td>Pride and Prejudice</td>
-                                                <td>Jane Austen</td>
-                                                <td>Romance</td>
-                                                <td><span class="status-badge status-maintenance">Maintenance</span></td>
-                                                <td>0</td>
-                                                <td>
-                                                      <div class="quantity-control">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK004', -1)" disabled>−</button>
-                                                            <input type="number" class="qty-input" value="0" min="0" id="qty-BK004">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK004', 1)">+</button>
-                                                      </div>
-                                                </td>
-                                                <td>
-                                                      <div class="action-buttons">
-                                                            <button class="action-btn btn-update" onclick="saveQuantity('BK004')">Update</button>
-                                                            <button class="action-btn btn-details" onclick="viewDetails('BK004')">Details</button>
-                                                      </div>
-                                                </td>
-                                          </tr>
-                                          <tr>
-                                                <td>BK005</td>
-                                                <td>The Catcher in the Rye</td>
-                                                <td>J.D. Salinger</td>
-                                                <td>Coming-of-age</td>
-                                                <td><span class="status-badge status-available">Available</span></td>
-                                                <td>3</td>
-                                                <td>
-                                                      <div class="quantity-control">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK005', -1)">−</button>
-                                                            <input type="number" class="qty-input" value="3" min="0" id="qty-BK005">
-                                                            <button class="qty-btn" onclick="updateQuantity('BK005', 1)">+</button>
-                                                      </div>
-                                                </td>
-                                                <td>
-                                                      <div class="action-buttons">
-                                                            <button class="action-btn btn-update" onclick="saveQuantity('BK005')">Update</button>
-                                                            <button class="action-btn btn-details" onclick="viewDetails('BK005')">Details</button>
-                                                      </div>
-                                                </td>
-                                          </tr>
-                     </tbody>
-                 </table>
+            <c:if test="${not empty error}">
+                <div class="error fade-in">
+                    <i class="fas fa-exclamation-circle"></i>
+                    ${error}
+                </div>
+            </c:if>
+
+            <!-- Books Table -->
+            <c:choose>
+                <c:when test="${not empty books}">
+                    <div class="table-container fade-in">
+                        <div class="table-header">
+                            <i class="fas fa-table"></i>
+                            <h3>Book Inventory Management</h3>
                         </div>
-             </div>
-         </div>
+                        <table>
+                            <thead class="menu-detail-book">
+                                <tr>
+                                    <th><i class="fas fa-book"></i> Title</th>
+                                    <th><i class="fas fa-user"></i> Author</th>
+                                    <th><i class="fas fa-barcode"></i> ISBN</th>
+                                    <th><i class="fas fa-tag"></i> Category</th>
+                                    <th><i class="fas fa-calendar"></i> Year</th>
+                                    <th><i class="fas fa-layer-group"></i> Total</th>
+                                    <th><i class="fas fa-check"></i> Available</th>
+                                    <th><i class="fas fa-cog"></i> Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${books}" var="book">
+                                    <tr>
+                                        <td><strong>${book.title}</strong></td>
+                                        <td>${book.author}</td>
+                                        <td><code class="isbn-code">${book.isbn}</code></td>
+                                        <td><span class="category-badge">${book.category}</span></td>
+                                        <td>${book.publishedYear}</td>
+                                        <td><strong>${book.totalCopies}</strong></td>
+                                        <td><span class="available-count">${book.availableCopies}</span></td>
+                                        <td>
+                                            <form action="${pageContext.request.contextPath}/updateinventory" method="post" style="margin: 0;">
+                                                <input type="hidden" name="action" value="update">
+                                                <input type="hidden" name="bookId" value="${book.id}">
+                                                <div class="action-group">
+                                                    <div class="input-group">
+                                                        <button type="button" onclick="decrement(this)">−</button>
+                                                        <input type="number" name="totalCopies" value="${book.totalCopies}" min="0" required>
+                                                        <button type="button" onclick="increment(this)">+</button>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary btn-small">
+                                                        <i class="fas fa-save"></i> Update
+                                                    </button>
+                                                    <a href="#" class="btn btn-secondary btn-small">
+                                                        <i class="fas fa-eye"></i> Details
+                                                    </a>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="table-container fade-in">
+                        <div class="no-books">
+                            <i class="fas fa-search"></i>
+                            <h3>No books found</h3>
+                            <p>Try adjusting your search criteria or browse all available books</p>
+                            <a href="${pageContext.request.contextPath}/updateinventory" class="btn btn-primary" style="margin-top: 20px;">
+                                <i class="fas fa-list"></i> Show All Books
+                            </a>
+                        </div>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </div>
 
-         <script>
-                  // Quantity update functions
-                  function updateQuantity(bookId, change) {
-                        const input = document.getElementById(`qty-${bookId}`);
-                        const currentValue = parseInt(input.value) || 0;
-                        const newValue = Math.max(0, currentValue + change);
-                        input.value = newValue;
+        <!-- Floating Action Buttons -->
+        <div class="floating-actions">
+            <button class="floating-btn pulse" title="Scroll to top" onclick="scrollToTop()">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            <button class="floating-btn" title="Refresh page" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+        <script>
+            function increment(button) {
+                const input = button.previousElementSibling;
+                input.stepUp();
+            }
 
-                        // Update minus button state
-                        const minusBtn = input.previousElementSibling;
-                        minusBtn.disabled = newValue === 0;
+            function decrement(button) {
+                const input = button.nextElementSibling;
+                if (parseInt(input.value) > 0) {
+                    input.stepDown();
+                }
+            }
+
+            function scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+
+// Enhanced smooth animations with staggered effect
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, observerOptions);
+
+// Observe all fade-in elements with enhanced styling
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+
+// Add hover effects to stat cards
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+// Add loading animation for form submissions
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function () {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+                        submitBtn.disabled = true;
+                    }
+                });
+            });
+
+// Add smooth scroll behavior for better UX
+            document.documentElement.style.scrollBehavior = 'smooth';
+
+// Add keyboard shortcuts
+            document.addEventListener('keydown', function (e) {
+                // Ctrl/Cmd + F to focus search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    const searchInput = document.querySelector('input[name="searchTerm"]');
+                    if (searchInput) {
+                        searchInput.focus();
+                        searchInput.select();
+                    }
                 }
 
-                  // Save quantity changes
-                  function saveQuantity(bookId) {
-                        const input = document.getElementById(`qty-${bookId}`);
-                        const newQuantity = input.value;
+                // Escape to clear search
+                if (e.key === 'Escape') {
+                    const searchInput = document.querySelector('input[name="searchTerm"]');
+                    if (searchInput && searchInput === document.activeElement) {
+                        searchInput.value = '';
+                    }
+                }
+            });
 
-                        // Show loading state
-                        const updateBtn = event.target;
-                        const originalText = updateBtn.textContent;
-                        updateBtn.innerHTML = '<span class="loading"></span>';
-                        updateBtn.disabled = true;
+// Auto-hide messages after 5 seconds
+            document.querySelectorAll('.message, .error').forEach(msg => {
+                setTimeout(() => {
+                    msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    msg.style.opacity = '0';
+                    msg.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        msg.remove();
+                    }, 500);
+                }, 5000);
+            });
 
-                        // Simulate API call
-                        setTimeout(() => {
-                              updateBtn.textContent = originalText;
-                              updateBtn.disabled = false;
+// Add table row click to highlight
+            document.querySelectorAll('tbody tr').forEach(row => {
+                row.addEventListener('click', function () {
+                    // Remove previous highlights
+                    document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('highlighted'));
+                    // Add highlight to clicked row
+                    this.classList.add('highlighted');
+                });
+            });
 
-                              // Show success feedback
-                              updateBtn.style.background = '#27ae60';
-                              updateBtn.textContent = 'Saved!';
+// Add CSS for highlighted row
+            const style = document.createElement('style');
+            style.textContent = `
+                tbody tr.highlighted {
+                    background: linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(22, 160, 133, 0.1) 100%) !important;
+                    border-left: 4px solid var(--primary-green) !important;
+                }
+            `;
+            document.head.appendChild(style);
 
-                              setTimeout(() => {
-                                    updateBtn.style.background = '#1ABC9C';
-                                    updateBtn.textContent = originalText;
-                              }, 1500);
-
-                              // Update stats (simple simulation)
-                              updateStats();
-                        }, 1000);
-                  }
-
-                  // View book details
-                  function viewDetails(bookId) {
-                        alert(`View details for book: ${bookId}`);
-                  }
-
-                  // Search functionality
-                  function searchBooks() {
-                        const searchBtn = document.querySelector('.search-btn');
-                        const searchText = document.getElementById('searchText');
-                        const searchLoading = document.getElementById('searchLoading');
-
-                        searchText.style.display = 'none';
-                        searchLoading.style.display = 'inline-block';
-                        searchBtn.disabled = true;
-
-                        // Simulate search
-                        setTimeout(() => {
-                              searchText.style.display = 'inline-block';
-                              searchLoading.style.display = 'none';
-                              searchBtn.disabled = false;
-                        }, 1500);
-                  }
-
-                  // Reset search
-                  function resetSearch() {
-                        document.getElementById('searchTitle').value = '';
-                        document.getElementById('searchAuthor').value = '';
-                  }
-
-                  // Update stats
-                  function updateStats() {
-                        // This would normally fetch real data from the server
-                        const stats = document.querySelectorAll('.stat-number');
-                        stats.forEach(stat => {
-                              stat.style.color = '#27ae60';
-                              setTimeout(() => {
-                                    stat.style.color = '#1ABC9C';
-                              }, 1000);
-                        });
-                  }
-
-                  // Navigation functions
-                  function goBack() {
-                        history.back();
-                  }
-
-                  function logout() {
-                        if (confirm('Are you sure you want to logout?')) {
-                              // Redirect to login page
-                              window.location.href = 'login.jsp';
+// Performance optimization: Lazy load images if any
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src;
+                            img.classList.remove('lazy');
+                            imageObserver.unobserve(img);
                         }
-                  }
+                    });
+                });
 
-                  // Initialize page
-                  document.addEventListener('DOMContentLoaded', function () {
-                        // Set initial state for quantity controls
-                        const qtyInputs = document.querySelectorAll('.qty-input');
-                        qtyInputs.forEach(input => {
-                              const bookId = input.id.replace('qty-', '');
-                              const minusBtn = input.previousElementSibling;
-                              minusBtn.disabled = parseInt(input.value) === 0;
-                        });
-                  });
-         </script>
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            }
+        </script>
     </body>
 </html>
