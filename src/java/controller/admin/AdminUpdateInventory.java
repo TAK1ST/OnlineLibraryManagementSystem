@@ -26,6 +26,7 @@ import util.DBConnection;
  *
  * @author asus
  */
+
 public class AdminUpdateInventory extends HttpServlet {
 
     private final IUpdateInventoryService inventoryService;

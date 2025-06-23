@@ -97,7 +97,7 @@
                                     <p class="card-text">
                                         <small class="text-muted">Available Copies: ${book.availableCopies}</small>
                                     </p>
-                                    <a href="book-detail?id=${book.id}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    <a href="BookDetailServlet?id=${book.id}" class="btn btn-outline-primary btn-sm">View Details</a>
                                 </div>
                             </div>
                         </div>
@@ -121,7 +121,7 @@
                                     <p class="card-text">
                                         <small class="text-muted">Available Copies: ${book.availableCopies}</small>
                                     </p>
-                                    <a href="book-detail?id=${book.id}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    <a href="BookDetailServlet?id=${book.id}" class="btn btn-outline-primary btn-sm">View Details</a>
                                 </div>
                             </div>
                         </div>

@@ -1,267 +1,280 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
       <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Book Management System</title>
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+            <title>Book Management</title>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/add-book-manager.css"/>
-
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-book-management.css"/>
       </head>
       <body>
-            <!-- Header -->
-            <div class="header">
-                  <div class="container">
-                        <div class="row align-items-center">
-                              <div class="col-auto">
-                                    <button class="btn back-btn" onclick="goBack()">
-                                          <i class="fas fa-arrow-left me-1"></i>
+            <div class="container">
+                  <!-- Header -->
+                  <div class="header">
+                        <div class="header-left">
+                              <a href="admindashboard" style="text-decoration: none">
+                                    <button class="back-arrow">
+                                          <i class="fas fa-arrow-left"></i>
                                     </button>
-                              </div>
-                              <div class="col text-center">
-                                    <h1 class="main-title mb-0">Book Management</h1>
-                              </div>
-                              <div class="col-auto">
-                                    <button class="btn logout-btn">
-                                          <i class="fas fa-sign-out-alt me-2"></i>
-                                          Logout
-                                    </button>
-                              </div>
+                              </a>
+                              <h1>Book Management</h1>
                         </div>
+                        <a href="#" class="logout-btn">
+                              <i class="fas fa-sign-out-alt"></i>
+                              Logout
+                        </a>
                   </div>
-            </div>
 
-            <!-- Main Content -->
-            <div class="container fade-in">
+                  <!-- Alert Messages -->
+                  <c:if test="${not empty successMessage}">
+                        <div class="alert alert-success">
+                              <i class="fas fa-check-circle"></i>
+                              ${successMessage}
+                        </div>
+                  </c:if>
+
+                  <c:if test="${not empty errorMessage}">
+                        <div class="alert alert-error">
+                              <i class="fas fa-exclamation-circle"></i>
+                              ${errorMessage}
+                        </div>
+                  </c:if>
+
                   <!-- Filter Section -->
                   <div class="filter-section">
-                        <div class="row g-3 align-items-end">
-                              <div class="col-md-3">
-                                    <label class="form-label fw-semibold text-muted">Title</label>
-                                    <input type="text" class="form-control" placeholder="Search by title...">
+                        <form class="filter-form" method="GET" action="bookmanagement">
+                              <div class="filter-group">
+                                    <label for="title">Book Title</label>
+                                    <input type="text" id="title" name="title" class="filter-input" 
+                                           placeholder="Search by title..." value="${titleFilter}">
                               </div>
-                              <div class="col-md-3">
-                                    <label class="form-label fw-semibold text-muted">Category</label>
-                                    <select class="form-control">
+                              <div class="filter-group">
+                                    <label for="category">Category</label>
+                                    <select id="category" name="category" class="filter-select">
                                           <option value="">All Categories</option>
-                                          <option value="fiction">Fiction</option>
-                                          <option value="non-fiction">Non-Fiction</option>
-                                          <option value="science">Science</option>
-                                          <option value="technology">Technology</option>
+                                          <c:forEach var="cat" items="${categories}">
+                                                <option value="${cat}" ${categoryFilter eq cat ? 'selected' : ''}>${cat}</option>
+                                          </c:forEach>
                                     </select>
                               </div>
-                              <div class="col-md-3">
-                                    <label class="form-label fw-semibold text-muted">Author</label>
-                                    <input type="text" class="form-control" placeholder="Search by author...">
+                              <div class="filter-group">
+                                    <label for="author">Author Name</label>
+                                    <input type="text" id="author" name="author" class="filter-input" 
+                                           placeholder="Search by author..." value="${authorFilter}">
                               </div>
-                              <div class="col-md-2">
-                                    <label class="form-label fw-semibold text-muted">Status</label>
-                                    <select class="form-control">
+                              <div class="filter-group">
+                                    <label for="status">Status</label>
+                                    <select id="status" name="status" class="filter-select">
                                           <option value="">All Status</option>
-                                          <option value="available">Available</option>
-                                          <option value="borrowed">Borrowed</option>
-                                          <option value="reserved">Reserved</option>
+                                          <c:forEach var="stat" items="${statuses}">
+                                                <option value="${stat}" ${statusFilter eq stat ? 'selected' : ''}>${stat}</option>
+                                          </c:forEach>
                                     </select>
                               </div>
-                              <div class="col-md-1">
-                                    <button class="btn filter-btn w-100">
-                                          <i class="fas fa-filter"></i>
-                                    </button>
-                              </div>
-                        </div>
+                              <button type="submit" class="filter-btn">
+                                    <i class="fas fa-search"></i>
+                                    Search
+                              </button>
+                        </form>
                   </div>
 
                   <!-- Add Book Button -->
-                  <div class="mb-4">
-                        <button class="btn add-book-btn">
-                              <i class="fas fa-plus me-2"></i>
+                  <div class="add-book-section">
+                        <a href="addbook" class="add-book-btn">
+                              <i class="fas fa-plus"></i>
                               Add New Book
-                        </button>
+                        </a>
                   </div>
 
-                  <!-- Books Table -->
+                  <!-- Book Table -->
                   <div class="table-container">
-                        <div class="table-responsive">
-                              <table class="table table-hover mb-0">
-                                    <thead>
-                                          <tr>
-                                                <th>ISBN</th>
-                                                <th>Title</th>
-                                                <th>Author</th>
-                                                <th>Category</th>
-                                                <th>Status</th>
-                                                <th class="text-center">Actions</th>
-                                          </tr>
-                                    </thead>
-                                    <tbody>
-                                          <!-- Sample Data -->
-                                          <tr>
-                                                <td><span class="badge bg-light text-dark">978-0-123456-78-9</span></td>
-                                                <td><strong>The Great Gatsby</strong></td>
-                                                <td>F. Scott Fitzgerald</td>
-                                                <td><span class="badge" style="background-color: var(--secondary-color);">Fiction</span></td>
-                                                <td><span class="badge bg-success">Available</span></td>
-                                                <td class="text-center">
-                                                      <button class="btn btn-edit btn-sm">
-                                                            <i class="fas fa-edit me-1"></i>Edit
-                                                      </button>
-                                                      <button class="btn btn-delete btn-sm">
-                                                            <i class="fas fa-trash me-1"></i>Delete
-                                                      </button>
-                                                </td>
-                                          </tr>
-                                          <tr>
-                                                <td><span class="badge bg-light text-dark">978-0-987654-32-1</span></td>
-                                                <td><strong>Clean Code</strong></td>
-                                                <td>Robert C. Martin</td>
-                                                <td><span class="badge" style="background-color: var(--primary-color);">Technology</span></td>
-                                                <td><span class="badge bg-warning">Borrowed</span></td>
-                                                <td class="text-center">
-                                                      <button class="btn btn-edit btn-sm">
-                                                            <i class="fas fa-edit me-1"></i>Edit
-                                                      </button>
-                                                      <button class="btn btn-delete btn-sm">
-                                                            <i class="fas fa-trash me-1"></i>Delete
-                                                      </button>
-                                                </td>
-                                          </tr>
-                                          <tr>
-                                                <td><span class="badge bg-light text-dark">978-0-456789-01-2</span></td>
-                                                <td><strong>Sapiens</strong></td>
-                                                <td>Yuval Noah Harari</td>
-                                                <td><span class="badge" style="background-color: var(--dark-primary);">History</span></td>
-                                                <td><span class="badge bg-info">Reserved</span></td>
-                                                <td class="text-center">
-                                                      <button class="btn btn-edit btn-sm">
-                                                            <i class="fas fa-edit me-1"></i>Edit
-                                                      </button>
-                                                      <button class="btn btn-delete btn-sm">
-                                                            <i class="fas fa-trash me-1"></i>Delete
-                                                      </button>
-                                                </td>
-                                          </tr>
-                                          <!-- Empty state can be shown when no books -->
-                                          <!-- <tr>
-                                              <td colspan="6">
-                                                  <div class="empty-state">
-                                                      <i class="fas fa-book-open"></i>
-                                                      <h4>No books found</h4>
-                                                      <p class="text-muted">Add your first book to get started</p>
-                                                  </div>
-                                              </td>
-                                          </tr> -->
-                                    </tbody>
-                              </table>
-                        </div>
+                        <c:choose>
+                              <c:when test="${not empty books}">
+                                    <table class="book-table">
+                                          <thead class="table-header">
+                                                <tr>
+                                                      <th>ISBN</th>
+                                                      <th>Title</th>
+                                                      <th>Author</th>
+                                                      <th>Category</th>
+                                                      <th>Status</th>
+                                                      <th>Actions</th>
+                                                </tr>
+                                          </thead>
+                                          <tbody>
+                                                <c:forEach var="book" items="${books}">
+                                                      <tr class="table-row">
+                                                            <td class="table-cell">${book.isbn}</td>
+                                                            <td class="table-cell">${book.title}</td>
+                                                            <td class="table-cell">${book.author}</td>
+                                                            <td class="table-cell">${book.category}</td>
+                                                            <td class="table-cell">
+                                                                  <span class="status-${book.status.toLowerCase()}">${book.status}</span>
+                                                            </td>
+                                                            <td class="table-cell">
+                                                                  <div class="action-buttons">
+                                                                        <form method="POST" action="bookmanagement" style="display: inline;">
+                                                                              <input type="hidden" name="action" value="edit">
+                                                                              <input type="hidden" name="bookId" value="${book.id}">
+                                                                              <!-- Preserve current filters -->
+                                                                              <input type="hidden" name="currentTitle" value="${titleFilter}">
+                                                                              <input type="hidden" name="currentAuthor" value="${authorFilter}">
+                                                                              <input type="hidden" name="currentCategory" value="${categoryFilter}">
+                                                                              <input type="hidden" name="currentStatus" value="${statusFilter}">
+                                                                              <input type="hidden" name="currentPage" value="${currentPage}">
+                                                                              <input type="hidden" name="currentSize" value="${pageSize}">
+                                                                              <button type="submit" class="edit-btn">
+                                                                                    <i class="fas fa-edit"></i>
+                                                                                    Edit
+                                                                              </button>
+                                                                        </form>
+
+                                                                        <c:if test="${book.status ne 'inactive'}">
+                                                                              <button class="delete-btn" onclick="confirmDelete('${book.id}', '${book.title}')">
+                                                                                    <i class="fas fa-trash"></i>
+                                                                                    Delete
+                                                                              </button>
+                                                                        </c:if>
+                                                                  </div>
+                                                            </td>
+                                                      </tr>
+                                                </c:forEach>
+                                          </tbody>
+                                    </table>
+                              </c:when>
+                              <c:otherwise>
+                                    <div class="no-data">
+                                          <i class="fas fa-book"></i>
+                                          <p>No books found matching your criteria.</p>
+                                    </div>
+                              </c:otherwise>
+                        </c:choose>
                   </div>
 
                   <!-- Pagination -->
-                  <div class="d-flex justify-content-center mt-4">
-                        <nav>
-                              <ul class="pagination">
-                                    <li class="page-item disabled">
-                                          <span class="page-link" style="color: var(--dark-secondary);">Previous</span>
-                                    </li>
-                                    <li class="page-item active">
-                                          <span class="page-link" style="background-color: var(--secondary-color); border-color: var(--secondary-color);">1</span>
-                                    </li>
-                                    <li class="page-item">
-                                          <a class="page-link" href="#" style="color: var(--dark-primary);">2</a>
-                                    </li>
-                                    <li class="page-item">
-                                          <a class="page-link" href="#" style="color: var(--dark-primary);">3</a>
-                                    </li>
-                                    <li class="page-item">
-                                          <a class="page-link" href="#" style="color: var(--dark-primary);">Next</a>
-                                    </li>
-                              </ul>
-                        </nav>
+                  <c:if test="${totalPages > 1}">
+                        <div class="pagination">
+                              <!-- Previous Button -->
+                              <c:if test="${currentPage > 1}">
+                                    <a href="bookmanagement?page=${currentPage - 1}&size=${pageSize}&title=${titleFilter}&author=${authorFilter}&category=${categoryFilter}&status=${statusFilter}" 
+                                       class="page-btn">Previous</a>
+                              </c:if>
+
+                              <!-- Page Numbers -->
+                              <c:forEach var="i" begin="1" end="${totalPages}">
+                                    <c:choose>
+                                          <c:when test="${i eq currentPage}">
+                                                <span class="page-btn active">${i}</span>
+                                          </c:when>
+                                          <c:otherwise>
+                                                <a href="bookmanagement?page=${i}&size=${pageSize}&title=${titleFilter}&author=${authorFilter}&category=${categoryFilter}&status=${statusFilter}" 
+                                                   class="page-btn">${i}</a>
+                                          </c:otherwise>
+                                    </c:choose>
+                              </c:forEach>
+
+                              <!-- Next Button -->
+                              <c:if test="${currentPage < totalPages}">
+                                    <a href="bookmanagement?page=${currentPage + 1}&size=${pageSize}&title=${titleFilter}&author=${authorFilter}&category=${categoryFilter}&status=${statusFilter}" 
+                                       class="page-btn">Next</a>
+                              </c:if>
+                        </div>
+
+                        <!-- Pagination Info -->
+                        <div class="pagination-info">
+                              Showing ${((currentPage - 1) * pageSize) + 1} to ${currentPage * pageSize > totalBooks ? totalBooks : currentPage * pageSize} of ${totalBooks} books
+                        </div>
+                  </c:if>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div id="deleteModal" class="modal">
+                  <div class="modal-content">
+                        <h3>
+                              <i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> 
+                              Confirm Delete
+                        </h3>
+                        <p>Are you sure you want to delete this book?</p>
+                        <p><strong id="bookTitle"></strong></p>
+                        <p style="color: #6c757d; font-size: 14px; margin-top: 12px;">This action will mark the book as inactive and cannot be undone.</p>
+                        <div class="modal-buttons">
+                              <button type="button" class="modal-btn btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                              <button type="button" class="modal-btn btn-confirm" onclick="executeDelete()">Delete Book</button>
+                        </div>
                   </div>
             </div>
 
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+            <!-- Hidden Delete Form -->
+            <form id="deleteForm" method="POST" action="bookmanagement" style="display: none;">
+                  <input type="hidden" name="action" value="delete">
+                  <input type="hidden" name="bookId" id="deleteBookId">
+                  <!-- Preserve current filters -->
+                  <input type="hidden" name="currentTitle" value="${titleFilter}">
+                  <input type="hidden" name="currentAuthor" value="${authorFilter}">
+                  <input type="hidden" name="currentCategory" value="${categoryFilter}">
+                  <input type="hidden" name="currentStatus" value="${statusFilter}">
+                  <input type="hidden" name="currentPage" value="${currentPage}">
+                  <input type="hidden" name="currentSize" value="${pageSize}">
+            </form>
+
             <script>
-                                  function goBack()
-                                  {
-                                        history.back();
-                                  }
-                                  // Add some interactive functionality
-                                  document.addEventListener('DOMContentLoaded', function () {
-                                        // Filter functionality
-                                        const filterBtn = document.querySelector('.filter-btn');
-                                        const inputs = document.querySelectorAll('.form-control');
+                  let currentDeleteBookId = null;
 
-                                        filterBtn.addEventListener('click', function () {
-                                              // Add loading animation
-                                              this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                                              setTimeout(() => {
-                                                    this.innerHTML = '<i class="fas fa-filter"></i>';
-                                              }, 1000);
-                                        });
-
-                                        // Add hover effects to table rows
-                                        const tableRows = document.querySelectorAll('tbody tr');
-                                        tableRows.forEach(row => {
-                                              row.addEventListener('mouseenter', function () {
-                                                    this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
-                                              });
-                                              row.addEventListener('mouseleave', function () {
-                                                    this.style.boxShadow = 'none';
-                                              });
-                                        });
-
-                                        // Button click animations
-                                        const buttons = document.querySelectorAll('.btn');
-                                        buttons.forEach(btn => {
-                                              btn.addEventListener('click', function (e) {
-                                                    // Create ripple effect
-                                                    const ripple = document.createElement('span');
-                                                    const rect = this.getBoundingClientRect();
-                                                    const size = Math.max(rect.width, rect.height);
-                                                    const x = e.clientX - rect.left - size / 2;
-                                                    const y = e.clientY - rect.top - size / 2;
-
-                                                    ripple.style.width = ripple.style.height = size + 'px';
-                                                    ripple.style.left = x + 'px';
-                                                    ripple.style.top = y + 'px';
-                                                    ripple.classList.add('ripple');
-
-                                                    this.appendChild(ripple);
-
-                                                    setTimeout(() => {
-                                                          ripple.remove();
-                                                    }, 600);
-                                              });
-                                        });
-                                  });
-            </script>
-
-            <style>
-                  .fa-arrow-left
-                  {
-                        size: 20px;
-                  }
-                  .ripple {
-                        position: absolute;
-                        border-radius: 50%;
-                        background: rgba(255, 255, 255, 0.6);
-                        transform: scale(0);
-                        animation: ripple 0.6s linear;
-                        pointer-events: none;
+                  function confirmDelete(bookId, bookTitle) {
+                        currentDeleteBookId = bookId;
+                        document.getElementById('bookTitle').textContent = bookTitle;
+                        document.getElementById('deleteModal').style.display = 'block';
                   }
 
-                  @keyframes ripple {
-                        to {
-                              transform: scale(4);
-                              opacity: 0;
+                  function closeDeleteModal() {
+                        document.getElementById('deleteModal').style.display = 'none';
+                        currentDeleteBookId = null;
+                  }
+
+                  function executeDelete() {
+                        if (currentDeleteBookId) {
+                              document.getElementById('deleteBookId').value = currentDeleteBookId;
+                              document.getElementById('deleteForm').submit();
                         }
                   }
 
-                  .btn {
-                        position: relative;
-                        overflow: hidden;
+                  // Close modal when clicking outside
+                  window.onclick = function (event) {
+                        const modal = document.getElementById('deleteModal');
+                        if (event.target === modal) {
+                              closeDeleteModal();
+                        }
                   }
-            </style>
+
+                  // Auto-hide alert messages after 5 seconds
+                  document.addEventListener('DOMContentLoaded', function () {
+                        const alerts = document.querySelectorAll('.alert');
+                        alerts.forEach(alert => {
+                              setTimeout(() => {
+                                    alert.style.opacity = '0';
+                                    setTimeout(() => {
+                                          alert.style.display = 'none';
+                                    }, 300);
+                              }, 5000);
+                        });
+                  });
+
+                  // Smooth animations for table rows
+                  document.addEventListener('DOMContentLoaded', function () {
+                        const rows = document.querySelectorAll('.table-row');
+                        rows.forEach((row, index) => {
+                              row.style.opacity = '0';
+                              row.style.transform = 'translateY(20px)';
+                              setTimeout(() => {
+                                    row.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                                    row.style.opacity = '1';
+                                    row.style.transform = 'translateY(0)';
+                              }, index * 100);
+                        });
+                  });
+            </script>
       </body>
 </html>

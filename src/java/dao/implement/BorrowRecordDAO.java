@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import util.DBConnection;
 
 /**
@@ -266,7 +267,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                     + "FROM borrow_records "
                     + "GROUP BY MONTH(borrow_date)";
 
-            int [] ls = new int[12];
+            int[] ls = new int[12];
             try {
                   cn = DBConnection.getConnection();
                   PreparedStatement pr = cn.prepareStatement(sql);
@@ -329,6 +330,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
             int uniqueUserCount = 0;
 
             LocalDate today = LocalDate.now();
+
 
             LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
@@ -443,7 +445,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                               prst.close();
                         }
                   } catch (SQLException e) {
-                        System.err.println("Lỗi khi đóng PreparedStatement trong BorrowRecordDAO (save): " + e.getMessage());
+                        System.err.println("Error: " + e.getMessage());
                         e.printStackTrace();
                   }
             }
@@ -465,5 +467,51 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
 
             record.setStatus(rs.getString("status"));
             return record;
+      }
+
+      @Override
+      public Optional<BorrowRecord> getBorrowRecordByRequestId(int requestId) {
+            String sql = "SELECT * FROM borrow_records WHERE request_id = ?";
+            Connection cn = null;
+            PreparedStatement pr = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  pr = cn.prepareStatement(sql);
+                  pr.setInt(1, requestId);
+                  ResultSet rs = pr.executeQuery();
+                  if (rs.next()) {
+                        return Optional.of(mapRowToBorrowRecord(rs));
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            }
+            return Optional.empty();
+      }
+
+      @Override
+      public List<BorrowRecord> getBorrowRecordsByUserIdAndBookId(int userId, int bookId) {
+            List<BorrowRecord> records = new ArrayList<>();
+            Connection cn = null;
+            PreparedStatement pr = null;
+            String sql = "SELECT [id],[user_id],[book_id],[borrow_date],[due_date],[return_date],[status] FROM [dbo].[borrow_records] WHERE user_id = ? AND book_id = ?";
+            try {
+                  cn = DBConnection.getConnection();
+                  pr = cn.prepareStatement(sql);
+                  if (cn == null) {
+                        System.err.println("Cannot connect database.");
+                        return records;
+                  }
+                  pr.setInt(1, userId);
+                  pr.setInt(2, bookId);
+                  try ( ResultSet rs = pr.executeQuery()) {
+                        while (rs.next()) {
+                              records.add(mapRowToBorrowRecord(rs));
+                        }
+                  }
+            } catch (Exception e) {
+                  System.err.println("Error: " + e.getMessage());
+                  e.printStackTrace();
+            }
+            return records;
       }
 }

@@ -12,6 +12,7 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>System Configuration</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/system-config.css"/>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css"/>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css"/>
@@ -23,12 +24,24 @@
                   <div class="sidebar">
                         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
                         <h3>Role: Administrator</h3>
-                        <a href="admindashboard" class="nav-link">Dashboard</a>
-                        <a href="systemconfig" class="nav-link active">System Config</a>
-                        <a href="usermanagement" class="nav-link">User Management</a>
-                        <a href="statusrequestborrowbook" class="nav-link">View Request Books</a>
-                        <a href="bookmanagement" class="nav-link">Book Management</a>
-                        <a href="updateinventory" class="nav-link">Update Inventory</a>
+                        <a href="admindashboard" class="nav-link">
+                              <i class="fas fa-chart-bar"></i> Dashboard
+                        </a>
+                        <a href="systemconfig" class="nav-link active">
+                              <i class="fas fa-cog"></i> System Config
+                        </a>
+                        <a href="usermanagement" class="nav-link">
+                              <i class="fas fa-users"></i> User Management
+                        </a>
+                        <a href="statusrequestborrowbook" class="nav-link">
+                              <i class="fas fa-clock"></i> View Request Books
+                        </a>
+                        <a href="bookmanagement" class="nav-link">
+                              <i class="fas fa-book"></i> Book Management
+                        </a>
+                        <a href="updateinventory" class="nav-link">
+                              <i class="fas fa-boxes"></i> Update Inventory
+                        </a>
                   </div>
 
                   <!-- Main Content -->
@@ -36,9 +49,7 @@
                         <!-- Header -->
                         <div class="header">
                               <h1>System Configuration</h1>
-                              <button class="logout-btn" onclick="logout()">
-                                  <a href="LogoutServlet" class="nav-link">Logout</a>
-                              </button>
+                              <button class="logout-btn" onclick="logout()">Logout</button>
                         </div>
 
                         <!-- Message Display -->
@@ -87,14 +98,14 @@
             <script>
                                     function logout() {
                                           if (confirm('Are you sure you want to logout?')) {
-                                                window.location.href = 'logout';
+                                                window.location.href = 'LogoutServlet';
                                           }
                                     }
                                     setTimeout(function () {
                                           const alertEl = document.getElementById("autoAlert");
                                           if (alertEl) {
                                                 alertEl.classList.remove("show");
-                                                alertEl.classList.add("fade"); 
+                                                alertEl.classList.add("fade");
                                                 setTimeout(() => alertEl.remove(), 300);
                                           }
                                     }, 1000);
