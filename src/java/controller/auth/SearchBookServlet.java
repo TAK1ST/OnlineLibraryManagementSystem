@@ -2,6 +2,7 @@ package controller.auth;
 
 import dao.implement.BookDAO;
 import entity.Book;
+import entity.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
@@ -9,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +36,8 @@ public class SearchBookServlet extends HttpServlet {
                 (category == null || category.trim().isEmpty())) {
                 books = new ArrayList<>(bookDAO.getAllBook());
                 // Get new books for the homepage
-                newBooks = new ArrayList<>(bookDAO.getNewBooks());
+                newBooks = new ArrayList<>(bookDAO.getNewBooks()); // Get top 5 new books
+
             } else {
                 books = bookDAO.searchBooks(title, author, category);
             }
@@ -56,7 +59,12 @@ public class SearchBookServlet extends HttpServlet {
             Logger.getLogger(SearchBookServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("loginedUser") != null) {
+            request.getRequestDispatcher("search.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+        }
     }
 
     @Override

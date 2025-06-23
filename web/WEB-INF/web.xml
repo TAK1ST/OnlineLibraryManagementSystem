@@ -2,52 +2,76 @@
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <!--servlet config-->
     <servlet>
-        <servlet-name>                                                          LoginServlet                                                          </servlet-name>
+        <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.auth.LoginServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                          LogoutServlet                                                        </servlet-name>
+        <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>controller.auth.LogoutServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                          RegisterServlet                                                      </servlet-name>
+        <servlet-name>RegisterServlet</servlet-name>
         <servlet-class>controller.auth.RegisterServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                          ResetPasswordServlet                                          </servlet-name>
+        <servlet-name>ResetPasswordServlet</servlet-name>
         <servlet-class>controller.auth.ResetPasswordServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                          ServletURL                                                            </servlet-name>
+        <servlet-name>ServletURL</servlet-name>
         <servlet-class>constant.ServletURL</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                          ViewURL                                                               </servlet-name>
+        <servlet-name>ViewURL</servlet-name>
         <servlet-class>constant.ViewURL</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                          AdminDashboard                                                  </servlet-name>
+        <servlet-name>AdminDashboard</servlet-name>
         <servlet-class>controller.admin.AdminDashboard</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                        AdminSystemConfig                                              </servlet-name>
+        <servlet-name>AdminSystemConfig</servlet-name>
         <servlet-class>controller.admin.AdminSystemConfig</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                        AdminUserManagement                                        </servlet-name>
+        <servlet-name>AdminUserManagement</servlet-name>
         <servlet-class>controller.admin.AdminUserManagement</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                        AdminBookManagement                                       </servlet-name>
+        <servlet-name>AdminBookManagement</servlet-name>
         <servlet-class>controller.admin.AdminBookManagement</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                      AdminOverdueBook                                               </servlet-name>
+        <servlet-name>AddBookManagement</servlet-name>
+        <servlet-class>controller.admin.AddBookManagement</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminOverdueBook</servlet-name>
         <servlet-class>controller.admin.AdminOverdueBook</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>                                                      BookDetailServlet                                                   </servlet-name>
+        <servlet-name>BookDetailServlet</servlet-name>
         <servlet-class>controller.auth.BookDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewCartServlet</servlet-name>
+        <servlet-class>controller.cart.ViewCartServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateCartServlet</servlet-name>
+        <servlet-class>controller.cart.UpdateCartServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RemoveFromCartServlet</servlet-name>
+        <servlet-class>controller.cart.RemoveFromCartServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddToCartServlet</servlet-name>
+        <servlet-class>controller.cart.AddToCartServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SubmitBorrowRequestServlet</servlet-name>
+        <servlet-class>controller.cart.SubmitBorrowRequestServlet</servlet-class>
     </servlet>
     <!--mapping-->
     <servlet>
@@ -75,6 +99,9 @@
         <servlet-class>controller.admin.AdminSearchUser</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>controller.auth.HomeServlet</servlet-class>
+
         <servlet-name>AdminUserDetail</servlet-name>
         <servlet-class>controller.admin.AdminUserDetail</servlet-class>
     </servlet>
@@ -85,6 +112,7 @@
     <servlet>
         <servlet-name>AdminAddBookManager</servlet-name>
         <servlet-class>controller.admin.AdminAddBookManager</servlet-class>
+
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -155,6 +183,29 @@
         <url-pattern>/searchUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCartServlet</servlet-name>
+        <url-pattern>/cart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateCartServlet</servlet-name>
+        <url-pattern>/UpdateCartServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RemoveFromCartServlet</servlet-name>
+        <url-pattern>/RemoveFromCartServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddToCartServlet</servlet-name>
+        <url-pattern>/AddToCartServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SubmitBorrowRequestServlet</servlet-name>
+        <url-pattern>/SubmitBorrowRequestServlet</url-pattern>
         <servlet-name>AdminDashboard</servlet-name>
         <url-pattern>/admindashboard</url-pattern>
     </servlet-mapping>

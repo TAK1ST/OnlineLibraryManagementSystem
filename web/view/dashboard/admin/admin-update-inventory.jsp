@@ -36,7 +36,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Main Content - Centered -->
         <div class="main-container">
             <!-- Statistics -->

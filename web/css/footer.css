@@ -7,15 +7,18 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Author     : asus
 */
 
+@import 'theme.css';
+
 .footer {
       text-align: center;
-      color: white;
+      color: var(--light);
       font-weight: 600;
-      padding: 10px;
-      background-color: #16A085;
+      padding: var(--spacing-md);
+      background: var(--gradient-accent);
       position: fixed;
-      left:250px;
+      left: 250px;
       bottom: 0;
       width: calc(100% - 250px);
       text-align: center;
+      box-shadow: var(--shadow-md);
 }

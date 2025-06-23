@@ -104,7 +104,42 @@ public class BookDAO implements IBookDAO {
             return books;
       }
 
-      // Lấy sách mới nhất
+      public List<Book> getNewBooks(int limit) throws SQLException, ClassNotFoundException {
+            List<Book> newBooks = new ArrayList<>();
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  String sql = "SELECT TOP ? [id],[title],[isbn],[author],[category],[published_year],"
+                          + "[total_copies],[available_copies],[status]\n"
+                          + "FROM [dbo].[books]\n"
+                          + "ORDER BY [published_year] DESC, [id] DESC";
+
+                  PreparedStatement st = cn.prepareStatement(sql);
+                  st.setInt(1, limit);
+                  ResultSet rs = st.executeQuery();
+
+                  while (rs.next()) {
+                        Book book = new Book();
+                        book.setId(rs.getInt("id"));
+                        book.setTitle(rs.getString("title"));
+                        book.setIsbn(rs.getString("isbn"));
+                        book.setAuthor(rs.getString("author"));
+                        book.setCategory(rs.getString("category"));
+                        book.setPublishedYear(rs.getInt("published_year"));
+                        book.setTotalCopies(rs.getInt("total_copies"));
+                        book.setAvailableCopies(rs.getInt("available_copies"));
+                        book.setStatus(rs.getString("status"));
+                        newBooks.add(book);
+                  }
+            } finally {
+                  if (cn != null) {
+                        cn.close();
+                  }
+            }
+            return newBooks;
+      }
+
+
       @Override
       public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
             List<Book> newBooks = new ArrayList<>();
@@ -588,6 +623,44 @@ public class BookDAO implements IBookDAO {
                         e.printStackTrace();
                   }
             }
-            return bookList;
+        }
+    }
+    return book;
+  }
+
+      @Override
+      public boolean updateBook(Book book) throws SQLException, ClassNotFoundException {
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  String sql = "UPDATE [dbo].[books] SET "
+                          + "[title] = ?, "
+                          + "[isbn] = ?, "
+                          + "[author] = ?, "
+                          + "[category] = ?, "
+                          + "[published_year] = ?, "
+                          + "[total_copies] = ?, "
+                          + "[available_copies] = ?, "
+                          + "[status] = ? "
+                          + "WHERE [id] = ?";
+
+                  PreparedStatement st = cn.prepareStatement(sql);
+                  st.setString(1, book.getTitle());
+                  st.setString(2, book.getIsbn());
+                  st.setString(3, book.getAuthor());
+                  st.setString(4, book.getCategory());
+                  st.setInt(5, book.getPublishedYear());
+                  st.setInt(6, book.getTotalCopies());
+                  st.setInt(7, book.getAvailableCopies());
+                  st.setString(8, book.getStatus());
+                  st.setInt(9, book.getId());
+
+                  int rowsAffected = st.executeUpdate();
+                  return rowsAffected > 0;
+            } finally {
+                  if (cn != null && !cn.isClosed()) {
+                        cn.close();
+                  }
+            }
       }
 }

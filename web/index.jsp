@@ -4,137 +4,237 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Library Dashboard</title>
+        <title>Thư viện trực tuyến</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
         <style>
+            /* Hero section */
+            .hero-section {
+                background: var(--gradient-primary);
+                color: var(--light);
+                padding: var(--spacing-xl) 0;
+                text-align: center;
+                margin-bottom: var(--spacing-xl);
+            }
+
+            .hero-section h1 {
+                font-size: 3rem;
+                margin-bottom: var(--spacing-md);
+                font-weight: 700;
+            }
+
+            .hero-section p {
+                font-size: 1.2rem;
+                opacity: 0.9;
+            }
+
+            /* Search section */
+            .search-form {
+                background: var(--light);
+                padding: var(--spacing-lg);
+                border-radius: var(--border-radius-lg);
+                box-shadow: var(--shadow-md);
+                margin-bottom: var(--spacing-xl);
+            }
+
+            /* Book cards */
             .book-card {
                 height: 100%;
-                transition: transform 0.2s;
-                margin-bottom: 20px;
+                transition: all 0.3s ease;
+                margin-bottom: var(--spacing-md);
                 border: none;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                border-radius: var(--border-radius-lg);
+                box-shadow: var(--shadow-sm);
+                overflow: hidden;
+                background: white;
             }
+
             .book-card:hover {
-                transform: scale(1.02);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-lg);
             }
-            .search-form {
-                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-                padding: 25px;
-                border-radius: 15px;
-                margin-bottom: 30px;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+
+            .book-card .card-img-top {
+                height: 250px;
+                object-fit: cover;
             }
+
+            .book-card .card-body {
+                padding: var(--spacing-md);
+            }
+
+            .book-card .card-title {
+                color: var(--primary-dark);
+                font-weight: 600;
+                margin-bottom: var(--spacing-sm);
+            }
+
+            .book-card .card-text {
+                color: var(--secondary-dark);
+                font-size: 0.9rem;
+            }
+
+            /* Section titles */
             .section-title {
-                border-left: 5px solid #0d6efd;
-                padding-left: 15px;
-                margin-bottom: 25px;
+                border-left: 5px solid var(--primary-accent);
+                padding-left: var(--spacing-md);
+                margin-bottom: var(--spacing-lg);
+                color: var(--primary-dark);
             }
+
+            /* Badges */
             .badge-new {
                 position: absolute;
-                top: 10px;
-                right: 10px;
-                background-color: #198754;
-                padding: 5px 10px;
-                border-radius: 5px;
-                color: white;
+                top: var(--spacing-sm);
+                right: var(--spacing-sm);
+                background: var(--gradient-accent);
+                padding: var(--spacing-xs) var(--spacing-sm);
+                border-radius: var(--border-radius-sm);
+                color: var(--light);
+                font-weight: 500;
+                box-shadow: var(--shadow-sm);
+            }
+
+            /* Navbar */
+            .navbar {
+                background: var(--gradient-primary) !important;
+                padding: var(--spacing-md) var(--spacing-lg);
+                box-shadow: var(--shadow-md);
+            }
+
+            .navbar-brand {
+                color: var(--light) !important;
+                font-weight: 600;
+            }
+
+            .nav-link {
+                color: var(--light) !important;
+                transition: all 0.3s ease;
+            }
+
+            .nav-link:hover {
+                color: var(--primary-accent) !important;
+            }
+
+            /* Buttons */
+            .btn-primary {
+                background: var(--gradient-accent);
+                border: none;
+                padding: var(--spacing-sm) var(--spacing-md);
+                border-radius: var(--border-radius-md);
+                color: var(--light);
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-md);
+            }
+
+            /* Category badges */
+            .category-badge {
+                background: rgba(26, 188, 156, 0.1);
+                color: var(--primary-accent);
+                padding: var(--spacing-xs) var(--spacing-sm);
+                border-radius: var(--border-radius-sm);
+                font-size: 0.8rem;
+                font-weight: 500;
             }
         </style>
     </head>
-    <body class="bg-light">
-        <!-- Navigation Bar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg">
             <div class="container">
-                <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
-                    <i class="fas fa-book-reader me-2"></i>Online Library
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-book-reader me-2"></i>
+                    Thư viện trực tuyến
                 </a>
-                <div class="d-flex">
-                    <a href="${pageContext.request.contextPath}/LoginServlet" class="btn btn-outline-light">Login</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="${pageContext.request.contextPath}/LoginServlet">
+                                <i class="fas fa-sign-in-alt me-1"></i>
+                                Đăng nhập
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="${pageContext.request.contextPath}/RegisterServlet">
+                                <i class="fas fa-user-plus me-1"></i>
+                                Đăng ký
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
 
-        <div class="container mt-4">
-            <!-- Search Form -->
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <h1>Chào mừng đến với Thư viện trực tuyến</h1>
+                <p>Khám phá hàng ngàn đầu sách và mở rộng kiến thức của bạn</p>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <div class="container">
             <div class="search-form">
-                <h4 class="mb-4 section-title">Search Books</h4>
                 <form action="${pageContext.request.contextPath}/search" method="GET" class="row g-3">
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="title" placeholder="Book Title" value="${title}">
+                        <input type="text" class="form-control" name="title" placeholder="Tên sách">
                     </div>
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" name="author" placeholder="Author" value="${author}">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="author" placeholder="Tác giả">
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" name="category">
-                            <option value="">Select Category</option>
-                            <c:forEach items="${categories}" var="cat">
-                                <option value="${cat}" ${cat eq category ? 'selected' : ''}>${cat}</option>
+                            <option value="">Tất cả thể loại</option>
+                            <c:forEach items="${categories}" var="category">
+                                <option value="${category.id}">${category.name}</option>
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
                 </form>
             </div>
 
-            <!-- New Arrivals Section -->
-            <c:if test="${empty param.title and empty param.author and empty param.category}">
-                <h4 class="mb-4 section-title">New Arrivals</h4>
-                <div class="row">
-                    <c:forEach items="${newBooks}" var="book">
-                        <div class="col-md-3">
-                            <div class="card book-card">
-                                <div class="badge-new">New</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">${book.title}</h5>
-                                    <p class="card-text">
-                                        <small class="text-muted">By ${book.author}</small><br>
-                                        <span class="badge bg-info">${book.category}</span>
-                                    </p>
-                                    <p class="card-text">
-                                        <small class="text-muted">Available Copies: ${book.availableCopies}</small>
-                                    </p>
-                                    <a href="BookDetailServlet?id=${book.id}" class="btn btn-outline-primary btn-sm">View Details</a>
-                                </div>
+            <!-- Latest Books Section -->
+            <h2 class="section-title">Sách mới nhất</h2>
+            <div class="row">
+                <c:forEach items="${latestBooks}" var="book">
+                    <div class="col-md-3 mb-4">
+                        <div class="card book-card">
+                            <c:if test="${book.isNew}">
+                                <span class="badge-primary position-absolute top-2 end-2">Mới</span>
+                            </c:if>
+                            <img src="${book.coverImage}" class="card-img-top" alt="${book.title}">
+                            <div class="card-body">
+                                <h5 class="card-title">${book.title}</h5>
+                                <p class="card-text">${book.author}</p>
+                                <span class="badge-primary">${book.category}</span>
                             </div>
                         </div>
-                    </c:forEach>
-                </div>
-            </c:if>
-
-            <!-- Search Results or All Books -->
-            <c:if test="${not empty books}">
-                <h4 class="mb-4 section-title">${empty param.title and empty param.author and empty param.category ? 'All Books' : 'Search Results'}</h4>
-                <div class="row">
-                    <c:forEach items="${books}" var="book">
-                        <div class="col-md-3">
-                            <div class="card book-card">
-                                <div class="card-body">
-                                    <h5 class="card-title">${book.title}</h5>
-                                    <p class="card-text">
-                                        <small class="text-muted">By ${book.author}</small><br>
-                                        <span class="badge bg-info">${book.category}</span>
-                                    </p>
-                                    <p class="card-text">
-                                        <small class="text-muted">Available Copies: ${book.availableCopies}</small>
-                                    </p>
-                                    <a href="BookDetailServlet?id=${book.id}" class="btn btn-outline-primary btn-sm">View Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    </c:forEach>
-                </div>
-            </c:if>
-
-            <c:if test="${empty books and (not empty param.title or not empty param.author or not empty param.category)}">
-                <div class="alert alert-info">
-                    No books found matching your search criteria.
-                </div>
-            </c:if>
+                    </div>
+                </c:forEach>
+            </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container text-center">
+                <p class="mb-0">&copy; 2024 Thư viện trực tuyến. All rights reserved.</p>
+            </div>
+        </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
