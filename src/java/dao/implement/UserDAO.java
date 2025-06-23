@@ -409,7 +409,34 @@ public class UserDAO implements IUserDAO {
                   }
             }
       }
-      
+
+      public int updateUser(int id, String name, String password) {
+            int result = 0;
+            Connection cn = null;
+            try {
+                  cn = DBConnection.getConnection();
+                  if (cn != null) {
+                        String sql = "update dbo.users set name=? , password=? where id=?";
+                        PreparedStatement st = cn.prepareStatement(sql);
+                        st.setString(1, name);
+                        st.setString(2, password);
+                        st.setInt(3, id);
+                        result = st.executeUpdate();
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            } finally {
+                  try {
+                        if (cn != null) {
+                              cn.close();
+                        }
+                  } catch (Exception e) {
+                        e.printStackTrace();
+                  }
+            }
+            return result;
+      }
+
       @Override
       public void delete(int userId) {
             Connection cn = null;

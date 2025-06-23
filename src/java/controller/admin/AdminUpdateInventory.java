@@ -18,6 +18,7 @@ import service.interfaces.IUpdateInventoryService;
  *
  * @author asus
  */
+
 public class AdminUpdateInventory extends HttpServlet {
 
       private final IUpdateInventoryService inventoryService;

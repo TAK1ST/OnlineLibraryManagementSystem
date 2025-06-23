@@ -331,6 +331,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
 
             LocalDate today = LocalDate.now();
 
+
             LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
             String sql = "SELECT COUNT(DISTINCT user_id) FROM [dbo].[borrow_records] WHERE borrow_date BETWEEN ? AND ?";

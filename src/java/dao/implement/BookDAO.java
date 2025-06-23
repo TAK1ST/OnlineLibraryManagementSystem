@@ -6,6 +6,7 @@ package dao.implement;
 
 import dao.interfaces.IBookDAO;
 import dto.BorrowedBookDTO;
+import dto.BorrowedBookDTO;
 import entity.Book;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -96,6 +97,7 @@ public class BookDAO implements IBookDAO {
             return bookList;
       }
 
+
       @Override
       public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
             List<Book> newBooks = new ArrayList<>();
@@ -132,7 +134,7 @@ public class BookDAO implements IBookDAO {
       }
 
       @Override
-      public List<Book> getAllBook() {
+public List<Book> getAllBook() {
             List<Book> books = new ArrayList<>();
             Connection cn = null;
             try {
@@ -172,7 +174,7 @@ public class BookDAO implements IBookDAO {
       }
 
       @Override
-      public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
+public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
             List<Book> books = new ArrayList<>();
             String sql = "SELECT * FROM books WHERE status = 'active' AND " + searchBy + " LIKE ?";
 
@@ -445,7 +447,7 @@ public class BookDAO implements IBookDAO {
       }
 
       @Override
-      public Book getBookById(int id) {
+public Book getBookById(int id) {
             Book book = null;
             Connection cn = null;
             PreparedStatement pr = null;
@@ -483,7 +485,7 @@ public class BookDAO implements IBookDAO {
       }
 
       @Override
-      public boolean update(Book book) throws SQLException, ClassNotFoundException {
+public boolean update(Book book) throws SQLException, ClassNotFoundException {
             Connection cn = null;
             PreparedStatement pr = null;
             try {
