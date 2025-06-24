@@ -233,7 +233,7 @@ public class BookDAO implements IBookDAO {
             try {
                   cn = DBConnection.getConnection();
                   String sql = "SELECT [id], [title], [isbn], [author], [category], [published_year],"
-                          + "[total_copies], [available_copies], [status] "
+                          + "[total_copies], [available_copies], [status], [image_url] "
                           + "FROM [dbo].[books] "
                           + "WHERE id = ?";
                   PreparedStatement st = cn.prepareStatement(sql);

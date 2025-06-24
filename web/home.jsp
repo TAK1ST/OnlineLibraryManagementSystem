@@ -425,7 +425,7 @@
                                             </span>
                                         </c:if>
                                     </p>
-                                    <a href="${pageContext.request.contextPath}/BookDetailServlet?id=${book.id}" 
+                                    <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}" 
                                        class="btn btn-primary w-100">
                                         <i class="fas fa-eye me-2"></i>Xem chi tiết
                                     </a>
