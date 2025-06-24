@@ -382,7 +382,7 @@
                         <select name="category" class="form-select">
                             <option value="">Tất cả thể loại</option>
                             <c:forEach items="${categories}" var="category">
-                                <option value="${category}">${category}</option>
+                                <option value="${category}" ${param.category eq category ? 'selected' : ''}>${category}</option>
                             </c:forEach>
                         </select>
                     </div>

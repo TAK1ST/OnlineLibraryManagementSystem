@@ -547,4 +547,50 @@ public class BookDAO implements IBookDAO {
                   }
             }
       }
+    public ArrayList<Book> search(String title, String author, String category) throws SQLException, ClassNotFoundException {
+        ArrayList<Book> list = new ArrayList<>();
+        Connection conn = DBConnection.getConnection();
+
+        String sql = "SELECT * FROM books WHERE 1=1";
+
+        if (title != null && !title.trim().isEmpty()) {
+            sql += " AND title LIKE ?";
+        }
+        if (author != null && !author.trim().isEmpty()) {
+            sql += " AND author LIKE ?";
+        }
+        if (category != null && !category.trim().isEmpty()) {
+            sql += " AND category LIKE ?";
+        }
+
+        PreparedStatement stmt = conn.prepareStatement(sql);
+
+        int index = 1;
+        if (title != null && !title.trim().isEmpty()) {
+            stmt.setString(index++, "%" + title + "%");
+        }
+        if (author != null && !author.trim().isEmpty()) {
+            stmt.setString(index++, "%" + author + "%");
+        }
+        if (category != null && !category.trim().isEmpty()) {
+            stmt.setString(index++, "%" + category + "%");
+        }
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            Book b = new Book();
+            b.setId(rs.getInt("id"));
+            b.setTitle(rs.getString("title"));
+            b.setAuthor(rs.getString("author"));
+            b.setCategory(rs.getString("category"));
+            list.add(b);
+        }
+
+        rs.close();
+        stmt.close();
+        conn.close();
+
+        return list;
+    }
+
 }
