@@ -13,7 +13,7 @@ import java.util.Optional;
  *
  * @author asus
  */
-public interface IBorrowRecordDAO extends IBaseDAO<BorrowRecord>{
+public interface IBorrowRecordDAO extends IBaseDAO<BorrowRecord> {
 
       List<BorrowRecord> getBorrowRecordsByUserId(int userId);
 
@@ -25,4 +25,7 @@ public interface IBorrowRecordDAO extends IBaseDAO<BorrowRecord>{
 
       List<BorrowRecord> getOverdueBooks();
 
+      Optional<BorrowRecord> getBorrowRecordByRequestId(int requestId);
+      
+      List<BorrowRecord> getBorrowRecordsByUserIdAndBookId(int userId, int bookId);
 }

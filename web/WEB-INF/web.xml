@@ -101,6 +101,18 @@
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.auth.HomeServlet</servlet-class>
+
+        <servlet-name>AdminUserDetail</servlet-name>
+        <servlet-class>controller.admin.AdminUserDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminSearchBook</servlet-name>
+        <servlet-class>controller.admin.AdminSearchBook</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminAddBookManager</servlet-name>
+        <servlet-class>controller.admin.AdminAddBookManager</servlet-class>
+
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -139,16 +151,12 @@
         <url-pattern>/bookmanagement</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AddBookManagement</servlet-name>
-        <url-pattern>/addbookmanagement</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>AdminOverdueBook</servlet-name>
         <url-pattern>/overduebook</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BookDetailServlet</servlet-name>
-        <url-pattern>/BookDetailServlet</url-pattern>
+        <url-pattern>/bookdetail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UserDashboard</servlet-name>
@@ -175,6 +183,7 @@
         <url-pattern>/searchUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
@@ -197,6 +206,20 @@
     <servlet-mapping>
         <servlet-name>SubmitBorrowRequestServlet</servlet-name>
         <url-pattern>/SubmitBorrowRequestServlet</url-pattern>
+        <servlet-name>AdminDashboard</servlet-name>
+        <url-pattern>/admindashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminUserDetail</servlet-name>
+        <url-pattern>/userdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminSearchBook</servlet-name>
+        <url-pattern>/searchbook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminAddBookManager</servlet-name>
+        <url-pattern>/addbook</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

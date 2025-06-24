@@ -27,7 +27,7 @@ public class SaveProfileServlet extends HttpServlet {
             String password = request.getParameter("txtpassword");
             if (id != null && name != null && password != null) {
                 UserDAO d = new UserDAO();
-                int result = d.updateUser(Integer.parseInt(id), name, password);
+                int result = d.updateUser(Integer.parseInt(id), name, password, null);
                 response.sendRedirect("LogoutServlet");
             }
         }catch(Exception e){
