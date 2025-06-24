@@ -139,7 +139,6 @@ public class BookDAO implements IBookDAO {
             return newBooks;
       }
 
-
       @Override
       public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
             List<Book> newBooks = new ArrayList<>();
@@ -590,7 +589,7 @@ public class BookDAO implements IBookDAO {
       }
 
       // Lấy top 5 sách được mượn nhiều nhất
-      public List<BorrowedBookDTO> getTop5BorrowedBooks()  {
+      public List<BorrowedBookDTO> getTop5BorrowedBooks() {
             List<BorrowedBookDTO> bookList = new ArrayList<>();
             String sql = "SELECT TOP 5 "
                     + "b.id, b.title AS book_name, b.author, "
@@ -612,21 +611,17 @@ public class BookDAO implements IBookDAO {
                         book.setBorrowCount(rs.getInt("borrow_count"));
                         bookList.add(book);
                   }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                   e.printStackTrace();
-            }
-                  finally {
+            } finally {
                   if (cn != null) try {
                         cn.close();
                   } catch (Exception e) {
                         e.printStackTrace();
                   }
             }
-        }
-    }
-    return book;
-  }
+            return bookList;
+      }
 
       @Override
       public boolean updateBook(Book book) throws SQLException, ClassNotFoundException {

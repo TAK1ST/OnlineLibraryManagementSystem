@@ -1,7 +1,7 @@
 FROM tomcat:10.0.27-jdk8
 
 # Xóa webapp mặc định để tránh xung đột
-RUN rm -rf /usr/local/tmcat/webapps/*
+RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Tạo thư mục cho application
 RUN mkdir -p /usr/local/tomcat/webapps
