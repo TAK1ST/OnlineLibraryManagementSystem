@@ -42,10 +42,6 @@
         <servlet-class>controller.admin.AdminBookManagement</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AddBookManagement</servlet-name>
-        <servlet-class>controller.admin.AddBookManagement</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>AdminOverdueBook</servlet-name>
         <servlet-class>controller.admin.AdminOverdueBook</servlet-class>
     </servlet>
@@ -101,7 +97,8 @@
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.auth.HomeServlet</servlet-class>
-
+    </servlet>
+    <servlet>
         <servlet-name>AdminUserDetail</servlet-name>
         <servlet-class>controller.admin.AdminUserDetail</servlet-class>
     </servlet>
@@ -112,7 +109,10 @@
     <servlet>
         <servlet-name>AdminAddBookManager</servlet-name>
         <servlet-class>controller.admin.AdminAddBookManager</servlet-class>
-
+    </servlet>
+    <servlet>
+        <servlet-name>AdminEditBook</servlet-name>
+        <servlet-class>controller.admin.AdminEditBook</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -183,7 +183,6 @@
         <url-pattern>/searchUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
@@ -206,6 +205,8 @@
     <servlet-mapping>
         <servlet-name>SubmitBorrowRequestServlet</servlet-name>
         <url-pattern>/SubmitBorrowRequestServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AdminDashboard</servlet-name>
         <url-pattern>/admindashboard</url-pattern>
     </servlet-mapping>
@@ -220,6 +221,10 @@
     <servlet-mapping>
         <servlet-name>AdminAddBookManager</servlet-name>
         <url-pattern>/addbook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminEditBook</servlet-name>
+        <url-pattern>/editbook</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

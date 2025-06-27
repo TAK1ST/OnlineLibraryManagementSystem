@@ -6,6 +6,7 @@ package controller.admin;
 
 import constant.ViewURL;
 import entity.Book;
+import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,7 +20,7 @@ import service.implement.BookManagementService;
  *
  * @author asus
  */
-public class AdminBookManagement extends HttpServlet {
+public class AdminBookManagement extends BaseAdminController {
 
       private final BookManagementService bookManagementService;
 
@@ -28,8 +29,14 @@ public class AdminBookManagement extends HttpServlet {
       }
 
       @Override
-      protected void doGet(HttpServletRequest request, HttpServletResponse response)
+      public void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+
+            // Check authentication and authorization
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return; // Already redirected to login
+            }
 
             // Get filter parameters
             String titleFilter = getParameterOrDefault(request, "title", "");
@@ -83,16 +90,20 @@ public class AdminBookManagement extends HttpServlet {
       }
 
       @Override
-      protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      public void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+
+            // Check authentication and authorization
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return; // Already redirected to login
+            }
 
             String action = request.getParameter("action");
             HttpSession session = request.getSession();
 
             if ("delete".equals(action)) {
                   handleSoftDelete(request, response, session);
-            } else if ("edit".equals(action)) {
-                  handleEditRedirect(request, response, session);
             } else {
                   session.setAttribute("errorMessage", "Invalid action specified.");
                   response.sendRedirect("bookmanagement");
@@ -143,39 +154,6 @@ public class AdminBookManagement extends HttpServlet {
             response.sendRedirect(redirectUrl);
       }
 
-      /**
-       * Handle edit redirect to edit book page
-       */
-      private void handleEditRedirect(HttpServletRequest request, HttpServletResponse response,
-              HttpSession session) throws IOException {
-            try {
-                  int bookId = Integer.parseInt(request.getParameter("bookId"));
-
-                  // Verify book exists
-                  Book book = bookManagementService.getBookById(bookId);
-                  if (book == null) {
-                        session.setAttribute("errorMessage", "Book not found.");
-                        response.sendRedirect("bookmanagement");
-                        return;
-                  }
-
-                  // Store return URL for after edit
-                  String returnUrl = buildReturnUrl(request);
-                  session.setAttribute("returnUrl", returnUrl);
-
-                  // Redirect to edit book page
-                  response.sendRedirect("editbook?id=" + bookId);
-
-            } catch (NumberFormatException e) {
-                  session.setAttribute("errorMessage", "Invalid book ID format.");
-                  response.sendRedirect("bookmanagement");
-            } catch (Exception e) {
-                  e.printStackTrace();
-                  session.setAttribute("errorMessage", "Error accessing book: " + e.getMessage());
-                  response.sendRedirect("bookmanagement");
-            }
-      }
-
       private String buildRedirectUrl(HttpServletRequest request) {
             StringBuilder url = new StringBuilder("bookmanagement?");
 
@@ -187,11 +165,6 @@ public class AdminBookManagement extends HttpServlet {
             appendParameterIfNotEmpty(url, "size", request.getParameter("currentSize"));
 
             return url.toString();
-      }
-
-      private String buildReturnUrl(HttpServletRequest request) {
-            return request.getRequestURL().toString() + "?"
-                    + (request.getQueryString() != null ? request.getQueryString() : "");
       }
 
       private void appendParameterIfNotEmpty(StringBuilder url, String paramName, String paramValue) {

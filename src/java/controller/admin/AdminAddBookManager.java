@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import service.implement.BookManagementService;
 
 /**
@@ -38,7 +39,7 @@ public class AdminAddBookManager extends HttpServlet {
                   request.setAttribute("suggestedISBN", bookManagementService.generateUniqueISBN());
 
                   // Forward to add book form
-                  request.getRequestDispatcher(ViewURL.ADD_BOOK_MANAGERMENT).forward(request, response);
+                  request.getRequestDispatcher(ViewURL.ADMIN_ADD_BOOK_MANAGEMENT).forward(request, response);
             } catch (Exception e) {
                   System.err.println("Error in doGet: " + e.getMessage());
                   e.printStackTrace();
@@ -48,11 +49,8 @@ public class AdminAddBookManager extends HttpServlet {
       }
 
       @Override
-      protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      public void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
-
-            System.out.println("=== Starting doPost method ===");
-
             try {
                   // Get form parameters
                   String title = request.getParameter("title");
@@ -101,8 +99,10 @@ public class AdminAddBookManager extends HttpServlet {
                   if (totalCopies < 1) {
                         throw new IllegalArgumentException("Total copies must be at least 1");
                   }
-                  if (publishedYear < 1000 || publishedYear > 2025) {
-                        throw new IllegalArgumentException("Published year must be between 1000 and 2025");
+                  
+                  String currentYear = String.valueOf(LocalDate.now().getYear());
+                  if (publishedYear < 1000 || publishedYear > Integer.parseInt(currentYear)) {
+                        throw new IllegalArgumentException("Published year must be between 1000 and " + currentYear);
                   }
 
                   // Handle file upload

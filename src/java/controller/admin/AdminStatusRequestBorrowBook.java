@@ -25,7 +25,7 @@ import service.implement.BookRequestStatusService;
 public class AdminStatusRequestBorrowBook extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         BookRequestStatusService service = new BookRequestStatusService();
         String ajax = request.getParameter("ajax");
@@ -79,7 +79,7 @@ public class AdminStatusRequestBorrowBook extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         BookRequestStatusService service = new BookRequestStatusService();
         String requestId = request.getParameter("requestId");

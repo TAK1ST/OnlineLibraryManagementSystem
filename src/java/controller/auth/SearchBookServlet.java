@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class SearchBookServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String title = request.getParameter("title");
         String author = request.getParameter("author");
