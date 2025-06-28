@@ -20,10 +20,26 @@
                 text-align: center;
             }
 
-            .alert-success {
-                background-color: #d4edda;
-                color: #155724;
-                border: 1px solid #c3e6cb;
+            .alert-success-slogan {
+                background: linear-gradient(135deg, #d4edda 0%, #e8f5e8 100%);
+                color: #7F8C8D;
+                border: 2px solid #4CAF50;
+                border-radius: 20px;
+                padding: 10px 20px;
+                margin: 20px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                text-align: center;
+                box-shadow:
+                    0 20px 40px rgba(76, 175, 80, 0.3),
+                    0 10px 20px rgba(0, 0, 0, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+                position: relative;
+                overflow: hidden;
+                max-width: 600px;
+                transform: scale(1);
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
             }
 
             .alert-error {
@@ -43,21 +59,27 @@
         <div class="register-container">
             <div class="register-header">
                 <h1>Đăng Ký</h1>
-                <p>Tạo tài khoản mới để bắt đầu</p>
+                <!--<p>Tạo tài khoản mới để bắt đầu</p>-->
             </div>
 
             <!-- Hiển thị thông báo thành công -->
             <% if (request.getAttribute("message") != null) { %>
-                <div class="alert alert-success">
-                    <%= request.getAttribute("message") %>
-                </div>
+            <div class="alert alert-success">
+                <%= request.getAttribute("message") %>
+            </div>
             <% } %>
             
+            <% if (request.getAttribute("mess") != null) { %>
+            <div class="alert alert-success-slogan">
+                <%= request.getAttribute("mess") %>
+            </div>
+            <% } %>
+
             <!-- Hiển thị thông báo lỗi -->
             <% if (request.getAttribute("error") != null) { %>
-                <div class="alert alert-error">
-                    <%= request.getAttribute("error") %>
-                </div>
+            <div class="alert alert-error">
+                <%= request.getAttribute("error") %>
+            </div>
             <% } %>
 
             <form accept-charset="utf-8" action="RegisterServlet" method="post">
