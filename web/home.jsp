@@ -344,9 +344,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                
                                     <i class="fas fa-user me-1"></i>Xin chào, ${sessionScope.loginedUser.name}!
-                                </span>
+                                
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">
@@ -400,7 +402,7 @@
             <div class="container">
                 <h2 class="section-title text-center">Sách mới nhất</h2>
                 <div class="row">
-                    <c:forEach items="${books}" var="book">
+                    <c:forEach items="${newBooks}" var="book">
                         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                             <div class="book-card card">
                                 <img src="https://via.placeholder.com/300x400?text=${book.title}&bg=1ABC9C&color=FFFFFF" 
@@ -436,6 +438,53 @@
                 </div>
             </div>
         </section>
+
+        <c:if test="${not empty recommendedBooks}">
+            <section class="new-books"> 
+                <div class="container">
+                    <h2 class="section-title text-center">
+                        RECOMMEND BOOKS
+                    </h2>
+                    <div class="row">
+                        <c:forEach items="${recommendedBooks}" var="book">
+                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                <div class="book-card card"> <!-- Sử dụng cùng class với sách mới -->
+                                    <img src="https://via.placeholder.com/300x400?text=${book.title}&bg=16A085&color=FFFFFF" 
+                                         class="card-img-top" alt="${book.title}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${book.title}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-user me-1"></i>Tác giả: ${book.author}
+                                            </small>
+                                        </p>
+                                        <p class="card-text">
+                                            <span class="badge bg-primary me-2">${book.category}</span>
+                                            <c:if test="${book.availableCopies > 0}">
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check me-1"></i>Còn sách
+                                                </span>
+                                            </c:if>
+                                            <c:if test="${book.availableCopies == 0}">
+                                                <span class="badge bg-danger">
+                                                    <i class="fas fa-times me-1"></i>Hết sách
+                                                </span>
+                                            </c:if>
+                                        </p>
+                                        <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}" 
+                                           class="btn btn-primary w-100">
+                                            <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </div>
+            </section>
+        </c:if>
+
+
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
