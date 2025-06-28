@@ -31,7 +31,7 @@ public class BookDAO implements IBookDAO {
             try {
                   cn = DBConnection.getConnection();
                   String sql = "select [id],[title],[isbn],[author],[category],[published_year],"
-                          + "[total_copies],[available_copies],[status] "
+                          + "[total_copies],[available_copies],[status], [image_url] "
                           + "from [dbo].[books] "
                           + "where title like ?";
                   PreparedStatement st = cn.prepareStatement(sql);
@@ -174,56 +174,115 @@ public class BookDAO implements IBookDAO {
 
       // Tìm kiếm sách động
       @Override
-      public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException {
-            ArrayList<Book> result = new ArrayList<>();
-            Connection cn = null;
-            try {
-                  cn = DBConnection.getConnection();
-                  StringBuilder sql = new StringBuilder(
-                          "SELECT [id],[title],[isbn],[author],[category],[published_year],"
-                          + "[total_copies],[available_copies],[status] "
-                          + "FROM [dbo].[books] "
-                          + "WHERE 1=1"
-                  );
-                  ArrayList<String> params = new ArrayList<>();
-                  if (title != null && !title.trim().isEmpty()) {
-                        sql.append(" AND title LIKE ?");
-                        params.add("%" + title + "%");
-                  }
-                  if (author != null && !author.trim().isEmpty()) {
-                        sql.append(" AND author LIKE ?");
-                        params.add("%" + author + "%");
-                  }
-                  if (category != null && !category.trim().isEmpty()) {
-                        sql.append(" AND category LIKE ?");
-                        params.add("%" + category + "%");
-                  }
-                  PreparedStatement st = cn.prepareStatement(sql.toString());
-                  for (int i = 0; i < params.size(); i++) {
-                        st.setString(i + 1, params.get(i));
-                  }
-                  ResultSet table = st.executeQuery();
-                  while (table.next()) {
-                        int id = table.getInt("id");
-                        String bookTitle = table.getString("title");
-                        String isbn = table.getString("isbn");
-                        String bookAuthor = table.getString("author");
-                        String bookCategory = table.getString("category");
-                        int year = table.getInt("published_year");
-                        int total = table.getInt("total_copies");
-                        int avaCopies = table.getInt("available_copies");
-                        String status = table.getString("status");
-                        String imageUrl = table.getString("image_url");
-                        Book book = new Book(id, bookTitle, isbn, bookAuthor, bookCategory, year, total, avaCopies, status, imageUrl);
-                        result.add(book);
-                  }
-            } finally {
-                  if (cn != null) {
-                        cn.close();
-                  }
+    public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException {
+        ArrayList<Book> result = new ArrayList<>();
+        Connection cn = null;
+        PreparedStatement st = null;
+        ResultSet table = null;
+
+        try {
+            cn = DBConnection.getConnection();
+            StringBuilder sql = new StringBuilder(
+                    "SELECT [id],[title],[isbn],[author],[category],[published_year],"
+                    + "[total_copies],[available_copies],[status],[image_url] " 
+                    + "FROM [dbo].[books] "
+                    + "WHERE 1=1"
+            );
+
+            ArrayList<String> params = new ArrayList<>();
+
+            System.out.println("=== SEARCH DEBUG ===");
+            System.out.println("Title: '" + title + "'");
+            System.out.println("Author: '" + author + "'");
+            System.out.println("Category: '" + category + "'");
+
+            if (title != null && !title.trim().isEmpty()) {
+                sql.append(" AND title LIKE ?");
+                params.add("%" + title.trim() + "%");
+                System.out.println("Added title filter: %" + title.trim() + "%");
             }
-            return result;
-      }
+
+            if (author != null && !author.trim().isEmpty()) {
+                sql.append(" AND author LIKE ?");
+                params.add("%" + author.trim() + "%");
+                System.out.println("Added author filter: %" + author.trim() + "%");
+            }
+
+            if (category != null && !category.trim().isEmpty()) {
+                sql.append(" AND category LIKE ?");
+                params.add("%" + category.trim() + "%");
+                System.out.println("Added category filter: %" + category.trim() + "%");
+            }
+
+            // Debug: In ra SQL query
+            System.out.println("Final SQL: " + sql.toString());
+            System.out.println("Parameters: " + params);
+
+            st = cn.prepareStatement(sql.toString());
+
+            // Set parameters
+            for (int i = 0; i < params.size(); i++) {
+                st.setString(i + 1, params.get(i));
+            }
+
+            table = st.executeQuery();
+
+            // Debug: Đếm số kết quả
+            int count = 0;
+            while (table.next()) {
+                count++;
+                int id = table.getInt("id");
+                String bookTitle = table.getString("title");
+                String isbn = table.getString("isbn");
+                String bookAuthor = table.getString("author");
+                String bookCategory = table.getString("category");
+                int year = table.getInt("published_year");
+                int total = table.getInt("total_copies");
+                int avaCopies = table.getInt("available_copies");
+                String status = table.getString("status");
+                String imageUrl = table.getString("image_url");
+
+                Book book = new Book(id, bookTitle, isbn, bookAuthor, bookCategory, year, total, avaCopies, status, imageUrl);
+                result.add(book);
+
+                // Debug: In ra thông tin sách tìm được
+                System.out.println("Found book: " + bookTitle + " by " + bookAuthor);
+            }
+
+            System.out.println("Total books found: " + count);
+            System.out.println("=== END DEBUG ===");
+
+        } catch (SQLException e) {
+            System.err.println("SQL Error in searchBooks: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            // Đóng resources theo thứ tự ngược lại
+            if (table != null) {
+                try {
+                    table.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (cn != null) {
+                try {
+                    cn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return result;
+    }
 
       // Lấy sách theo id
       @Override
@@ -703,5 +762,7 @@ public class BookDAO implements IBookDAO {
 
         return list;
     }
+    
+    
 
 }
