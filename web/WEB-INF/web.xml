@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <!--servlet config-->
+    <filter>
+        <filter-name>LoginValidateFilter</filter-name>
+        <filter-class>filter.LoginValidateFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>RegisterValidateFilter</filter-name>
+        <filter-class>filter.RegisterValidateFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>RegisterHashPasswordFilter</filter-name>
+        <filter-class>filter.RegisterHashPasswordFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>RegisterHashPasswordFilter</filter-name>
+        <servlet-name>RegisterServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>RegisterValidateFilter</filter-name>
+        <servlet-name>RegisterServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>LoginValidateFilter</filter-name>
+        <servlet-name>LoginServlet</servlet-name>
+    </filter-mapping>
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.auth.LoginServlet</servlet-class>
@@ -73,7 +97,6 @@
         <servlet-name>SubmitBorrowRequestServlet</servlet-name>
         <servlet-class>controller.cart.SubmitBorrowRequestServlet</servlet-class>
     </servlet>
-    <!--mapping-->
     <servlet>
         <servlet-name>UserDashboard</servlet-name>
         <servlet-class>controller.auth.UserDashboard</servlet-class>
@@ -101,7 +124,7 @@
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.auth.HomeServlet</servlet-class>
-        </servlet>
+    </servlet>
     <servlet>
         <servlet-name>AdminUserDetail</servlet-name>
         <servlet-class>controller.admin.AdminUserDetail</servlet-class>
@@ -113,8 +136,8 @@
     <servlet>
         <servlet-name>AdminAddBookManager</servlet-name>
         <servlet-class>controller.admin.AdminAddBookManager</servlet-class>
-
     </servlet>
+    <!--mapping-->
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -184,7 +207,6 @@
         <url-pattern>/searchUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>

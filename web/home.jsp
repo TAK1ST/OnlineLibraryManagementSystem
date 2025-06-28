@@ -344,9 +344,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                
                                     <i class="fas fa-user me-1"></i>Xin chào, ${sessionScope.loginedUser.name}!
-                                </span>
+                                
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">

@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Update Inventory</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-update-inventory.css"/>
     </head>
     <body>
@@ -14,10 +15,15 @@
         <div class="header">
             <div class="header-container">
                 <div class="header-left">
-                    <button class="back-btn" onclick="history.back()">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Back</span>
-                    </button>
+                    <!--                    <button class="back-btn" onclick="history.back()">
+                                            <i class="fas fa-arrow-left"></i>
+                                            <span>Back</span>
+                                        </button>-->
+                    <a href="admindashboard" style="text-decoration: none">
+                        <button class="back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </a>
                 </div>
                 <div class="header-center">
                     <div class="header-title">
@@ -176,9 +182,9 @@
             <button class="floating-btn pulse" title="Scroll to top" onclick="scrollToTop()">
                 <i class="fas fa-arrow-up"></i>
             </button>
-            <button class="floating-btn" title="Refresh page" onclick="location.reload()">
-                <i class="fas fa-sync-alt"></i>
-            </button>
+            <!--            <button class="floating-btn" title="Refresh page" onclick="location.reload()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>-->
         </div>
         <script>
             function increment(button) {

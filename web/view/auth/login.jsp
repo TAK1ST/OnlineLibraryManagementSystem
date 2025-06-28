@@ -99,14 +99,48 @@
             .register-link a:hover {
                 color: var(--secondary-accent);
             }
+
+            .alert {
+                padding: 10px;
+                margin-bottom: 15px;
+                border-radius: 4px;
+                text-align: center;
+            }
+
+            .alert-success {
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+
+            .alert-error {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
         </style>
     </head>
     <body>
         <div class="login-container">
             <h1>Đăng nhập</h1>
+            
+            <!-- Hiển thị thông báo thành công -->
+            <% if (request.getAttribute("message") != null) { %>
+                <div class="alert alert-success">
+                    <%= request.getAttribute("message") %>
+                </div>
+            <% } %>
+            
+            <!-- Hiển thị thông báo lỗi -->
+            <% if (request.getAttribute("error") != null) { %>
+                <div class="alert alert-error">
+                    <%= request.getAttribute("error") %>
+                </div>
+            <% } %>
+            
             <form action="${pageContext.request.contextPath}/LoginServlet" method="POST">
                 <div class="form-group">
-                    <label for="username">Tên đăng nhập</label>
+                    <label for="username">Email đăng nhập</label>
                     <input type="text" class="form-control" id="username" name="txtemail" required>
                 </div>
                 <div class="form-group">
@@ -116,7 +150,8 @@
                 <button type="submit" class="btn-login">Đăng nhập</button>
             </form>
             <div class="register-link">
-                <p>Chưa có tài khoản? <a href="${pageContext.request.contextPath}/RegisterServlet">Đăng ký ngay</a></p>
+                <p>Chưa có tài khoản? | <a href="${pageContext.request.contextPath}/RegisterServlet">Đăng ký ngay</a></p>
+                <p><a href="javascript: history.back()">Quay lại</a></p>
             </div>
         </div>
     </body>
