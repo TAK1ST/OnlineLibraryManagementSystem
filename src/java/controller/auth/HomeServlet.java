@@ -2,13 +2,17 @@ package controller.auth;
 
 import dao.implement.BookDAO;
 import entity.Book;
-import java.io.IOException;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "HomeServlet", urlPatterns = {"/home"})
 public class HomeServlet extends HttpServlet {
@@ -16,26 +20,45 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            // Lấy danh sách sách mới
-            BookDAO bookDAO = new BookDAO();
-            List<Book> newBooks = bookDAO.getNewBooks(); 
-            List<String> categories = bookDAO.getAllCategories(); 
-            request.setAttribute("books", newBooks);
-            request.setAttribute("categories", categories);
-            
-            
-            request.getRequestDispatcher("home.jsp").forward(request, response);
-        } catch (Exception e) {
-            request.setAttribute("message", "Error: " + e.getMessage());
-            request.setAttribute("messageType", "error");
-            request.getRequestDispatcher("/home.jsp").forward(request, response);
-        }
-    }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
+        try {
+            BookDAO dao = new BookDAO();
+
+            // Lấy sách mới nhất
+            List<Book> newBooks = dao.getNewBooks();
+            request.setAttribute("newBooks", newBooks);
+
+            // Lấy tất cả categories cho dropdown
+            List<String> categories = dao.getAllCategories();
+            request.setAttribute("categories", categories);
+
+            // Đọc cookie recentKeyword
+            String recentKeyword = null;
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("recentKeyword".equals(cookie.getName())) {
+                        try {
+                            recentKeyword = URLDecoder.decode(cookie.getValue(), "UTF-8");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                }
+}
+
+            if (recentKeyword != null && !recentKeyword.trim().isEmpty()) {
+                List<Book> recommendedBooks = dao.getBookByTitle(recentKeyword);
+                request.setAttribute("recommendedBooks", recommendedBooks);
+                request.setAttribute("recentKeyword", recentKeyword);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Đã xảy ra lỗi khi tải trang.");
+        }
+
+        request.getRequestDispatcher("home.jsp").forward(request, response);
     }
-} 
+}
