@@ -8,9 +8,9 @@ RUN mkdir -p /usr/local/tomcat/webapps
 
 # Copy WAR file từ NetBeans build output
 # Thường ở thư mục dist/ sau khi clean and build
-COPY dist/*.war /usr/local/tomcat/webapps/ROOT.war
+COPY dist/*.war /usr/local/tomcat/webapps/OnlineLibraryManagementSystem.war
 
-# Copy JDBC driver cho SQL Server (nếu chưa có trong WAR)
+# Copy JDBC driver cho SQL Server
 # Download từ: https://docs.microsoft.com/en-us/sql/connect/jdbc/download-microsoft-jdbc-driver-for-sql-server
 COPY lib/*.jar /usr/local/tomcat/lib/
 
