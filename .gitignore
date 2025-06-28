@@ -1,0 +1,15 @@
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### enviroment
+**/DBConnection.java
+
+**/nbproject/
+
