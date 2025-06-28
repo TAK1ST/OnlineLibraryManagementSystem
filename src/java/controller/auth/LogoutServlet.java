@@ -17,16 +17,25 @@ import jakarta.servlet.http.HttpSession;
  * @author asus
  */
 public class LogoutServlet extends HttpServlet {
-    public void processRequest(HttpServletRequest request, HttpServletResponse response){
-       try {
+
+    public void processRequest(HttpServletRequest request, HttpServletResponse response) {
+        try {
            HttpSession s = request.getSession();
+//           if (s != null){
            s.invalidate();
-           response.sendRedirect("index.jsp");
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-   }
-    
+//           s.removeAttribute("loginedUser");
+           response.sendRedirect("home.jsp");
+//           }
+//            HttpSession session = request.getSession(false);
+//            if (session != null) {
+//                session.invalidate();
+//            }
+//            response.sendRedirect("home.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

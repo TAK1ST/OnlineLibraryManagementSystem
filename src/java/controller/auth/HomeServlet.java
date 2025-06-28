@@ -19,12 +19,11 @@ public class HomeServlet extends HttpServlet {
         try {
             // Lấy danh sách sách mới
             BookDAO bookDAO = new BookDAO();
-            List<Book> newBooks = bookDAO.getNewBooks(); 
-            List<String> categories = bookDAO.getAllCategories(); 
+            List<Book> newBooks = bookDAO.getNewBooks();
+            List<String> categories = bookDAO.getAllCategories();
             request.setAttribute("books", newBooks);
             request.setAttribute("categories", categories);
-            
-            
+
             request.getRequestDispatcher("home.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("message", "Error: " + e.getMessage());
@@ -38,4 +37,4 @@ public class HomeServlet extends HttpServlet {
             throws ServletException, IOException {
         doGet(request, response);
     }
-} 
+}
