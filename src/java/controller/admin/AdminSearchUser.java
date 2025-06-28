@@ -19,14 +19,20 @@ import service.implement.UserManagerService;
  *
  * @author asus
  */
-public class AdminSearchUser extends HttpServlet {
+public class AdminSearchUser extends BaseAdminController {
 
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+            
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
 
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
+            
             UserManagerService userManagerService = new UserManagerService();
             int offset = 0;
 

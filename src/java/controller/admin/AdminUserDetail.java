@@ -20,25 +20,19 @@ import service.implement.UserManagerService;
  *
  * @author asus
  */
-public class AdminUserDetail extends HttpServlet {
-
-      /**
-       * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-       *
-       * @param request servlet request
-       * @param response servlet response
-       * @throws ServletException if a servlet-specific error occurs
-       * @throws IOException if an I/O error occurs
-       */
-      protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-              throws ServletException, IOException {
-      }
+public class AdminUserDetail extends BaseAdminController {
 
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
+
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
 
             UserManagerService userService = new UserManagerService();
             try {

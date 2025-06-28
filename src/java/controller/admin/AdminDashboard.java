@@ -24,11 +24,13 @@ public class AdminDashboard extends BaseAdminController {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-       // Check authentication and authorization
-        User adminUser = checkAdminAuthentication(request, response);
-        if (adminUser == null) {
-            return; // Already redirected to login //why it need return
-        }
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
         
         StatisticService statisticService = new StatisticService();
         

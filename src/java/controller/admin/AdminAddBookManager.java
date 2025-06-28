@@ -6,10 +6,10 @@ package controller.admin;
 
 import constant.ViewURL;
 import entity.Book;
+import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
@@ -22,14 +22,23 @@ import service.implement.BookManagementService;
  *
  * @author asus
  */
- @MultipartConfig
-public class AdminAddBookManager extends HttpServlet {
+@MultipartConfig
+public class AdminAddBookManager extends BaseAdminController {
 
       private final BookManagementService bookManagementService = new BookManagementService();
 
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
+
             try {
                   // Set available options for dropdowns
                   request.setAttribute("categories", bookManagementService.getAvailableCategories());
@@ -99,7 +108,7 @@ public class AdminAddBookManager extends HttpServlet {
                   if (totalCopies < 1) {
                         throw new IllegalArgumentException("Total copies must be at least 1");
                   }
-                  
+
                   String currentYear = String.valueOf(LocalDate.now().getYear());
                   if (publishedYear < 1000 || publishedYear > Integer.parseInt(currentYear)) {
                         throw new IllegalArgumentException("Published year must be between 1000 and " + currentYear);

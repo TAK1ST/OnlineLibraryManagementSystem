@@ -32,10 +32,12 @@ public class AdminBookManagement extends BaseAdminController {
       public void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
 
-            // Check authentication and authorization
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+
             User adminUser = checkAdminAuthentication(request, response);
             if (adminUser == null) {
-                  return; // Already redirected to login
+                  return;
             }
 
             // Get filter parameters

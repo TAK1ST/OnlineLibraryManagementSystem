@@ -7,6 +7,7 @@ package controller.admin;
 import constant.ViewURL;
 import static constant.constance.RECORDS_PER_LOAD;
 import dto.BookInforRequestStatusDTO;
+import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,7 +20,7 @@ import service.implement.BookRequestStatusService;
  *
  * @author asus
  */
-public class AdminSearchBook extends HttpServlet {
+public class AdminSearchBook extends BaseAdminController {
 
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -27,6 +28,11 @@ public class AdminSearchBook extends HttpServlet {
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
 
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
+            
             BookRequestStatusService bookRequestStatusService = new BookRequestStatusService();
             int offset = 0;
 
@@ -53,19 +59,19 @@ public class AdminSearchBook extends HttpServlet {
             searchName = (searchName != null && !searchName.trim().isEmpty()) ? searchName.trim() : null;
             searchTitle = (searchTitle != null && !searchTitle.trim().isEmpty()) ? searchTitle.trim() : null;
 
-            List<BookInforRequestStatusDTO> bookRequestList = 
-                    bookRequestStatusService.getAllBookRequestStatusLazyLoading(searchTitle, searchName, offset);
+            List<BookInforRequestStatusDTO> bookRequestList
+                    = bookRequestStatusService.getAllBookRequestStatusLazyLoading(searchTitle, searchName, offset);
 
             request.setAttribute("bookRequestList", bookRequestList);
             request.setAttribute("offset", offset);
             request.setAttribute("recordsPerPage", RECORDS_PER_LOAD);
 
-           if ("true".equalsIgnoreCase(ajax)) {
-    response.setContentType("text/html; charset=UTF-8");
-    request.getRequestDispatcher(ViewURL.BOOK_REQUEST_LIST_FRAGMENT).include(request, response);
-} else {
-    request.getRequestDispatcher(ViewURL.ADMIN_STATUS_REQUEST_BORROW_BOOK).forward(request, response);
-}
+            if ("true".equalsIgnoreCase(ajax)) {
+                  response.setContentType("text/html; charset=UTF-8");
+                  request.getRequestDispatcher(ViewURL.BOOK_REQUEST_LIST_FRAGMENT).include(request, response);
+            } else {
+                  request.getRequestDispatcher(ViewURL.ADMIN_STATUS_REQUEST_BORROW_BOOK).forward(request, response);
+            }
       }
 
       /**

@@ -22,9 +22,14 @@ public class AdminSystemConfig extends BaseAdminController {
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
 
-            // Check authentication and authorization
-            checkAdminAuthentication(request, response);
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
 
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
+            
             request.getRequestDispatcher(ViewURL.ADMIN_SYSTEM_CONFIG).forward(request, response);
       }
 

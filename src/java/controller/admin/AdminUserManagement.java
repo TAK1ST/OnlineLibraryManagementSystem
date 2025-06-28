@@ -23,6 +23,11 @@ public class AdminUserManagement extends BaseAdminController {
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
 
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
+
             // Check authentication and authorization
             checkAdminAuthentication(request, response);
 

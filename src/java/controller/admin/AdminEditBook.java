@@ -6,28 +6,35 @@ package controller.admin;
 
 import constant.ViewURL;
 import entity.Book;
+import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
-import javax.naming.Context;
 import service.implement.BookManagementService;
 
 /**
  *
  * @author asus
  */
-public class AdminEditBook extends HttpServlet {
+public class AdminEditBook extends BaseAdminController {
 
       private final BookManagementService bookManagementService = new BookManagementService();
 
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+            
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
 
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
+            
             String idParam = request.getParameter("id");
 
             if (idParam == null || idParam.trim().isEmpty()) {
