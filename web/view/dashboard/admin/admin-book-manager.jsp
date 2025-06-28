@@ -116,21 +116,12 @@
                                                             </td>
                                                             <td class="table-cell">
                                                                   <div class="action-buttons">
-                                                                        <form method="POST" action="bookmanagement" style="display: inline;">
-                                                                              <input type="hidden" name="action" value="edit">
-                                                                              <input type="hidden" name="bookId" value="${book.id}">
-                                                                              <!-- Preserve current filters -->
-                                                                              <input type="hidden" name="currentTitle" value="${titleFilter}">
-                                                                              <input type="hidden" name="currentAuthor" value="${authorFilter}">
-                                                                              <input type="hidden" name="currentCategory" value="${categoryFilter}">
-                                                                              <input type="hidden" name="currentStatus" value="${statusFilter}">
-                                                                              <input type="hidden" name="currentPage" value="${currentPage}">
-                                                                              <input type="hidden" name="currentSize" value="${pageSize}">
-                                                                              <button type="submit" class="edit-btn">
-                                                                                    <i class="fas fa-edit"></i>
-                                                                                    Edit
-                                                                              </button>
-                                                                        </form>
+                                                                        <!-- Edit Button - Fixed to trigger modal -->
+                                                                        <button type="button" class="edit-btn" 
+                                                                                onclick="openEditModal('${book.id}', '${book.isbn}', '${book.title}', '${book.author}', '${book.category}', '${book.publishedYear}', '${book.totalCopies}', '${book.availableCopies}', '${book.status}', '${book.imageUrl}')">
+                                                                              <i class="fas fa-edit"></i>
+                                                                              Edit
+                                                                        </button>
 
                                                                         <c:if test="${book.status ne 'inactive'}">
                                                                               <button class="delete-btn" onclick="confirmDelete('${book.id}', '${book.title}')">
@@ -146,9 +137,8 @@
                                     </table>
                               </c:when>
                               <c:otherwise>
-                                    <div class="no-data">
-                                          <i class="fas fa-book"></i>
-                                          <p>No books found matching your criteria.</p>
+                                    <div class="no-data" style="padding: 20px 50px;">
+                                          <i class="fas fa-book">             No books found matching your criteria.</i>
                                     </div>
                               </c:otherwise>
                         </c:choose>
@@ -189,37 +179,15 @@
                         </div>
                   </c:if>
             </div>
-
             <!-- Delete Confirmation Modal -->
-            <div id="deleteModal" class="modal">
-                  <div class="modal-content">
-                        <h3>
-                              <i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> 
-                              Confirm Delete
-                        </h3>
-                        <p>Are you sure you want to delete this book?</p>
-                        <p><strong id="bookTitle"></strong></p>
-                        <p style="color: #6c757d; font-size: 14px; margin-top: 12px;">This action will mark the book as inactive and cannot be undone.</p>
-                        <div class="modal-buttons">
-                              <button type="button" class="modal-btn btn-cancel" onclick="closeDeleteModal()">Cancel</button>
-                              <button type="button" class="modal-btn btn-confirm" onclick="executeDelete()">Delete Book</button>
-                        </div>
-                  </div>
-            </div>
+            <jsp:include page="/view/dashboard/admin/delete-confirm-modal.jsp"/>
 
-            <!-- Hidden Delete Form -->
-            <form id="deleteForm" method="POST" action="bookmanagement" style="display: none;">
-                  <input type="hidden" name="action" value="delete">
-                  <input type="hidden" name="bookId" id="deleteBookId">
-                  <!-- Preserve current filters -->
-                  <input type="hidden" name="currentTitle" value="${titleFilter}">
-                  <input type="hidden" name="currentAuthor" value="${authorFilter}">
-                  <input type="hidden" name="currentCategory" value="${categoryFilter}">
-                  <input type="hidden" name="currentStatus" value="${statusFilter}">
-                  <input type="hidden" name="currentPage" value="${currentPage}">
-                  <input type="hidden" name="currentSize" value="${pageSize}">
-            </form>
+            <!-- Edit Book Modal -->
+            <jsp:include page="/view/dashboard/admin/modal-edit-book.jsp"/>
 
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js">
+            </script>
+            
             <script>
                   let currentDeleteBookId = null;
 
@@ -262,6 +230,40 @@
                         });
                   });
 
+                  // Edit modal functions
+                  function openEditModal(bookId, isbn, title, author, category, publishedYear, totalCopies, availableCopies, status, imageUrl) {
+                        // Populate form fields
+                        document.getElementById('modalBookId').value = bookId;
+                        document.getElementById('modalIsbn').value = isbn;
+                        document.getElementById('modalTitle').value = title;
+                        document.getElementById('modalAuthor').value = author;
+                        document.getElementById('modalCategory').value = category;
+                        document.getElementById('modalPublishedYear').value = publishedYear;
+                        document.getElementById('modalTotalCopies').value = totalCopies;
+                        document.getElementById('modalAvailableCopies').value = availableCopies;
+                        document.getElementById('modalStatus').value = status;
+                        document.getElementById('modalImageUrl').value = imageUrl || '';
+
+                        // Store current filter parameters
+                        document.getElementById('currentTitle').value = '${titleFilter}';
+                        document.getElementById('currentAuthor').value = '${authorFilter}';
+                        document.getElementById('currentCategory').value = '${categoryFilter}';
+                        document.getElementById('currentStatus').value = '${statusFilter}';
+                        document.getElementById('currentPage').value = '${currentPage}';
+                        document.getElementById('currentSize').value = '${pageSize}';
+
+                        // Show modal using Bootstrap
+                        var editModal = new bootstrap.Modal(document.getElementById('editBookModal'));
+                        editModal.show();
+                  }
+
+                  // Close modal when clicking outside
+                  window.onclick = function (event) {
+                        const modal = document.getElementById('deleteModal');
+                        if (event.target === modal) {
+                              closeDeleteModal();
+                        }
+                  }
                   // Smooth animations for table rows
                   document.addEventListener('DOMContentLoaded', function () {
                         const rows = document.querySelectorAll('.table-row');

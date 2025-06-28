@@ -174,11 +174,20 @@ public class BookManagementDAO {
       }
 
       public boolean updateBook(Book book) throws SQLException {
-            String sql = "UPDATE books SET title = ?, author = ?, isbn = ?, category = ?, "
+            String sql = "UPDATE books SET "
+                    + "title = ?, author = ?, isbn = ?, category = ?, "
                     + "published_year = ?, total_copies = ?, available_copies = ?, "
-                    + "image_url = ?, status = ? WHERE id = ?";
+                    + "image_url = ?, status = ? "
+                    + "WHERE id = ?";
+            Connection cn = null;
+            PreparedStatement stmt = null;
             boolean isSuccess = false;
-            try ( Connection cn = DBConnection.getConnection();  PreparedStatement stmt = cn.prepareStatement(sql)) {
+            try {
+                  cn = DBConnection.getConnection();
+                  stmt = cn.prepareStatement(sql);
+                  if (cn == null) {
+                        throw new Exception("Cannot connect database");
+                  }
 
                   stmt.setString(1, book.getTitle());
                   stmt.setString(2, book.getAuthor());
@@ -333,4 +342,5 @@ public class BookManagementDAO {
             book.setStatus(rs.getString("status"));
             return book;
       }
+
 }

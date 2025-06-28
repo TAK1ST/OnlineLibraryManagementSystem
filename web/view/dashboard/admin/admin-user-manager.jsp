@@ -46,6 +46,9 @@
                         <a href="updateinventory" class="nav-link">
                               <i class="fas fa-boxes me-2"></i>Update Inventory
                         </a>
+                        <a href="overduebook" class="nav-link">
+                              <i class="fas fa-boxes"></i> Overdue Book
+                        </a>
                   </div>
                   <!-- Main Content -->
                   <div class="main-content">

@@ -66,10 +66,6 @@
         <servlet-class>controller.admin.AdminBookManagement</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AddBookManagement</servlet-name>
-        <servlet-class>controller.admin.AddBookManagement</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>AdminOverdueBook</servlet-name>
         <servlet-class>controller.admin.AdminOverdueBook</servlet-class>
     </servlet>
@@ -136,6 +132,10 @@
     <servlet>
         <servlet-name>AdminAddBookManager</servlet-name>
         <servlet-class>controller.admin.AdminAddBookManager</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminEditBook</servlet-name>
+        <servlet-class>controller.admin.AdminEditBook</servlet-class>
     </servlet>
     <!--mapping-->
     <servlet-mapping>
@@ -245,6 +245,10 @@
     <servlet-mapping>
         <servlet-name>AdminAddBookManager</servlet-name>
         <url-pattern>/addbook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminEditBook</servlet-name>
+        <url-pattern>/editbook</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

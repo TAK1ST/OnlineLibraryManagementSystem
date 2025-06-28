@@ -23,7 +23,7 @@ ENV CATALINA_OPTS="-Xms512m -Xmx1024m -XX:PermSize=64m -XX:MaxPermSize=128m"
 ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 
 # Expose port
-EXPOSE 8080
+EXPOSE 8084
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
