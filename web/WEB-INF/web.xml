@@ -229,7 +229,7 @@
     <servlet-mapping>
         <servlet-name>SubmitBorrowRequestServlet</servlet-name>
         <url-pattern>/SubmitBorrowRequestServlet</url-pattern>
-    </servlet-mapping>
+     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AdminDashboard</servlet-name>
         <url-pattern>/admindashboard</url-pattern>
