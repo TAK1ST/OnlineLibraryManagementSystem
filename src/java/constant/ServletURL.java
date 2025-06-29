@@ -9,5 +9,5 @@ package constant;
  * @author asus
  */
 public class ServletURL {
-    
+    public static String LOGIN_SERVLET = "/LoginServlet";
 }

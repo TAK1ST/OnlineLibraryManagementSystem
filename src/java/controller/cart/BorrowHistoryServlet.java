@@ -1,5 +1,6 @@
 package controller.cart;
 
+import constant.ServletURL;
 import dao.implement.BorrowRequestDAO;
 import entity.BorrowRequest;
 import entity.User;
@@ -22,7 +23,7 @@ public class BorrowHistoryServlet extends HttpServlet {
         User loginedUser = (User) session.getAttribute("loginedUser");
         
         if (loginedUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + ServletURL.LOGIN_SERVLET); // Tuan sua
             return;
         }
         

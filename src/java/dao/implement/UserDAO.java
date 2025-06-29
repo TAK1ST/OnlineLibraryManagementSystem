@@ -354,7 +354,7 @@ public class UserDAO implements IUserDAO {
         try {
             cn = DBConnection.getConnection();
             if (cn != null) {
-                String sql = "SELECT [id], [name], [email], [password], [role], [status] FROM [dbo].[users] WHERE [id] = ?";
+                String sql = "SELECT [id], [name], [email], [password], [role], [status], [avatar] FROM [dbo].[users] WHERE [id] = ?";
                 pst = cn.prepareStatement(sql);
                 pst.setInt(1, id);
                 rs = pst.executeQuery();
