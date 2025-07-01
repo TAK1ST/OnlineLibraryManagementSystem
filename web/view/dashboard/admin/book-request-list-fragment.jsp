@@ -4,32 +4,21 @@
     Author     : asus
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List,dto.BookInforRequestStatusDTO" %>
+<%@ page import="java.util.List,dto.BookInforRequestStatusDTO,dao.implement.BookDAO" %>
 <%! 
-    // Helper method to determine request type
     private String determineRequestType(BookInforRequestStatusDTO dto) {
-        return dto.getRequestType() != null ? dto.getRequestType() : "borrow";
+        return dto.getRequestType() != null ? dto.getRequestType().trim().toLowerCase() : "borrow";
     }
 
-    // Helper method to get actual status
     private String getActualStatus(BookInforRequestStatusDTO dto) {
-        String rawStatus = dto.getStatusAction();
-        String requestType = determineRequestType(dto);
-        
-        if ("pending".equals(rawStatus)) {
-            return "pending";
-        } else if ("approved".equals(rawStatus)) {
-            return "approved";
-        } else if ("rejected".equals(rawStatus)) {
-            return "rejected";
-        } else if ("completed".equals(rawStatus)) {
-            return "completed";
+        String rawStatus = dto.getStatusAction() != null ? dto.getStatusAction().trim().toLowerCase() : "pending";
+        System.out.println("getActualStatus - ID: " + dto.getId() + ", Raw Status: " + dto.getStatusAction() + ", Normalized: " + rawStatus);
+        if ("pending".equals(rawStatus) || "approved-borrow".equals(rawStatus) || "rejected".equals(rawStatus) || "borrowed".equals(rawStatus)) {
+            return rawStatus;
         }
-        
-        return rawStatus != null ? rawStatus : "pending";
+        return "pending";
     }
 
-    // Helper method to get display status
     private String getDisplayStatus(BookInforRequestStatusDTO dto) {
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
@@ -37,33 +26,31 @@
         switch(status) {
             case "pending":
                 return "PENDING " + requestType.toUpperCase();
-            case "approved":
-                return "APPROVED " + requestType.toUpperCase();
+            case "approved-borrow":
+                return "APPROVED BORROW";
             case "rejected":
                 return "REJECTED";
-            case "completed":
-                return "COMPLETED";
+            case "borrowed":
+                return "BORROWED";
             default:
                 return status.toUpperCase();
         }
     }
 
-    // Helper method to determine status priority
     private int getStatusPriority(BookInforRequestStatusDTO dto) {
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
         
         if ("pending".equals(status)) {
             return "borrow".equals(requestType) ? 1 : 2;
-        } else if ("approved".equals(status) && "borrow".equals(requestType)) {
+        } else if ("approved-borrow".equals(status)) {
             return 3;
-        } else if ("approved".equals(status) && "return".equals(requestType)) {
+        } else if ("approved-return".equals(status)) {
             return 4;
         }
         return 5;
     }
 
-    // Helper method to get badge class for status
     private String getStatusBadgeClass(BookInforRequestStatusDTO dto) {
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
@@ -71,44 +58,54 @@
         switch(status) {
             case "pending":
                 return "bg-warning text-dark";
-            case "approved":
-                return "borrow".equals(requestType) ? "bg-primary" : "bg-info";
+            case "approved-borrow":
+                return "bg-primary";
+            case "approved-return":
+                return "bg-info";
             case "rejected":
                 return "bg-danger";
-            case "completed":
+            case "borrowed":
                 return "bg-success";
             default:
                 return "bg-secondary";
         }
     }
 
-    // Helper method to check if borrow button should be shown
     private boolean shouldShowBorrowButton(BookInforRequestStatusDTO dto) {
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
-        return "approved".equals(status) && "borrow".equals(requestType);
+        boolean shouldShow = "approved-borrow".equals(status) && "borrow".equals(requestType);
+        System.out.println("shouldShowBorrowButton - ID: " + dto.getId() + ", Status: " + status + ", Type: " + requestType + ", Show: " + shouldShow);
+        return shouldShow;
     }
 
-    // Helper method to check if approve button should be shown
-    private boolean shouldShowApproveButton(BookInforRequestStatusDTO dto) {
-        return "pending".equals(getActualStatus(dto));
+    private boolean shouldShowApproveButton(BookInforRequestStatusDTO dto, HttpServletRequest request) {
+        String status = getActualStatus(dto);
+        String requestType = determineRequestType(dto);
+        if (!"pending".equals(status) || !"borrow".equals(requestType)) {
+            return false;
+        }
+
+        // Kiểm tra số lượng bản sao sách
+        BookDAO bookDAO = new BookDAO();
+        entity.Book book = bookDAO.getBookById(dto.getBookId());
+        boolean shouldShow = book != null && book.getAvailableCopies() > 0 && "active".equalsIgnoreCase(book.getStatus());
+        System.out.println("shouldShowApproveButton - ID: " + dto.getId() + ", Book Available: " + (book != null ? book.getAvailableCopies() : "null") + ", Show: " + shouldShow);
+        return shouldShow;
     }
 
-    // Helper method to check if reject button should be shown
     private boolean shouldShowRejectButton(BookInforRequestStatusDTO dto) {
-        return "pending".equals(getActualStatus(dto));
+        boolean shouldShow = "pending".equals(getActualStatus(dto));
+        System.out.println("shouldShowRejectButton - ID: " + dto.getId() + ", Show: " + shouldShow);
+        return shouldShow;
     }
 %>
 
-<%-- Main processing code --%>
 <%
     List<BookInforRequestStatusDTO> bookRequestList = (List<BookInforRequestStatusDTO>) request.getAttribute("bookStatusList");
     String emptyMessage = request.getAttribute("emptyMessage") != null ? (String) request.getAttribute("emptyMessage") : "No book borrowing requests found!";
 
     if (bookRequestList != null && !bookRequestList.isEmpty()) {
-        // Sort by priority
-        bookRequestList.sort((a, b) -> Integer.compare(getStatusPriority(a), getStatusPriority(b)));
-
         for (BookInforRequestStatusDTO b : bookRequestList) {
             String id = String.valueOf(b.getId());
             String isbn = b.getIsbn() != null ? b.getIsbn() : "N/A";
@@ -122,7 +119,6 @@
             String badgeClass = getStatusBadgeClass(b);
             int priority = getStatusPriority(b);
 
-            // Debug logging
             System.out.println("Request ID: " + id + ", Status: " + actualStatus + 
                              ", Type: " + requestType + ", Display: " + displayStatus + 
                              ", Fine: " + overdueFine + ", Priority: " + priority);
@@ -179,13 +175,13 @@
 
       <td class="action-cell">
             <div class="action-buttons d-flex flex-wrap gap-1">
-                  <% if (shouldShowApproveButton(b)) { %>
+                  <% if (shouldShowApproveButton(b, request)) { %>
                   <!-- Approve Button -->
                   <form id="approve-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
                         <input type="hidden" name="requestId" value="<%=id%>">
                         <input type="hidden" name="action" value="approve">
                         <button type="button" class="btn btn-sm btn-success me-1 approve-btn" 
-                                onclick="handleApprove(this)"
+                                onclick="document.getElementById('approve-form-<%=id%>').submit()"
                                 data-request-id="<%=id%>" 
                                 data-status="<%=actualStatus%>_<%=requestType%>" 
                                 data-type="<%=requestType%>"
@@ -202,7 +198,7 @@
                         <input type="hidden" name="requestId" value="<%=id%>">
                         <input type="hidden" name="action" value="reject">
                         <button type="button" class="btn btn-sm btn-danger me-1 reject-btn"
-                                onclick="handleReject(this)"
+                                onclick="document.getElementById('reject-form-<%=id%>').submit()"
                                 data-request-id="<%=id%>"
                                 title="Reject request">
                               <i class="fas fa-times"></i> Reject
@@ -215,7 +211,8 @@
                   <form id="borrow-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
                         <input type="hidden" name="requestId" value="<%=id%>">
                         <input type="hidden" name="action" value="borrow">
-                        <button type="submit" class="btn btn-sm btn-primary borrow-btn"
+                        <button type="button" class="btn btn-sm btn-primary borrow-btn"
+                                onclick="document.getElementById('borrow-form-<%=id%>').submit()"
                                 data-request-id="<%=id%>"
                                 title="Create borrow record">
                               <i class="fas fa-book"></i> Process Borrow
@@ -223,7 +220,7 @@
                   </form>
                   <% } %>
 
-                  <% if ("approved".equals(actualStatus) && "return".equals(requestType)) { %>
+                  <% if ("approved-return".equals(actualStatus)) { %>
                   <!-- Approved Return Status -->
                   <div class="completed-status text-center">
                         <span class="badge bg-primary">
@@ -241,7 +238,7 @@
                   </div>
                   <% } else if ("rejected".equals(actualStatus)) { %>
                   <!-- Rejected Status -->
-                  <div class="completed-status text-center">
+                  <div class=" personally-status text-center">
                         <span class="badge bg-danger">
                               <i class="fas fa-times-circle"></i> Request Rejected
                         </span>
@@ -249,17 +246,17 @@
                               No further action needed
                         </small>
                   </div>
-                  <% } else if ("completed".equals(actualStatus)) { %>
-                  <!-- Completed Status -->
+                  <% } else if ("borrowed".equals(actualStatus)) { %>
+                  <!-- Borrowed Status -->
                   <div class="completed-status text-center">
-                        <span class="badge bg-dark">
-                              <i class="fas fa-check-double"></i> Completed
+                        <span class="badge bg-success">
+                              <i class="fas fa-check-double"></i> Borrowed
                         </span>
                         <small class="text-success d-block mt-1">
-                              <i class="fas fa-thumbs-up"></i> All done
+                              <i class="fas fa-thumbs-up"></i> Book borrowed
                         </small>
                   </div>
-                  <% } else if (!shouldShowApproveButton(b) && !shouldShowRejectButton(b) && !shouldShowBorrowButton(b)) { %>
+                  <% } else if (!shouldShowApproveButton(b, request) && !shouldShowRejectButton(b) && !shouldShowBorrowButton(b)) { %>
                   <!-- Unknown Status -->
                   <div class="unknown-status text-center">
                         <span class="badge bg-secondary">

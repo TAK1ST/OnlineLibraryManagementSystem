@@ -49,6 +49,7 @@ public class SendMail {
         props.put("mail.smtp.starttls.enable", "true");
         
         Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
+            @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(fromEmail, password);
             }

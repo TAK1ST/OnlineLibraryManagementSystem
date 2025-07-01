@@ -73,7 +73,7 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
             conn = DBConnection.getConnection();
             String sql = "SELECT id, user_id, book_id, request_date, status "
                     + "FROM book_requests "
-                    + "WHERE user_id = ? AND status = 'approved' "
+                    + "WHERE user_id = ? AND status = 'borrowed' "
                     + "ORDER BY request_date DESC";
             
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -98,7 +98,7 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
             conn = DBConnection.getConnection();
             
             // Update request status to pending_return
-            String updateRequestSql = "UPDATE book_requests SET status = 'pending_return' WHERE id = ? AND status = 'approved'";
+            String updateRequestSql = "UPDATE book_requests SET status = 'pending' WHERE id = ? AND status = 'borrowed'";
             PreparedStatement updateRequestStmt = conn.prepareStatement(updateRequestSql);
             updateRequestStmt.setInt(1, requestId);
             
