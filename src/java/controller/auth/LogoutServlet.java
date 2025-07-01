@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller.auth;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -21,7 +20,8 @@ public class LogoutServlet extends HttpServlet {
        try {
            HttpSession s = request.getSession();
            s.invalidate();
-           response.sendRedirect("index.jsp");
+           response.sendRedirect(request.getContextPath() + "/home");
+           
        } catch (Exception e) {
            e.printStackTrace();
        }
@@ -32,7 +32,7 @@ public class LogoutServlet extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
+    
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -46,7 +46,7 @@ public class LogoutServlet extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
+    
     /**
      * Returns a short description of the servlet.
      *
@@ -55,6 +55,5 @@ public class LogoutServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    }
 }
