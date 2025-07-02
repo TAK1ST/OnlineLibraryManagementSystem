@@ -116,6 +116,26 @@ public class BookManagementService {
                   throw new RuntimeException("Error adding book: " + e.getMessage(), e);
             }
       }
+      
+      public boolean editBook(Book  book) {
+            try {
+                  Book currentBook = getBookById(book.getId());
+                  // Validate book data
+                  if (book == null) {
+                        throw new IllegalArgumentException("Book cannot be null");
+                  }
+                  if (book.getTitle() == null || book.getTitle().trim().isEmpty()) {
+                        throw new IllegalArgumentException("Book title is required");
+                  }
+                  if (book.getAuthor() == null || book.getAuthor().trim().isEmpty()) {
+                        throw new IllegalArgumentException("Book author is required");
+                  }
+
+                  return bookManagementDAO.updateBook(book);
+            } catch (Exception e) {
+                  throw new RuntimeException("Error edit book: " + e.getMessage(), e);
+            }
+      }
 
       public List<String> getAvailableCategories() {
             try {

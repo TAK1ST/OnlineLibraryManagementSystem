@@ -17,7 +17,6 @@ public class ViewURL {
       public static String                ADMIN_ADD_BOOK_MANAGEMENT =                                                              "/view/dashboard/admin/admin-add-book-manager.jsp";
       public static String                ADMIN_STATUS_REQUEST_BORROW_BOOK =                                               "/view/dashboard/admin/admin-status-resquest-borrow-book.jsp";
       public static String                BOOK_REQUEST_LIST_FRAGMENT =                                                              "/view/dashboard/admin/book-request-list-fragment.jsp";
-      public static String                ADD_BOOK_MANAGERMENT =                                                              "/view/dashboard/admin/admin-add-book-manager.jsp";
       public static String                USER_LIST_FRAGMENT =                                                                                  "/view/dashboard/admin/user-list-fragment.jsp";
       public static String                ADMIN_CHANGE_PROFILE_USER =                                                      "/view/dashboard/admin/admin-change-profile-user.jsp";
       public static String                ADMIN_UPDATE_INVENTORY =                                                              "/view/dashboard/admin/admin-update-inventory.jsp";

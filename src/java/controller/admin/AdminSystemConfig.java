@@ -5,9 +5,9 @@
 package controller.admin;
 
 import constant.ViewURL;
+import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.implement.SystemConfigurationService;
@@ -16,16 +16,25 @@ import service.implement.SystemConfigurationService;
  *
  * @author asus
  */
-public class AdminSystemConfig extends HttpServlet {
+public class AdminSystemConfig extends BaseAdminController {
 
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
+
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
+            
             request.getRequestDispatcher(ViewURL.ADMIN_SYSTEM_CONFIG).forward(request, response);
       }
 
       @Override
-      protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      public void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
 
             SystemConfigurationService systemConfigService = new SystemConfigurationService();

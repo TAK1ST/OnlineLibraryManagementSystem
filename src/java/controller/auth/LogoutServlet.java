@@ -16,9 +16,11 @@ import jakarta.servlet.http.HttpSession;
  * @author asus
  */
 public class LogoutServlet extends HttpServlet {
-    public void processRequest(HttpServletRequest request, HttpServletResponse response){
-       try {
+
+    public void processRequest(HttpServletRequest request, HttpServletResponse response) {
+        try {
            HttpSession s = request.getSession();
+//           if (s != null){
            s.invalidate();
            response.sendRedirect(request.getContextPath() + "/home");
            
@@ -28,7 +30,7 @@ public class LogoutServlet extends HttpServlet {
    }
     
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }

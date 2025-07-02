@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpSession;
 public class SubmitBorrowRequestServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User loginedUser = (User) session.getAttribute("loginedUser");

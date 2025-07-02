@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Đăng nhập - Thư viện trực tuyến</title>
+        <title>Login - Online Library</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
@@ -99,24 +99,65 @@
             .register-link a:hover {
                 color: var(--secondary-accent);
             }
+
+            .alert {
+                padding: 10px;
+                margin-bottom: 15px;
+                border-radius: 4px;
+                text-align: center;
+            }
+
+            .alert-success {
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+
+            .alert-error {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
         </style>
     </head>
     <body>
         <div class="login-container">
-            <h1>Đăng nhập</h1>
+            <h1>Login</h1>
+            
+            <!-- Hiển thị thông báo thành công -->
+            <% if (request.getAttribute("message") != null) { %>
+                <div class="alert alert-success">
+                    <%= request.getAttribute("message") %>
+                </div>
+            <% } %>
+            
+            <!-- Hiển thị thông báo lỗi -->
+            <% if (request.getAttribute("error") != null) { %>
+                <div class="alert alert-error">
+                    <%= request.getAttribute("error") %>
+                </div>
+            <% } %>
+            
             <form action="${pageContext.request.contextPath}/LoginServlet" method="POST">
                 <div class="form-group">
-                    <label for="username">Tên đăng nhập</label>
+                    <label for="username">Your Email</label>
                     <input type="text" class="form-control" id="username" name="txtemail" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Mật khẩu</label>
+                    <label for="password">Your Password</label>
                     <input type="password" class="form-control" id="password" name="txtpassword" required>
                 </div>
-                <button type="submit" class="btn-login">Đăng nhập</button>
+                <button type="submit" class="btn-login">Login</button>
+                <div class="form-group">
+                    <a href="resetpassword" style="text-decoration: none;">
+                    <label for="password"></label>Forgot password?
+                    <!--<input type="password" class="form-control" id="password" name="txtpassword" required>-->
+                    </a>
+                </div>
             </form>
             <div class="register-link">
-                <p>Chưa có tài khoản? <a href="${pageContext.request.contextPath}/RegisterServlet">Đăng ký ngay</a></p>
+                <p>New to Library? | <a href="${pageContext.request.contextPath}/RegisterServlet">Sign Up</a></p>
+                <p><a href="javascript: history.back()">Come Back</a></p>
             </div>
         </div>
     </body>
