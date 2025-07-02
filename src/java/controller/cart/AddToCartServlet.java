@@ -87,7 +87,7 @@ public class AddToCartServlet extends HttpServlet {
         } catch (Exception e) {
             request.setAttribute("message", "Error: " + e.getMessage());
             request.setAttribute("messageType", "error");
-            request.getRequestDispatcher("/user-dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/home.jsp").forward(request, response);
         }
     }
     

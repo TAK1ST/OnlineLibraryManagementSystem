@@ -313,6 +313,54 @@
                     margin-bottom: 1rem;
                 }
             }
+            .banner-container {
+            width: 100%;
+            max-width: 100%;
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #ddd; /* Để debug */
+        }
+
+        .banner-slide {
+            display: flex;
+            width: 400%; /* 4 slides = 400% */
+            height: 100%;
+            transition: transform 1s ease-in-out;
+        }
+
+        .slide-item {
+            position: relative;
+            width: 25%; /* Mỗi slide chiếm 25% của container */
+            flex-shrink: 0;
+            background: #f0f0f0; /* Màu nền để debug */
+        }
+
+        .slide-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .caption {
+            position: absolute;
+            bottom: 170px; /* Điều chỉnh vị trí */
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* Debug styles */
+        .slide-item:nth-child(1) { background-color: #ff6b6b; }
+        .slide-item:nth-child(2) { background-color: #4ecdc4; }
+        .slide-item:nth-child(3) { background-color: #45b7d1; }
+        .slide-item:nth-child(4) { background-color: #96ceb4; }
         </style>
     </head>
     <body>
@@ -320,7 +368,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
-                    <i class="fas fa-book-reader me-2"></i>Thư viện trực tuyến
+                    <i class="fas fa-book-reader me-2"></i>Online Library
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -330,34 +378,34 @@
                         <c:if test="${empty sessionScope.loginedUser}">
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LoginServlet">
-                                    <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                                    <i class="fas fa-sign-in-alt me-1"></i>Log in
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/RegisterServlet">
-                                    <i class="fas fa-user-plus me-1"></i>Đăng ký
+                                    <i class="fas fa-user-plus me-1"></i>Register
                                 </a>
                             </li>
                         </c:if>
                         <c:if test="${not empty sessionScope.loginedUser}">
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/BorrowHistoryServlet">
-                                    <i class="fas fa-history me-1"></i> Lịch sử mượn
+                                    <i class="fas fa-history me-1"></i>Borrowed History
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/cart">
-                                    <i class="fas fa-shopping-cart me-1"></i> Giỏ sách
+                                    <i class="fas fa-shopping-cart me-1"></i>Cart
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <span class="nav-link">
-                                    <i class="fas fa-user me-1"></i>Xin chào, ${sessionScope.loginedUser.name}!
+                                    <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
                                 </span>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">
-                                    <i class="fas fa-sign-out-alt me-1"></i>Đăng xuất
+                                    <i class="fas fa-sign-out-alt me-1"></i>Log out
                                 </a>
                             </li>
                         </c:if>
@@ -367,10 +415,24 @@
         </nav>
 
         <!-- Phần Hero -->
-        <div class="banner">
-            <div class="content">
-                <p class="header">Tìm kiếm sách</p>
-                <p class="header2">Khám phá và tìm kiếm những cuốn sách yêu thích của bạn</p>
+        <div class="banner-container">
+            <div class="banner-slide" id="slide">
+                <div class="slide-item">
+                    <img src="${pageContext.request.contextPath}/hinh/OIP.jpg" alt="Ảnh 1">
+                    <div class="caption">Welcome to the Online Library</div>
+                </div>
+                <div class="slide-item">
+                    <img src="${pageContext.request.contextPath}/hinh/R.jpg" alt="Ảnh 2">
+                    <div class="caption">Explore thousands of books and expand your knowledge</div>
+                </div>
+                <div class="slide-item">
+                    <img src="${pageContext.request.contextPath}/hinh/1.jpg" alt="Ảnh 3">
+                    <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
+                </div>
+                <div class="slide-item">
+                    <img src="${pageContext.request.contextPath}/hinh/4.jpg" alt="Ảnh 4">
+                    <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
+                </div>
             </div>
         </div>
 
@@ -386,7 +448,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <select name="category" class="form-select">
-                            <option value="">Tất cả thể loại</option>
+                            <option value="">All categories</option>
                             <c:forEach items="${categories}" var="category">
                                 <option value="${category}" ${param.category eq category ? 'selected' : ''}>${category}</option>
                             </c:forEach>
@@ -394,7 +456,7 @@
                     </div>
                     <div class="col-md-2 mb-3">
                         <button type="submit" class="btn btn-primary w-100 btn-search">
-                            <i class="fas fa-search me-2"></i> Tìm kiếm
+                            <i class="fas fa-search me-2"></i>Find
                         </button>
                     </div>
                 </form>
@@ -418,15 +480,15 @@
                     <c:when test="${empty books}">
                         <div class="empty-results">
                             <i class="fas fa-search"></i>
-                            <h3>Không tìm thấy kết quả</h3>
-                            <p class="text-muted">Vui lòng thử lại với từ khóa khác hoặc điều chỉnh bộ lọc tìm kiếm</p>
+                            <h3>No results found</h3>
+                            <p class="text-muted">Please try again with different keywords or adjust your search filters.</p>
                             <a href="${pageContext.request.contextPath}/home" class="btn btn-primary">
-                                <i class="fas fa-home me-2"></i>Về trang chủ
+                                <i class="fas fa-home me-2"></i>Back to home page
                             </a>
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <h2 class="section-title text-center">Kết quả tìm kiếm</h2>
+                        <h2 class="section-title text-center">Search results</h2>
                         <div class="row">
                             <c:forEach items="${books}" var="book">
                                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
@@ -437,35 +499,35 @@
                                             <h5 class="card-title">${book.title}</h5>
                                             <p class="card-text">
                                                 <small class="text-muted">
-                                                    <i class="fas fa-user me-1"></i>Tác giả: ${book.author}
+                                                    <i class="fas fa-user me-1"></i>Author: ${book.author}
                                                 </small>
                                             </p>
                                             <p class="card-text">
                                                 <span class="badge bg-primary me-2">${book.category}</span>
                                                 <c:if test="${book.availableCopies > 0}">
                                                     <span class="badge bg-success">
-                                                        <i class="fas fa-check me-1"></i>Còn sách
+                                                        <i class="fas fa-check me-1"></i>Still have books
                                                     </span>
                                                 </c:if>
                                                 <c:if test="${book.availableCopies == 0}">
                                                     <span class="badge bg-danger">
-                                                        <i class="fas fa-times me-1"></i>Hết sách
+                                                        <i class="fas fa-times me-1"></i>Out of book
                                                     </span>
                                                 </c:if>
                                             </p>
                                             <p class="card-text">
                                                 <small class="text-muted">
-                                                    <i class="fas fa-book me-1"></i>Có sẵn: ${book.availableCopies}/${book.totalCopies}
+                                                    <i class="fas fa-book me-1"></i>Available: ${book.availableCopies}/${book.totalCopies}
                                                 </small>
                                             </p>
                                             <div class="d-grid gap-2">
                                                 <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}" 
                                                    class="btn btn-primary">
-                                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                                    <i class="fas fa-eye me-2"></i>See details
                                                 </a>
                                                 <c:if test="${not empty sessionScope.loginedUser && book.availableCopies > 0}">
                                                     <button onclick="addToCart(${book.id})" class="btn btn-outline-primary">
-                                                        <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+                                                        <i class="fas fa-cart-plus me-2"></i>Add to cart
                                                     </button>
                                                 </c:if>
                                             </div>
@@ -480,6 +542,23 @@
         </section>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+         <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const slide = document.getElementById('slide');
+    const totalSlides = slide.children.length;
+    let index = 0;
+
+    function updateSlide() {
+        slide.style.transform = `translateX(-${index * 25}%)`;
+    }
+
+    setInterval(() => {
+        index = (index + 1) % totalSlides;
+        updateSlide();
+    }, 3000);
+});
+</script>
+
         <script>
             function addToCart(bookId) {
                 fetch('${pageContext.request.contextPath}/UpdateCartServlet?bookId=' + bookId + '&change=1')
