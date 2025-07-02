@@ -154,6 +154,7 @@ public class BookRequestStatusService {
       
       public Book getBookDAO(int id)
       { 
-            return bookDAO.getBookById(id);
+            BookRequest br = bookRequestDAO.getBookRequestById(id).get();
+            return bookDAO.getBookById(br.getBookId());
       }
 }

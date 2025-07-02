@@ -93,6 +93,7 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
             BookRequestStatusService service = new BookRequestStatusService();
             String requestId = request.getParameter("requestId");
             String action = request.getParameter("action");
+            System.err.println("Action: " + action);
             HttpSession session = request.getSession();
 
             try {
@@ -139,7 +140,6 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
             try {
                   BookRequest bookRequest = service.getBookRequestById(requestId)
                           .orElseThrow(() -> new Exception("Yêu cầu không tìm thấy với ID: " + requestId));
-
                   String requestType = bookRequest.getRequestType() != null ? bookRequest.getRequestType().toLowerCase() : "borrow";
                   String currentStatus = bookRequest.getStatus() != null ? bookRequest.getStatus().toLowerCase() : "pending";
 
