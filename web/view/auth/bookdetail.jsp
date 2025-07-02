@@ -60,18 +60,20 @@
                     <div class="detail-value"><%= book.getTotalCopies() - book.getAvailableCopies() %> cuốn</div>
                 </div>
             </div>
-
-            <div class="availability">
+            <!-- 
+                <div class="availability">
                 <div class="availability-count"><%= book.getAvailableCopies() %></div>
                 <p>Số lượng còn lại</p>
-                <% if (book.getAvailableCopies() == 0) { %>
+                <%// if (book.getAvailableCopies() == 0) { %>
                     <span class="status-badge status-unavailable">Hết sách</span>
-                <% } else if (book.getAvailableCopies() <= 2) { %>
+                <%// } else if (book.getAvailableCopies() <= 2) { %>
                     <span class="status-badge status-limited">Sắp hết</span>
-                <% } else { %>
+                <%// } else { %>
                     <span class="status-badge status-available">Còn nhiều</span>
-                <% } %>
-            </div>
+                <%// } %>
+                </div> 
+            -->
+            
 
             <div class="book-actions">
                 <a href="${pageContext.request.contextPath}/home" class="btn btn-primary">

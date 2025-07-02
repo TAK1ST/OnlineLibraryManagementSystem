@@ -6,6 +6,7 @@ package controller.admin;
 
 import constant.ViewURL;
 import dao.implement.BookDAO;
+import dao.implement.OverdueBookDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.List;
 import entity.Book;
+import entity.OverdueBook;
 import entity.User;
 import java.util.ArrayList;
 import service.implement.UpdateInventoryService;
@@ -30,6 +32,7 @@ public class AdminUpdateInventory extends BaseAdminController {
 
       private final IUpdateInventoryService inventoryService;
       private final BookDAO bookDAO = new BookDAO();
+      private final OverdueBookDAO overdueBookDAO = new OverdueBookDAO();
 
       public AdminUpdateInventory() throws SQLException, ClassNotFoundException {
             this.inventoryService = new UpdateInventoryService();
@@ -48,17 +51,19 @@ public class AdminUpdateInventory extends BaseAdminController {
             }
             
             try {
+                List<OverdueBook> overdueBooks = overdueBookDAO.getAllOverdueBooks();
+                
                   // Get statistics
                   int totalBooks = inventoryService.getTotalBook();
                   int availableBooks = inventoryService.getTotalBookAvailable();
                   int borrowedBooks = inventoryService.getBorrowBook();
-                  int lowStockBooks = inventoryService.getBorrowLowStock();
+                  int totalOverdueBooks = overdueBookDAO.getTotalOverdueBooks();
 
                   // Set statistics attributes
                   request.setAttribute("totalBooks", totalBooks);
                   request.setAttribute("availableBooks", availableBooks);
                   request.setAttribute("borrowedBooks", borrowedBooks);
-                  request.setAttribute("lowStockBooks", lowStockBooks);
+                  request.setAttribute("totalOverdueBooks", totalOverdueBooks);
 
                   // Get search parameters
                   String searchTitle = request.getParameter("searchTitle");
@@ -93,6 +98,7 @@ public class AdminUpdateInventory extends BaseAdminController {
                                     books = bookDAO.searchByCategory(searchTerm);
                                     break;
                               case "isbn":
+                                    books = bookDAO.searchByIsbn(searchTerm);
                                     // Note: ISBN search not implemented in DAO as per request
                                     break;
                         }
