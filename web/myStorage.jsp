@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>My Storage - Thư viện trực tuyến</title>
+        <title>My Storage - Online Library</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
@@ -65,7 +65,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
-                    <i class="fas fa-book-reader me-2"></i>Thư viện trực tuyến
+                    <i class="fas fa-book-reader me-2"></i>Online Library
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -75,14 +75,14 @@
                         <c:if test="${not empty sessionScope.loginedUser}">
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/BorrowHistoryServlet">
-                                    <i class="fas fa-history"></i> Lịch sử mượn
+                                    <i class="fas fa-history"></i>Borrowed History
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">Xin chào, ${sessionScope.loginedUser.name}!</span>
+                                <span class="nav-link">Hi, ${sessionScope.loginedUser.name}!</span>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Đăng xuất</a>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Log out</a>
                             </li>
                         </c:if>
                     </ul>
@@ -109,10 +109,10 @@
                 <c:when test="${empty approvedRequests}">
                     <div class="text-center py-5">
                         <i class="fas fa-books fa-3x text-muted mb-3"></i>
-                        <h4>Chưa có sách trong kho</h4>
-                        <p class="text-muted">Bạn chưa mượn cuốn sách nào hoặc chưa có request nào được duyệt</p>
+                        <h4>No books in stock</h4>
+                        <p class="text-muted">You have not borrowed any books or have not had any requests approved.</p>
                         <a href="${pageContext.request.contextPath}/home" class="btn btn-primary">
-                            <i class="fas fa-book me-2"></i>Xem danh sách sách
+                            <i class="fas fa-book me-2"></i>View book list
                         </a>
                     </div>
                 </c:when>
@@ -131,20 +131,17 @@
                                             <div class="book-details">
                                                 <h5 class="card-title">${book.title}</h5>
                                                 <p class="card-text mb-1">
-                                                    <strong>Tác giả:</strong> ${book.author}
+                                                    <strong>Author:</strong> ${book.author}
                                                 </p>
                                                 <p class="card-text mb-1">
-                                                    <strong>Thể loại:</strong> ${book.category}
+                                                    <strong>Categories:</strong> ${book.category}
                                                 </p>
                                                 <p class="card-text mb-3">
-                                                    <strong>Ngày mượn:</strong> ${request.requestDate}
+                                                    <strong>Borrowed date:</strong> ${request.requestDate}
                                                 </p>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <a href="#" class="btn btn-primary">
-                                                        <i class="fas fa-book-reader me-1"></i>Đọc sách
-                                                    </a>
                                                     <button class="return-btn" onclick="showReturnConfirmation(${request.id})">
-                                                        <i class="fas fa-undo-alt me-1"></i>Trả sách
+                                                        <i class="fas fa-undo-alt me-1"></i>Return book
                                                     </button>
                                                 </div>
                                             </div>
@@ -163,15 +160,15 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Xác nhận trả sách</h5>
+                        <h5 class="modal-title">Confirm book return</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Bạn có chắc muốn trả sách này?</p>
+                        <p>Are you sure you want to return this book?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" id="confirmReturnBtn">Xác nhận</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmReturnBtn">Confirm</button>
                     </div>
                 </div>
             </div>

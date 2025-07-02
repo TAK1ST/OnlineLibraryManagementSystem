@@ -51,8 +51,8 @@
             String email = request.getParameter("txtemail");
             String password = request.getParameter("txtpassword");
 
-            System.out.println("Debug Login - Email: " + email);
-            System.out.println("Debug Login - Password length: " + (password != null ? password.length() : "null"));
+//            System.out.println("Debug Login - Email: " + email);
+//            System.out.println("Debug Login - Password length: " + (password != null ? password.length() : "null"));
 
             // Validate input
             if(email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {

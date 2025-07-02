@@ -99,182 +99,303 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                           </div>
                                     </c:if>
+                    <c:if test="${not empty error}">
+                        <div class="alert alert-danger-custom alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>${error}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </c:if>
 
-                                    <!-- Summary Cards -->
-                                    <div class="row mb-4">
-                                          <div class="col-md-4">
-                                                <div class="card stats-card card-danger">
-                                                      <div class="card-body">
-                                                            <div class="row align-items-center">
-                                                                  <div class="col-8">
-                                                                        <h5 class="card-title">Total Overdue</h5>
-                                                                        <h2 class="card-text mb-0">${totalOverdueBooks}</h2>
-                                                                        <small class="opacity-75">Books past due date</small>
-                                                                  </div>
-                                                                  <div class="col-4 text-end">
-                                                                        <i class="fas fa-exclamation-triangle fa-3x opacity-25"></i>
-                                                                  </div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                          </div>
-                                          <div class="col-md-4">
-                                                <div class="card stats-card card-warning">
-                                                      <div class="card-body">
-                                                            <div class="row align-items-center">
-                                                                  <div class="col-8">
-                                                                        <h5 class="card-title">Total Fines</h5>
-                                                                        <h2 class="card-text mb-0">
-                                                                              <fmt:formatNumber value="${totalFines}" type="currency"/>
-                                                                        </h2>
-                                                                        <small class="opacity-75">Outstanding penalties</small>
-                                                                  </div>
-                                                                  <div class="col-4 text-end">
-                                                                        <i class="fas fa-dollar-sign fa-3x opacity-25"></i>
-                                                                  </div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                          </div>
-                                          <div class="col-md-4">
-                                                <div class="card stats-card card-info">
-                                                      <div class="card-body">
-                                                            <div class="row align-items-center">
-                                                                  <div class="col-8">
-                                                                        <h5 class="card-title">Avg. Days Overdue</h5>
-                                                                        <h2 class="card-text mb-0">${avgOverdueDays}</h2>
-                                                                        <small class="opacity-75">Average delay period</small>
-                                                                  </div>
-                                                                  <div class="col-4 text-end">
-                                                                        <i class="fas fa-calendar-times fa-3x opacity-25"></i>
-                                                                  </div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                          </div>
-                                    </div>
+                    <c:if test="${not empty message}">
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <i class="fas fa-info-circle"></i>
+                            <span>${message}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </c:if>
 
-                                    <!-- Overdue Books Table -->
-                                    <div class="overdue-table">
-                                          <div class="table-header">
-                                                <h5 class="mb-0">
-                                                      <i class="fas fa-list"></i>
-                                                      <span>Overdue Books List</span>
-                                                </h5>
-                                          </div>
-                                          <div class="p-3">
-                                                <c:choose>
-                                                      <c:when test="${empty overdueBookDetails}">
-                                                            <div class="no-data-container">
-                                                                  <i class="fas fa-check-circle fa-4x"></i>
-                                                                  <h4>No Overdue Books</h4>
-                                                                  <p>All books are returned on time! Great job managing the library.</p>
-                                                            </div>
-                                                      </c:when>
-                                                      <c:otherwise>
-                                                            <div class="table-responsive">
-                                                                  <table class="table table-hover">
-                                                                        <thead>
-                                                                              <tr>
-                                                                                    <th><i class="fas fa-hashtag me-2"></i>ID</th>
-                                                                                    <th><i class="fas fa-book me-2"></i>Book</th>
-                                                                                    <th><i class="fas fa-user me-2"></i>Borrower</th>
-                                                                                    <th><i class="fas fa-calendar-plus me-2"></i>Borrow Date</th>
-                                                                                    <th><i class="fas fa-calendar-times me-2"></i>Due Date</th>
-                                                                                    <th><i class="fas fa-clock me-2"></i>Days Overdue</th>
-                                                                                    <th><i class="fas fa-dollar-sign me-2"></i>Fine Amount</th>
-                                                                                    <th><i class="fas fa-flag me-2"></i>Status</th>
-                                                                                    <th><i class="fas fa-cogs me-2"></i>Actions</th>
-                                                                              </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                              <c:forEach var="detail" items="${overdueBookDetails}">
-                                                                                    <tr class="overdue-row">
-                                                                                          <td>
-                                                                                                <div class="fw-bold text-primary">#${detail.borrowRecord.id}</div>
-                                                                                          </td>
-                                                                                          <td>
-                                                                                                <div class="fw-bold text-dark">${detail.book.title}</div>
-                                                                                                <small class="text-muted d-block">by ${detail.book.author}</small>
-                                                                                                <small class="text-muted d-block">ISBN: ${detail.book.isbn}</small>
-                                                                                          </td>
-                                                                                          <td>
-                                                                                                <div class="fw-bold text-dark">${detail.user.name}</div>
-                                                                                                <small class="text-muted d-block">${detail.user.email}</small>
-                                                                                          </td>
-                                                                                          <td>
-                                                                                                <i class="fas fa-calendar me-2 text-muted"></i>
-                                                                                                <fmt:formatDate value="${detail.borrowRecord.borrowDate}" pattern="yyyy-MM-dd"/>
-                                                                                          </td>
-                                                                                          <td class="text-danger fw-bold">
-                                                                                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                                                                                <fmt:formatDate value="${detail.borrowRecord.dueDate}" pattern="yyyy-MM-dd"/>
-                                                                                          </td>
-                                                                                          <td>
-                                                                                                <span class="overdue-days">
-                                                                                                      <i class="fas fa-clock me-1"></i>
-                                                                                                      ${detail.overdueDays} days
-                                                                                                </span>
-                                                                                          </td>
-                                                                                          <td>
-                                                                                                <span class="fine-amount">
-                                                                                                      <i class="fas fa-dollar-sign me-1"></i>
-                                                                                                      <fmt:formatNumber value="${detail.fineAmount}" type="currency"/>
-                                                                                                </span>
-                                                                                          </td>
-                                                                                          <td>
-                                                                                                <span class="badge status-overdue">
-                                                                                                      <i class="fas fa-exclamation-circle me-1"></i>
-                                                                                                      ${detail.borrowRecord.status}
-                                                                                                </span>
-                                                                                          </td>
-                                                                                          <td>
-                                                                                                <div class="btn-group" role="group">
-                                                                                                      <button type="button" class="btn btn-warning-custom btn-custom btn-sm" 
-                                                                                                              title="Send Reminder">
-                                                                                                            <i class="fas fa-bell"></i>
-                                                                                                      </button>
-                                                                                                      <button type="button" class="btn btn-primary-custom btn-custom btn-sm" 
-                                                                                                              title="View Details">
-                                                                                                            <i class="fas fa-eye"></i>
-                                                                                                      </button>
-                                                                                                      <button type="button" class="btn btn-info-custom btn-custom btn-sm" 
-                                                                                                              title="Mark as Returned">
-                                                                                                            <i class="fas fa-check"></i>
-                                                                                                      </button>
-                                                                                                </div>
-                                                                                          </td>
-                                                                                    </tr>
-                                                                              </c:forEach>
-                                                                        </tbody>
-                                                                  </table>
-                                                            </div>
-                                                      </c:otherwise>
-                                                </c:choose>
-                                          </div>
+                    <!-- Summary Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card stats-card card-danger">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h5 class="card-title">Total Overdue</h5>
+                                            <h2 class="card-text mb-0">${totalOverdueBooks}</h2>
+                                            <small class="opacity-75">Books past due date</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <i class="fas fa-exclamation-triangle fa-3x opacity-25"></i>
+                                        </div>
                                     </div>
-                              </div>
-                        </main>
-                  </div>
-            </div>
-            <div class="modal-footer justify-content-center">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <div id="overdueApproveFormContainer"></div>
-                  <button type U="button" class="btn btn-primary" id="confirmOverdueApprove">Confirm Approve</button>
-            </div>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
-            </script>
-            <script>
-                  document.getElementById('confirmOverdueApprove').addEventListener('click', function () {
-                        const formContainer = document.getElementById('overdueApproveFormContainer');
-                        const form = formContainer.querySelector('form');
-                        if (form) {
-                              form.submit();
-                        } else {
-                              console.error('Overdue approve form not found');
-                              alert('Error: Form not found');
-                        }
-                  });
-            </script>
-      </body>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stats-card card-warning">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h5 class="card-title">Total Fines</h5>
+                                            <h2 class="card-text mb-0">
+                                                $<fmt:formatNumber value="${totalFines}" type="number" minFractionDigits="2" maxFractionDigits="2"/>
+                                            </h2>
+                                            <small class="opacity-75">Outstanding penalties</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <i class="fas fa-dollar-sign fa-3x opacity-25"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card stats-card card-info">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-8">
+                                            <h5 class="card-title">Avg. Days Overdue</h5>
+                                            <h2 class="card-text mb-0">${averageOverdueDays}</h2>
+                                            <small class="opacity-75">Average delay period</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <i class="fas fa-calendar-times fa-3x opacity-25"></i>
+                                        </div>
+                                    </div>
+                    <!-- Overdue Books Table -->
+                    <div class="overdue-table">
+                        <div class="table-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list"></i>
+                                <span>Overdue Books List</span>
+                            </h5>
+                        </div>
+                        <div class="p-3">
+                            <c:choose>
+                                <c:when test="${empty overdueBooks}">
+                                    <div class="no-data-container">
+                                        <i class="fas fa-check-circle fa-4x"></i>
+                                        <h4>No Overdue Books</h4>
+                                        <p>All books are returned on time! Great job managing the library.</p>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th><i class="fas fa-hashtag me-2"></i>ID</th>
+                                                    <th><i class="fas fa-book me-2"></i>Book Title</th>
+                                                    <th><i class="fas fa-calendar-plus me-2"></i>Borrow Date</th>
+                                                    <th><i class="fas fa-calendar-times me-2"></i>Due Date</th>
+                                                    <th><i class="fas fa-clock me-2"></i>Days Overdue</th>
+                                                    <th><i class="fas fa-flag me-2"></i>Status</th>
+                                                    <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="overdueBook" items="${overdueBooks}" varStatus="status">
+                                                    <!-- Main row -->
+                                                    <tr class="overdue-row clickable-row" onclick="toggleDetails('${status.index}')" style="cursor: pointer;">
+                                                        <td>
+                                                            <div class="fw-bold text-primary">#${overdueBook.borrowId}</div>
+                                                            <i class="fas fa-chevron-down toggle-icon" id="icon-${status.index}"></i>
+                                                        </td>
+                                                        <td>
+                                                            <div class="fw-bold text-dark">${overdueBook.bookTitle}</div>
+                                                            <small class="text-muted d-block">by ${overdueBook.bookAuthor}</small>
+                                                        </td>
+                                                        <td>
+                                                            <i class="fas fa-calendar me-2 text-muted"></i>
+                                                            <fmt:formatDate value="${overdueBook.borrowDate}" pattern="yyyy-MM-dd"/>
+                                                        </td>
+                                                        <td class="text-danger fw-bold">
+                                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                                            <fmt:formatDate value="${overdueBook.dueDate}" pattern="yyyy-MM-dd"/>
+                                                        </td>
+                                                        <td>
+                                                            <span class="overdue-days">
+                                                                <i class="fas fa-clock me-1"></i>
+                                                                ${overdueBook.overdueDays} days
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge status-overdue">
+                                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                                ${overdueBook.borrowStatus}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <!-- I need fix here / Tuan-->
+                                                            <div class="btn-group" role="group" onclick="event.stopPropagation()">
+                                                                <button type="button" class="btn btn-warning btn-sm" 
+                                                                        title="Send Reminder">
+                                                                    <i class="fas fa-bell"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary btn-sm" 
+                                                                        title="View Details">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-success btn-sm" 
+                                                                        title="Mark as Returned">
+                                                                    <i class="fas fa-check"></i>
+                                                                </button>
+                                                            </div>
+                                                            <!-- finish fix here -->
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                    <!-- Details row (hidden by default) -->
+                                                    <tr class="details-row" id="details-${status.index}" style="display: none;">
+                                                        <td colspan="7">
+                                                            <div class="details-content p-3 bg-light">
+                                                                <div class="row">
+                                                                    <!-- Book Details -->
+                                                                    <div class="col-md-4">
+                                                                        <h6 class="fw-bold text-primary mb-2">
+                                                                            <i class="fas fa-book me-2"></i>Book Details
+                                                                        </h6>
+                                                                        <div class="mb-2">
+                                                                            <strong>ISBN:</strong> ${overdueBook.bookIsbn}
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <strong>Category:</strong> ${overdueBook.bookCategory}
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <strong>Author:</strong> ${overdueBook.bookAuthor}
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <!-- User Details -->
+                                                                    <div class="col-md-4">
+                                                                        <h6 class="fw-bold text-success mb-2">
+                                                                            <i class="fas fa-user me-2"></i>Borrower Details
+                                                                        </h6>
+                                                                        <div class="mb-2">
+                                                                            <strong>Name:</strong> ${overdueBook.userName}
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <strong>Email:</strong> ${overdueBook.userEmail}
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <strong>Role:</strong> 
+                                                                            <span class="badge bg-secondary">${overdueBook.userRole}</span>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <strong>User Status:</strong> 
+                                                                            <span class="badge bg-info">${overdueBook.userStatus}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <!-- Fine Details -->
+                                                                    <div class="col-md-4">
+                                                                        <h6 class="fw-bold text-warning mb-2">
+                                                                            <i class="fas fa-dollar-sign me-2"></i>Fine Details
+                                                                        </h6>
+                                                                        <div class="mb-2">
+                                                                            <strong>Fine Amount:</strong> 
+                                                                            <span class="text-danger fw-bold">
+                                                                                $<fmt:formatNumber value="${overdueBook.fineAmount}" type="number" minFractionDigits="2" maxFractionDigits="2"/>
+                                                                            </span>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <strong>Payment Status:</strong>
+                                                                            <c:choose>
+                                                                                <c:when test="${overdueBook.paidStatus == 'paid'}">
+                                                                                    <span class="badge bg-success">
+                                                                                        <i class="fas fa-check-circle me-1"></i>
+                                                                                        Paid
+                                                                                    </span>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <span class="badge bg-danger">
+                                                                                        <i class="fas fa-times-circle me-1"></i>
+                                                                                        Unpaid
+                                                                                    </span>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <strong>Return Date:</strong> 
+                                                                            <c:choose>
+                                                                                <c:when test="${not empty overdueBook.returnDate}">
+                                                                                    <fmt:formatDate value="${overdueBook.returnDate}" pattern="yyyy-MM-dd"/>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <span class="text-muted">Not returned</span>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function toggleDetails(index) {
+            const detailsRow = document.getElementById('details-' + index);
+            const icon = document.getElementById('icon-' + index);
+            
+            if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+                detailsRow.style.display = 'table-row';
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                detailsRow.style.display = 'none';
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+    </script>
+    
+    <style>
+        .clickable-row:hover {
+            background-color: #f8f9fa !important;
+        }
+        
+        .toggle-icon {
+            font-size: 0.8em;
+            margin-left: 0.5rem;
+            color: #6c757d;
+        }
+        
+        .details-content {
+            border-left: 4px solid #007bff;
+            border-radius: 0.375rem;
+            margin: 0.5rem 0;
+        }
+        
+        .details-content h6 {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .details-row td {
+            padding: 0 !important;
+            border-top: none !important;
+        }
+        
+        .overdue-row.clickable-row {
+            transition: background-color 0.2s ease;
+        }
+    </style>
+</body>
 </html>

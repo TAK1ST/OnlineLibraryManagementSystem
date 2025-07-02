@@ -61,10 +61,14 @@
                     <div class="stat-number">${borrowedBooks != null ? borrowedBooks : 0}</div>
                     <div class="stat-label">Borrowed</div>
                 </div>
-                <div class="stat-card low-stock">
-                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="stat-number">${lowStockBooks != null ? lowStockBooks : 0}</div>
-                    <div class="stat-label">Low Stock</div>
+                <div>
+                    <a href="overduebook" style="text-decoration: none;">
+                        <div class="stat-card low-stock">
+                            <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div class="stat-number">${totalOverdueBooks != null ? totalOverdueBooks : 0}</div>
+                            <div class="stat-label">Overdue Book</div>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -150,7 +154,7 @@
                                                     <button type="submit" class="btn btn-primary btn-small">
                                                         <i class="fas fa-save"></i> Update
                                                     </button>
-                                                    <a href="#" class="btn btn-secondary btn-small">
+                                                    <a href="bookdetail?id=${book.id}" class="btn btn-secondary btn-small">
                                                         <i class="fas fa-eye"></i> Details
                                                     </a>
                                                 </div>

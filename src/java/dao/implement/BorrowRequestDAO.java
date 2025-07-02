@@ -65,20 +65,22 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
     }
 
     @Override
-    public List<BorrowRequest> getApprovedRequestsByUser(int userId) 
+    public List<BorrowRequest> getApprovedRequestsByUser(int userId)
             throws SQLException, ClassNotFoundException {
         Connection conn = null;
         List<BorrowRequest> requests = new ArrayList<>();
         try {
             conn = DBConnection.getConnection();
-            String sql = "SELECT id, user_id, book_id, request_date, status "
+
+            String sql = "SELECT id, user_id, book_id, request_date, request_type, status "
                     + "FROM book_requests "
                     + "WHERE user_id = ? AND status = 'borrowed' "
+
                     + "ORDER BY request_date DESC";
-            
+
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
-            
+
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 requests.add(extractBorrowRequestFromResultSet(rs));
@@ -91,6 +93,18 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
         return requests;
     }
 
+
+    
+    private BorrowRequest extractBorrowRequestFromResultSet(ResultSet rs) throws SQLException {
+        BorrowRequest request = new BorrowRequest();
+        request.setId(rs.getInt("id"));
+        request.setUserId(rs.getInt("user_id"));
+        request.setBookId(rs.getInt("book_id"));
+        request.setRequestDate(rs.getDate("request_date"));
+        request.setStatus(rs.getString("status"));
+        return request;
+    }
+    
     @Override
     public boolean returnBook(int requestId) throws SQLException, ClassNotFoundException {
         Connection conn = null;
@@ -105,20 +119,13 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
             int rowsAffected = updateRequestStmt.executeUpdate();
             return rowsAffected > 0;
             
+
         } finally {
             if (conn != null) {
                 conn.close();
             }
         }
     }
+
     
-    private BorrowRequest extractBorrowRequestFromResultSet(ResultSet rs) throws SQLException {
-        BorrowRequest request = new BorrowRequest();
-        request.setId(rs.getInt("id"));
-        request.setUserId(rs.getInt("user_id"));
-        request.setBookId(rs.getInt("book_id"));
-        request.setRequestDate(rs.getDate("request_date"));
-        request.setStatus(rs.getString("status"));
-        return request;
-    }
 } 
