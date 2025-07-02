@@ -37,28 +37,28 @@ public class BookDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("=== BookDetailServlet.doGet() called ===");
+//        System.out.println("=== BookDetailServlet.doGet() called ===");
 
         try {
             // Kiểm tra BookDAO
             if (bookDAO == null) {
-                System.err.println("ERROR: BookDAO is null!");
-                request.setAttribute("error", "BookDAO không được khởi tạo");
+//                System.err.println("ERROR: BookDAO is null!");
+                request.setAttribute("error", "Book not initialized");
                 request.getRequestDispatcher("view/auth/bookdetail.jsp").forward(request, response);
                 return;
             }
 
-            System.out.println("BookDAO initialized successfully");
+//            System.out.println("BookDAO initialized successfully");
 
             // Lấy ID từ request (từ button View Details) 
             String bookId = request.getParameter("id");
             if (bookId == null || bookId.trim().isEmpty()) {
-                request.setAttribute("error", "ID sách không hợp lệ");
+                request.setAttribute("error", "Invalid book ID");
                 request.getRequestDispatcher("view/auth/bookdetail.jsp").forward(request, response);
                 return;
             }
 
-            System.out.println("Fetching book with ID: " + bookId);
+//            System.out.println("Fetching book with ID: " + bookId);
 
             // Lấy thông tin sách dựa trên ID
             Book book = bookDAO.getBookById(Integer.parseInt(bookId));
@@ -71,7 +71,7 @@ public class BookDetailServlet extends HttpServlet {
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi không xác định: " + e.getMessage());
+            request.setAttribute("error", "Unknown error: " + e.getMessage());
             request.getRequestDispatcher("view/auth/bookdetail.jsp").forward(request, response);
         }
     }
