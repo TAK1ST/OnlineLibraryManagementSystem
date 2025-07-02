@@ -1,26 +1,32 @@
-<%-- Document : admin-box-add-book-manager 
+<%-- Document : admin-status-request-borrow-book 
 Created on : May 29, 2025, 10:25:36 PM 
 Author : asus 
 --%>
 <!DOCTYPE html>
 <html lang="en">
-
       <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Status Request Borrow Book</title>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css" />
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/container.css" />
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
-            <link rel="stylesheet"
-                  href="${pageContext.request.contextPath}/css/admin-status-resquest-borrow-book.css" />
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-status-resquest-borrow-book.css"/>
 
       </head>
-
       <body>
             <div class="header">
+                  <% if (request.getAttribute("errorMessage") != null) { %>
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Error: </strong> <%= request.getAttribute("errorMessage") %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  <% } %>
+                  <% if (request.getAttribute("successMessage") != null) { %>
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Success: </strong> <%= request.getAttribute("successMessage") %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  <% } %>
                   <div class="header-content">
                         <a href="admindashboard" class="back-arrow">
                               <i class="fas fa-arrow-left fa-2x"></i>
@@ -113,73 +119,15 @@ Author : asus
                         </tbody>
                   </table>
             </div>
-            <jsp:include page="/view/dashboard/admin/modal-overdue-fine.jsp"/>
-            <jsp:include page="/view/dashboard/admin/modal-success.jsp"/>
-            <jsp:include page="/view/dashboard/admin/modal-out-of-stock.jsp"/>
-            <jsp:include page="/view/dashboard/admin/motal-confirm-borrow.jsp"/>
-
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
             <script>
-                              function handleApprove(button) {
-                                    const status = button.getAttribute('data-status');
-                                    const fine = parseFloat(button.getAttribute('data-fine')) || 0;
-                                    const requestId = button.getAttribute('data-request-id');
-                                    const requestType = button.getAttribute('data-type') || 'borrow';
-
-                                    const formHtml = `
-                                          <form action="statusrequestborrowbook" method="POST" style="display:inline;">
-                                              <input type="hidden" name="requestId" value="${requestId}">
-                                              <input type="hidden" name="action" value="approve">
-                                              <button type="submit" class="btn btn-primary">
-                                                  <i class="fas fa-check me-2"></i>Confirm Approve
-                                              </button>
-                                          </form>
-                                      `;
-
-                                    if (status === 'pending_return' && fine > 0) {
-                                          document.getElementById('fineAmount').textContent = fine.toLocaleString() + ' VND';
-                                          document.getElementById('overdueApproveFormContainer').innerHTML = formHtml;
-                                          const overdueModal = new bootstrap.Modal(document.getElementById('overdueModal'));
-                                          overdueModal.show();
-                                    } else {
-                                          document.getElementById('approveFormContainer').innerHTML = formHtml;
-                                          const approveModal = new bootstrap.Modal(document.getElementById('approveModal'));
-                                          approveModal.show();
-                                    }
-                              }
-
-                              function handleReject(button) {
-                                    if (confirm('Are you sure you want to reject this request?')) {
-                                          const requestId = button.getAttribute('data-request-id');
-                                          const form = document.getElementById(`reject-form-${requestId}`);
-                                          form.submit();
-                                    }
-                              }
-
-                              function handleBorrow(button) {
-                                    const requestId = button.getAttribute('data-request-id');
-                                    const formHtml = `
-                                    <form action="statusrequestborrowbook" method="POST" style="display:inline;">
-                                        <input type="hidden" name="requestId" value="${requestId}">
-                                        <input type="hidden" name="action" value="borrow">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-book me-2"></i>Confirm Process Borrow
-                                        </button>
-                                    </form>
-                                `;
-                                    document.getElementById('borrowFormContainer').innerHTML = formHtml;
-                                    const borrowModal = new bootstrap.Modal(document.getElementById('borrowModal'));
-                                    borrowModal.show();
-                              }
-
                               let offset = ${requestScope.offset != null ? requestScope.offset : 0};
                               let isLoading = false;
                               let hasMoreData = true;
                               let searchTitle = "${param.searchTitle != null ? param.searchTitle : ''}";
                               let searchStatus = "${param.searchStatus != null ? param.searchStatus : ''}";
                               let isSearchMode = false;
-                              let currentRequestId = null;
 
                               function updateSearchMode() {
                                     isSearchMode = (searchTitle.trim() !== '' || searchStatus.trim() !== '');
@@ -187,141 +135,9 @@ Author : asus
 
                               updateSearchMode();
 
-                              document.addEventListener('DOMContentLoaded', function () {
-                                    const confirmApproveBtn = document.getElementById('confirmApprove');
-                                    if (confirmApproveBtn) {
-                                          confirmApproveBtn.addEventListener('click', function () {
-                                                console.log('Confirm approve clicked, currentRequestId:', currentRequestId);
-
-                                                if (!currentRequestId) {
-                                                      alert('No request selected!');
-                                                      return;
-                                                }
-
-                                                const form = document.getElementById(`approve-form-${currentRequestId}`);
-                                                if (!form) {
-                                                      alert('Form not found!');
-                                                      console.error('Form not found for ID:', `approve-form-${currentRequestId}`);
-                                                      return;
-                                                }
-
-                                                // Disable button to prevent double click
-                                                confirmApproveBtn.disabled = true;
-                                                confirmApproveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-
-                                                const formData = new FormData(form);
-
-                                                fetch(form.action, {
-                                                      method: 'POST',
-                                                      body: formData
-                                                }).then(response => {
-                                                      if (response.ok) {
-                                                            // Close approve modal
-                                                            const approveModal = bootstrap.Modal.getInstance(document.getElementById('approveModal'));
-                                                            if (approveModal) {
-                                                                  approveModal.hide();
-                                                            }
-
-                                                            // Show success modal
-                                                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                                                            successModal.show();
-
-                                                            // Reload page when success modal is closed
-                                                            document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
-                                                                  window.location.reload();
-                                                            }, {once: true});
-                                                      } else {
-                                                            throw new Error('Approve failed');
-                                                      }
-                                                }).catch(error => {
-                                                      console.error('Error:', error);
-                                                      // Re-enable button
-                                                      confirmApproveBtn.disabled = false;
-                                                      confirmApproveBtn.innerHTML = 'Confirm';
-
-                                                      // Fallback to normal form submission
-                                                      form.submit();
-                                                });
-                                          });
-                                    }
-
-                                    const confirmOverdueApproveBtn = document.getElementById('confirmOverdueApprove');
-                                    if (confirmOverdueApproveBtn) {
-                                          confirmOverdueApproveBtn.addEventListener('click', function () {
-                                                console.log('Confirm overdue approve clicked, currentRequestId:', currentRequestId);
-
-                                                if (!currentRequestId) {
-                                                      alert('No request selected!');
-                                                      return;
-                                                }
-
-                                                const form = document.getElementById(`approve-form-${currentRequestId}`);
-                                                if (!form) {
-                                                      alert('Form not found!');
-                                                      console.error('Form not found for ID:', `approve-form-${currentRequestId}`);
-                                                      return;
-                                                }
-
-                                                // Disable button to prevent double click
-                                                confirmOverdueApproveBtn.disabled = true;
-                                                confirmOverdueApproveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-
-                                                const formData = new FormData(form);
-
-                                                fetch(form.action, {
-                                                      method: 'POST',
-                                                      body: formData
-                                                }).then(response => {
-                                                      if (response.ok) {
-                                                            // Close overdue modal
-                                                            const overdueModal = bootstrap.Modal.getInstance(document.getElementById('overdueModal'));
-                                                            if (overdueModal) {
-                                                                  overdueModal.hide();
-                                                            }
-
-                                                            // Show success modal
-                                                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                                                            successModal.show();
-
-                                                            // Reload page when success modal is closed
-                                                            document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
-                                                                  window.location.reload();
-                                                            }, {once: true});
-                                                      } else {
-                                                            throw new Error('Approve failed');
-                                                      }
-                                                }).catch(error => {
-                                                      console.error('Error:', error);
-                                                      // Re-enable button
-                                                      confirmOverdueApproveBtn.disabled = false;
-                                                      confirmOverdueApproveBtn.innerHTML = 'Confirm Approve';
-
-                                                      // Fallback to normal form submission
-                                                      form.submit();
-                                                });
-                                          });
-                                    }
-
-                                    // Reset currentRequestId when modals are hidden
-                                    document.getElementById('approveModal').addEventListener('hidden.bs.modal', function () {
-                                          currentRequestId = null;
-                                    });
-
-                                    document.getElementById('overdueModal').addEventListener('hidden.bs.modal', function () {
-                                          currentRequestId = null;
-                                    });
-                              });
-
-                              window.addEventListener('scroll', function () {
-                                    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50 && !isLoading && hasMoreData) {
-                                          loadMoreBookRequests();
-                                    }
-                              });
-
                               function loadMoreBookRequests() {
                                     if (isLoading)
                                           return;
-
                                     isLoading = true;
                                     document.getElementById('loading').style.display = 'block';
 
@@ -330,7 +146,7 @@ Author : asus
                                           url += '&searchTitle=' + encodeURIComponent(searchTitle);
                                     }
                                     if (searchStatus && searchStatus.trim() !== '') {
-                                          url += '&searchStatus=' + encodeURIComponent(searchStatus);
+                                          url += '&searchStatus=' + encodeURIComponent(searchStatus.split('_')[0]);
                                     }
 
                                     fetch(url)
@@ -375,11 +191,19 @@ Author : asus
                                             });
                               }
 
-// Event listener for search button
+                              window.addEventListener('scroll', function () {
+                                    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50 && !isLoading && hasMoreData) {
+                                          loadMoreBookRequests();
+                                    }
+                              });
+
                               document.getElementById('searchBtn').addEventListener('click', function (e) {
                                     e.preventDefault();
                                     searchTitle = document.getElementById('searchTitle').value.trim();
                                     searchStatus = document.getElementById('searchStatus').value.trim();
+                                    if (searchStatus) {
+                                          searchStatus = searchStatus.split('_')[0]; //pending_borrow -> pending
+                                    }
                                     offset = 0;
                                     hasMoreData = true;
                                     updateSearchMode();
@@ -387,11 +211,28 @@ Author : asus
                                     loadMoreBookRequests();
                               });
 
-// Logout function
                               function logout() {
                                     if (confirm('Are you sure you want to logout?')) {
                                           window.location.href = 'logout';
                                     }
+                              }
+
+                              function confirmApprove(requestId, bookId) {
+                                    fetch('checkBookAvailability?bookId=' + bookId)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                  if (data.availableCopies <= 0) {
+                                                        alert('Sách không còn b?n sao nào kh? d?ng!');
+                                                        return false;
+                                                  }
+                                                  if (confirm('B?n có ch?c ch?n mu?n phê duy?t yêu c?u này?')) {
+                                                        document.getElementById('approve-form-' + requestId).submit();
+                                                  }
+                                            })
+                                            .catch(error => {
+                                                  console.error('L?i khi ki?m tra s? l??ng sách:', error);
+                                                  alert('?ã x?y ra l?i khi ki?m tra s? l??ng sách.');
+                                            });
                               }
             </script>
       </body>

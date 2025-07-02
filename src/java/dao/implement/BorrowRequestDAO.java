@@ -74,7 +74,8 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
 
             String sql = "SELECT id, user_id, book_id, request_date, request_type, status "
                     + "FROM book_requests "
-                    + "WHERE user_id = ? AND status = 'approved' AND request_type = 'borrow' "
+                    + "WHERE user_id = ? AND status = 'borrowed' "
+
                     + "ORDER BY request_date DESC";
 
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -109,26 +110,15 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
-            String query = "SELECT user_id, book_id FROM book_requests WHERE id = ?";
-            PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, requestId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                int userId = rs.getInt("user_id");
-                int bookId = rs.getInt("book_id");
-
-                String insertSql = "INSERT INTO book_requests (user_id, book_id, request_date, request_type, status) "
-                        + "VALUES (?, ?, GETDATE(), 'return', 'pending')";
-                PreparedStatement stmt = conn.prepareStatement(insertSql);
-                stmt.setInt(1, userId);
-                stmt.setInt(2, bookId);
-
-                int rowsAffected = stmt.executeUpdate();
-                return rowsAffected > 0;
-            } else {
-                return false; // requestId không tồn tại
-            }
+            
+            // Update request status to pending_return
+            String updateRequestSql = "UPDATE book_requests SET status = 'pending' WHERE id = ? AND status = 'borrowed'";
+            PreparedStatement updateRequestStmt = conn.prepareStatement(updateRequestSql);
+            updateRequestStmt.setInt(1, requestId);
+            
+            int rowsAffected = updateRequestStmt.executeUpdate();
+            return rowsAffected > 0;
+            
 
         } finally {
             if (conn != null) {

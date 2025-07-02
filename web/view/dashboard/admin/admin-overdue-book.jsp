@@ -9,97 +9,96 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overdue Books Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-overdue-book.css"/>
-</head>
-<body>
-    <div class="container-fluid p-0">
-        <div class="row g-0">
-            <!-- Sidebar -->
-            <nav class="col-md-2 sidebar">
-                <div class="sidebar-sticky">
-                    <div class="sidebar-header">
-                        <h4>
-                            <div class="brand-icon">
-                                <i class="fas fa-book-reader"></i>
-                            </div>
-                            Library Admin
-                        </h4>
-                    </div>
-                    <div class="p-3">
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link" href="admindashboard">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                    <span>Dashboard</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="overduebook">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <span>Overdue Books</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="bookmanagement">
-                                    <i class="fas fa-book"></i>
-                                    <span>Books</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="usermanagement">
-                                    <i class="fas fa-users"></i>
-                                    <span>Users</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+      <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Overdue Books Management</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-overdue-book.css"/>
+      </head>
+      <body>
+            <div class="container-fluid p-0">
+                  <div class="row g-0">
+                        <!-- Sidebar -->
+                        <nav class="col-md-2 sidebar">
+                              <div class="sidebar-sticky">
+                                    <div class="sidebar-header">
+                                          <h4>
+                                                <div class="brand-icon">
+                                                      <i class="fas fa-book-reader"></i>
+                                                </div>
+                                                Library Admin
+                                          </h4>
+                                    </div>
+                                    <div class="p-3">
+                                          <ul class="nav flex-column">
+                                                <li class="nav-item">
+                                                      <a class="nav-link" href="admindashboard">
+                                                            <i class="fas fa-tachometer-alt"></i>
+                                                            <span>Dashboard</span>
+                                                      </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                      <a class="nav-link active" href="overduebook">
+                                                            <i class="fas fa-exclamation-triangle"></i>
+                                                            <span>Overdue Books</span>
+                                                      </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                      <a class="nav-link" href="bookmanagement">
+                                                            <i class="fas fa-book"></i>
+                                                            <span>Books</span>
+                                                      </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                      <a class="nav-link" href="usermanagement">
+                                                            <i class="fas fa-users"></i>
+                                                            <span>Users</span>
+                                                      </a>
+                                                </li>
+                                          </ul>
+                                    </div>
+                              </div>
+                        </nav>
 
-            <!-- Main content -->
-            <main class="col-md-10">
-                <div class="main-content">
-                    <!-- Header -->
-                    <div class="page-header">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <div>
-                                <h1>
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    Overdue Books Management
-                                </h1>
-                                <p class="mb-0">Monitor and manage overdue library books with ease</p>
-                            </div>
-                            <button class="refresh-btn" onclick="window.location.reload()">
-                                <i class="fas fa-sync-alt"></i>
-                                <span>Refresh</span>
-                            </button>
-                        </div>
-                    </div>
+                        <!-- Main content -->
+                        <main class="col-md-10">
+                              <div class="main-content">
+                                    <!-- Header -->
+                                    <div class="page-header">
+                                          <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                                <div>
+                                                      <h1>
+                                                            <i class="fas fa-exclamation-triangle"></i>
+                                                            Overdue Books Management
+                                                      </h1>
+                                                      <p class="mb-0">Monitor and manage overdue library books with ease</p>
+                                                </div>
+                                                <button class="refresh-btn" onclick="window.location.reload()">
+                                                      <i class="fas fa-sync-alt"></i>
+                                                      <span>Refresh</span>
+                                                </button>
+                                          </div>
+                                    </div>
 
-                    <!-- Alert Messages -->
-                    <c:if test="${not empty successMessage}">
-                        <div class="alert alert-success-custom alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle"></i>
-                            <span>${successMessage}</span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </c:if>
+                                    <!-- Alert Messages -->
+                                    <c:if test="${not empty successMessage}">
+                                          <div class="alert alert-success-custom alert-dismissible fade show" role="alert">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>${successMessage}</span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                          </div>
+                                    </c:if>
 
-                    <c:if test="${not empty errorMessage}">
-                        <div class="alert alert-danger-custom alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <span>${errorMessage}</span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </c:if>
-
+                                    <c:if test="${not empty errorMessage}">
+                                          <div class="alert alert-danger-custom alert-dismissible fade show" role="alert">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                                <span>${errorMessage}</span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                          </div>
+                                    </c:if>
                     <c:if test="${not empty error}">
                         <div class="alert alert-danger-custom alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-circle"></i>
@@ -165,11 +164,6 @@
                                             <i class="fas fa-calendar-times fa-3x opacity-25"></i>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Overdue Books Table -->
                     <div class="overdue-table">
                         <div class="table-header">

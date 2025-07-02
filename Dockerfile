@@ -1,25 +1,32 @@
 FROM tomcat:10.0.27-jdk8
 
-# Xóa webapp mặc định để tránh xung đột
+# Cài đặt curl cho HEALTHCHECK
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Xóa webapp mặc định
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Tạo thư mục cho application
 RUN mkdir -p /usr/local/tomcat/webapps
 
-# Copy WAR file từ NetBeans build output
-# Thường ở thư mục dist/ sau khi clean and build
-COPY dist/*.war /usr/local/tomcat/webapps/ROOT.war
+# Copy WAR file
+COPY dist/*.war /usr/local/tomcat/webapps/OnlineLibraryManagementSystem.war
 
-# Copy JDBC driver cho SQL Server (nếu chưa có trong WAR)
-# Download từ: https://docs.microsoft.com/en-us/sql/connect/jdbc/download-microsoft-jdbc-driver-for-sql-server
+# Copy JDBC driver
 COPY lib/*.jar /usr/local/tomcat/lib/
+
+# Tải driver nếu cần
+# RUN curl -L -o /usr/local/tomcat/lib/mssql-jdbc.jar https://github.com/microsoft/mssql-jdbc/releases/download/v12.8.1/mssql-jdbc-12.8.1.jre8.jar
 
 # Tạo thư mục logs
 RUN mkdir -p /usr/local/tomcat/logs && \
     chmod 755 /usr/local/tomcat/logs
 
+# Sửa cổng Tomcat
+RUN sed -i 's/Connector port="8080"/Connector port="8084"/' /usr/local/tomcat/conf/server.xml
+
 # Set environment variables
-ENV CATALINA_OPTS="-Xms512m -Xmx1024m -XX:PermSize=64m -XX:MaxPermSize=128m"
+ENV CATALINA_OPTS="-Xms512m -Xmx1024m"
 ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 
 # Expose port
@@ -27,7 +34,7 @@ EXPOSE 8084
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8080/ || exit 1
+  CMD curl -f http://localhost:8084/ || exit 1
 
 # Start Tomcat
 CMD ["catalina.sh", "run"]
