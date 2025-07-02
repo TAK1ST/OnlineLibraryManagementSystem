@@ -151,10 +151,6 @@
         <url-pattern>/RegisterServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ResetPasswordServlet</servlet-name>
-        <url-pattern>/ResetPasswordServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ServletURL</servlet-name>
         <url-pattern>/ServletURL</url-pattern>
     </servlet-mapping>
@@ -229,7 +225,7 @@
     <servlet-mapping>
         <servlet-name>SubmitBorrowRequestServlet</servlet-name>
         <url-pattern>/SubmitBorrowRequestServlet</url-pattern>
-     </servlet-mapping>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AdminDashboard</servlet-name>
         <url-pattern>/admindashboard</url-pattern>
@@ -249,6 +245,10 @@
     <servlet-mapping>
         <servlet-name>AdminEditBook</servlet-name>
         <url-pattern>/editbook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ResetPasswordServlet</servlet-name>
+        <url-pattern>/resetpassword</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
