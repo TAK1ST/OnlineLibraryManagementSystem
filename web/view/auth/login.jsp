@@ -157,7 +157,7 @@
             </form>
             <div class="register-link">
                 <p>New to Library? | <a href="${pageContext.request.contextPath}/RegisterServlet">Sign Up</a></p>
-                <p><a href="javascript: history.back()">Come Back</a></p>
+                <p><a href="home">Come Back</a></p>
             </div>
         </div>
     </body>

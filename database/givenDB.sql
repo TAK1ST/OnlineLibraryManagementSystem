@@ -12,7 +12,8 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role varchar(20),
-    status varchar (20) DEFAULT 'active'   --active/inactive
+    status varchar (20) DEFAULT 'active',   --active/inactive
+    avatar varchar (100)
 );
 GO
 -- 2. BOOKS TABLE
@@ -25,7 +26,7 @@ CREATE TABLE books (
     published_year INT,
     total_copies INT DEFAULT 1,
     available_copies INT DEFAULT 1,
-	image_url VARCHAR(255) DEFAULT NULL,
+    image_url VARCHAR(255) DEFAULT NULL,
     status varchar(20) default 'active' -- active/inactive
 );
 GO

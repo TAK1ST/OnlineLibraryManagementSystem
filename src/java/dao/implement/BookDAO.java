@@ -330,7 +330,7 @@ public class BookDAO implements IBookDAO {
             try {
                   conn = DBConnection.getConnection();
                   conn.setAutoCommit(false); // Bắt đầu transaction
-                  String countQuery = "SELECT COUNT(*) FROM borrow_records WHERE book_id = ? AND status = 'borrowed'";
+                  String countQuery = "SELECT COUNT(*) FROM borrow_records WHERE book_id = ? AND status = 'borrowed' or status = 'overdue'";
                   int borrowedCount = 0;
                   try ( PreparedStatement countStmt = conn.prepareStatement(countQuery)) {
                         countStmt.setInt(1, bookId);
@@ -580,7 +580,8 @@ public class BookDAO implements IBookDAO {
             try {
                   cn = DBConnection.getConnection();
                   if (cn != null) {
-                        String sql = "SELECT COUNT([id]) FROM [dbo].[borrow_records]";
+                        String sql = "SELECT COUNT([id]) FROM [dbo].[borrow_records] "
+                                + " WHERE status='borrowed'";
                         Statement st = cn.createStatement();
                         ResultSet table = st.executeQuery(sql);
                         if (table.next()) {
