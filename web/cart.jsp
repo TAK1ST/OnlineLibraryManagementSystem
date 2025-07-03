@@ -164,7 +164,7 @@
                         
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <a href="${pageContext.request.contextPath}/home" class="btn btn-outline-primary">
-                                <i class="fas fa-arrow-left me-2"></i>Continue reading
+                                <i class="fas fa-arrow-left me-2"></i>Continue
                             </a>
                             <form action="${pageContext.request.contextPath}/SubmitBorrowRequestServlet" method="POST">
                                 <button type="submit" class="btn btn-primary">

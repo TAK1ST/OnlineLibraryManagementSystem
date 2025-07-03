@@ -71,6 +71,15 @@ CREATE TABLE system_config (
     description TEXT
 );
 GO
+CREATE TABLE messages (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    user_id INT NOT NULL,
+    subject NVARCHAR(255),
+    message TEXT,
+    status VARCHAR(20) DEFAULT 'unread',
+    created_at DATETIME DEFAULT GETDATE()
+);
+GO
 
 --Trigger update overdue
 DROP TRIGGER IF EXISTS trg_UpdateOverdueStatus;

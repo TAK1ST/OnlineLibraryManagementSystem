@@ -441,10 +441,10 @@
             <div class="container">
                 <form action="${pageContext.request.contextPath}/search" method="GET" class="row justify-content-center">
                     <div class="col-md-3 mb-3">
-                        <input type="text" name="title" class="form-control" placeholder="Tên sách" value="${param.title}">
+                        <input type="text" name="title" class="form-control" placeholder="Title" value="${param.title}">
                     </div>
                     <div class="col-md-3 mb-3">
-                        <input type="text" name="author" class="form-control" placeholder="Tác giả" value="${param.author}">
+                        <input type="text" name="author" class="form-control" placeholder="Author" value="${param.author}">
                     </div>
                     <div class="col-md-3 mb-3">
                         <select name="category" class="form-select">
@@ -539,7 +539,27 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+            <!-- Floating Action Buttons -->
+        <div class="floating-actions">
+            <button class="floating-btn pulse" title="Scroll to top" onclick="scrollToTop()">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            <!--            <button class="floating-btn" title="Refresh page" onclick="location.reload()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>-->
+        </div>
         </section>
+        <footer class="footer text-white pt-4 pb-3 mt-5" style="background-color: #2F4256; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div class="container text-center" style="padding-top: 30px">
+                <p class="mb-1">&copy; 2025 Group 7 - Library Management System</p>
+                <p class="mb-1">vdtuan245@gmail.com</p>
+                <div class="social-icons mt-2">
+                    <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white me-3"><i class="bi bi-envelope-fill"></i></a>
+                    <a href="#" class="text-white me-3"><i class="bi bi-github"></i></a>
+                </div>
+            </div>
+        </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
          <script>
@@ -570,7 +590,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
                             alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
                             alertDiv.innerHTML = `
-                                <i class="fas fa-check-circle me-2"></i>Đã thêm sách vào giỏ thành công!
+                                <i class="fas fa-check-circle me-2"></i>Book added to cart successfully!
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             `;
                             document.body.appendChild(alertDiv);
@@ -604,6 +624,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.error('Error:', error);
                         alert('Có lỗi xảy ra, vui lòng thử lại!');
                     });
+            }
+        </script>
+        <script>
+            function scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
         </script>
     </body>
