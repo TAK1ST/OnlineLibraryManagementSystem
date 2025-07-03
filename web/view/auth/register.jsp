@@ -10,8 +10,44 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Đăng Ký Tài Khoản</title>
+        <title>Register Account</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-register.css"/>
+        <style>
+            .alert {
+                padding: 10px;
+                margin-bottom: 15px;
+                border-radius: 4px;
+                text-align: center;
+            }
+
+            .alert-success-slogan {
+                background: linear-gradient(135deg, #d4edda 0%, #e8f5e8 100%);
+                color: #7F8C8D;
+                border: 2px solid #4CAF50;
+                border-radius: 20px;
+                padding: 10px 20px;
+                margin: 20px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                text-align: center;
+                box-shadow:
+                    0 20px 40px rgba(76, 175, 80, 0.3),
+                    0 10px 20px rgba(0, 0, 0, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+                position: relative;
+                overflow: hidden;
+                max-width: 600px;
+                transform: scale(1);
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            .alert-error {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+        </style>
     </head>
     <body>
         <div class="floating-shapes">
@@ -22,49 +58,69 @@
 
         <div class="register-container">
             <div class="register-header">
-                <h1>Đăng Ký</h1>
-                <p>Tạo tài khoản mới để bắt đầu</p>
+                <h1>Sign Up</h1>
+                <!--<p>Tạo tài khoản mới để bắt đầu</p>-->
             </div>
+
+            <!-- Hiển thị thông báo thành công -->
+            <% if (request.getAttribute("message") != null) { %>
+            <div class="alert alert-success">
+                <%= request.getAttribute("message") %>
+            </div>
+            <% } %>
+            
+            <% if (request.getAttribute("mess") != null) { %>
+            <div class="alert alert-success-slogan">
+                <%= request.getAttribute("mess") %>
+            </div>
+            <% } %>
+
+            <!-- Hiển thị thông báo lỗi -->
+            <% if (request.getAttribute("error") != null) { %>
+            <div class="alert alert-error">
+                <%= request.getAttribute("error") %>
+            </div>
+            <% } %>
 
             <form accept-charset="utf-8" action="RegisterServlet" method="post">
                 <div class="form-group">
-                    <label for="txtname">Họ và tên <span class="required">*</span></label>
+                    <label for="txtname">Your Full Name <span class="required">*</span></label>
                     <input type="text" id="txtname" name="txtname" class="form-input" required 
-                           placeholder="Nhập họ và tên của bạn">
+                           placeholder="Enter Your Full Name" value="<%= request.getParameter("txtname") != null ? request.getParameter("txtname") : "" %>">
                 </div>
 
                 <div class="form-group">
-                    <label for="txtemail">Email <span class="required">*</span></label>
+                    <label for="txtemail">Your Email<span class="required">*</span></label>
                     <input type="email" id="txtemail" name="txtemail" class="form-input" required 
-                           placeholder="example@email.com">
+                           placeholder="example@email.com" value="<%= request.getParameter("txtemail") != null ? request.getParameter("txtemail") : "" %>">
                 </div>
 
                 <div class="form-group">
-                    <label for="txtpassword">Mật khẩu <span class="required">*</span></label>
+                    <label for="txtpassword">Your Password<span class="required">*</span></label>
                     <div class="password-group">
                         <input type="password" id="txtpassword" name="txtpassword" class="form-input" required 
-                               placeholder="Nhập mật khẩu">
-                        <button type="button" class="password-toggle" onclick="togglePassword('txtpassword')">👁</button>
+                               placeholder="Enter your password">
+                        <button type="button" class="password-toggle" onclick="togglePassword('txtpassword')">😵</button>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="txtconfirmpassword">Xác nhận mật khẩu <span class="required">*</span></label>
+                    <label for="txtconfirmpassword">Confirm Your Password<span class="required">*</span></label>
                     <div class="password-group">
                         <input type="password" id="txtconfirmpassword" name="txtconfirmpassword" class="form-input" required 
-                               placeholder="Nhập lại mật khẩu">
-                        <button type="button" class="password-toggle" onclick="togglePassword('txtconfirmpassword')">👁</button>
+                               placeholder="Enter your password again">
+                        <button type="button" class="password-toggle" onclick="togglePassword('txtconfirmpassword')">😵</button>
                     </div>
                 </div>
 
                 <button type="submit" name="btn" value="submit" class="submit-btn">
-                    Đăng Ký
+                    Sign Up
                 </button>
             </form>
 
             <div class="form-footer">
-                <p>Đã có tài khoản?</p>
-                <a href="LoginServlet" class="login-link">Đăng nhập ngay</a>
+                <p>Already have an account?</p>
+                <a href="LoginServlet" class="login-link">Login now</a>
             </div>
         </div>
 
@@ -75,10 +131,10 @@
 
                 if (input.type === 'password') {
                     input.type = 'text';
-                    button.textContent = '🙈';
+                    button.textContent = '😮';
                 } else {
                     input.type = 'password';
-                    button.textContent = '👁️';
+                    button.textContent = '😵';
                 }
             }
 
@@ -89,13 +145,13 @@
 
                 if (password !== confirmPassword) {
                     e.preventDefault();
-                    alert('Mật khẩu xác nhận không khớp!');
+                    alert('Confirmation password does not match!');
                     return false;
                 }
 
                 if (password.length < 6) {
                     e.preventDefault();
-                    alert('Mật khẩu phải có ít nhất 6 ký tự!');
+                    alert('Password must be at least 6 characters!');
                     return false;
                 }
             });

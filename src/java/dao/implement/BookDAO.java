@@ -409,6 +409,22 @@ public class BookDAO implements IBookDAO {
             }
             return count;
       }
+      
+      // Tìm kiếm sách theo isbn
+      public List<Book> searchByIsbn(String searchTerm) {
+            List<Book> books = new ArrayList<>();
+            String query = "SELECT * FROM books WHERE isbn LIKE ? AND status = 'active'";
+            try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
+                  stmt.setString(1, "%" + searchTerm + "%");
+                  ResultSet rs = stmt.executeQuery();
+                  while (rs.next()) {
+                        books.add(createBookFromResultSet(rs));
+                  }
+            } catch (Exception e) {
+                  e.printStackTrace();
+            }
+            return books;
+      }
 
       // Tìm kiếm sách theo category
       public List<Book> searchByCategory(String searchTerm) {

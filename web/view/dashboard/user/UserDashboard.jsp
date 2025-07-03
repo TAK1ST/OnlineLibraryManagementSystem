@@ -15,7 +15,7 @@
     <body>
         <%
           
-           if(session.getAttribute("loginedUser")==null){
+           /*if(session.getAttribute("loginedUser")==null){
                response.sendRedirect("index.jsp");
            }else{
                User us=(User) session.getAttribute("loginedUser");
@@ -26,7 +26,12 @@
                out.print("<h1>DASHBOARD</h1>");
                out.print("<p><a href='ChangeProfile'>Change profile</a></p>");
              
-           }
+           }*/
         %>
+
+        <h1>Account</h1>
+        <p>Center Account</p>
+        <a href="EditProfileServlet">Edit Your Profile</a><br>
+        <a href="EditPasswordServlet">Edit Your Password</a><br>
     </body>
 </html>

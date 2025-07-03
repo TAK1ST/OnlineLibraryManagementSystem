@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.admin;
 
 import constant.ViewURL;
@@ -9,7 +5,6 @@ import static constant.constance.RECORDS_PER_LOAD;
 import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -20,21 +15,22 @@ import service.implement.UserManagerService;
  *
  * @author asus
  */
-public class AdminUserManagement extends HttpServlet {
+public class AdminUserManagement extends BaseAdminController {
 
       @Override
-      protected void doGet(HttpServletRequest request, HttpServletResponse response)
+      public void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
 
-            HttpSession s = request.getSession();
-            User loggedInUser = (User) s.getAttribute("user");
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return;
+            }
 
-//            if (loggedInUser == null || !"admin".equalsIgnoreCase(loggedInUser.getRole())) {
-//                  response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: Only admins can access this page");
-//                  return;
-//            }
+            // Check authentication and authorization
+            checkAdminAuthentication(request, response);
+
             String userId = request.getParameter("userId");
             String currentStatus = request.getParameter("newStatus");
 
@@ -50,7 +46,7 @@ public class AdminUserManagement extends HttpServlet {
                         } else if ("admin".equalsIgnoreCase(targetUser.getRole())) {
                               request.setAttribute("errorMessage", "Cannot update status of admin users");
                         } else {
-                              userService.updateUser(id, null, null ,currentStatus);
+                              userService.updateUser(id, null, null, currentStatus);
                         }
                   } catch (NumberFormatException e) {
                         request.setAttribute("errorMessage", "Invalid user ID format");
@@ -68,15 +64,20 @@ public class AdminUserManagement extends HttpServlet {
       }
 
       @Override
-      protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      public void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
 
-            HttpSession session = request.getSession();
-            User loggedInUser = (User) session.getAttribute("user");
+            // Check authentication and authorization
+            User adminUser = checkAdminAuthentication(request, response);
+            if (adminUser == null) {
+                  return; // Already redirected to login
+            }
 
+            HttpSession session = request.getSession();
             UserManagerService userService = new UserManagerService();
+
             try {
                   int userId = Integer.parseInt(request.getParameter("userId"));
                   String name = request.getParameter("name");
@@ -113,7 +114,6 @@ public class AdminUserManagement extends HttpServlet {
 
       @Override
       public String getServletInfo() {
-            return "Short description";
+            return "Admin User Management Controller";
       }
-
 }
