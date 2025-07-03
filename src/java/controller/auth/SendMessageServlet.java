@@ -44,7 +44,6 @@ public class SendMessageServlet extends HttpServlet {
             response.sendRedirect("view/auth/login.jsp");
             return;
         }
-
         try (Connection conn = DBConnection.getConnection()) {
             String sql = "INSERT INTO messages (user_id, subject, message) VALUES (?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
