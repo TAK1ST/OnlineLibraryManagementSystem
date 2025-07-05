@@ -72,16 +72,23 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
         try {
             conn = DBConnection.getConnection();
 
+            // Chỉ lấy những sách đang được mượn (status = 'borrowed') 
+            // và chưa có yêu cầu trả sách (không có record nào với request_type = 'return' và status = 'pending')
             String sql = "SELECT id, user_id, book_id, request_date, request_type, status "
                     + "FROM book_requests "
                     + "WHERE user_id = ? AND status = 'borrowed' "
-
+                    + "AND book_id NOT IN ("
+                    + "    SELECT book_id FROM book_requests "
+                    + "    WHERE user_id = ? AND request_type = 'return' AND status = 'pending'"
+                    + ") "
                     + "ORDER BY request_date DESC";
 
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
+            stmt.setInt(2, userId);
 
             ResultSet rs = stmt.executeQuery();
+            
             while (rs.next()) {
                 requests.add(extractBorrowRequestFromResultSet(rs));
             }
@@ -105,6 +112,7 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
         return request;
     }
     
+    
     @Override
     public boolean returnBook(int requestId) throws SQLException, ClassNotFoundException {
         Connection conn = null;
@@ -119,6 +127,7 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
                 int userId = rs.getInt("user_id");
                 int bookId = rs.getInt("book_id");
 
+                // Tạo một record mới với request_type = 'return' và status = 'pending'
                 String insertSql = "INSERT INTO book_requests (user_id, book_id, request_date, request_type, status) "
                         + "VALUES (?, ?, GETDATE(), 'return', 'pending')";
                 PreparedStatement stmt = conn.prepareStatement(insertSql);
@@ -126,8 +135,13 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
                 stmt.setInt(2, bookId);
 
                 int rowsAffected = stmt.executeUpdate();
+                
+                // In log để debug
+                System.out.println("Return book request created - User: " + userId + ", Book: " + bookId + ", Rows affected: " + rowsAffected);
+                
                 return rowsAffected > 0;
             } else {
+                System.out.println("Request ID not found: " + requestId);
                 return false; // requestId không tồn tại
             }
 
@@ -135,7 +149,29 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
             if (conn != null) {
                 conn.close();
             }
-        }    }
+        }
+    }
 
-    
-} 
+    // Thêm phương thức để lấy thông tin BorrowRequest theo ID (nếu cần)
+    public BorrowRequest getBorrowRequestById(int requestId) throws SQLException, ClassNotFoundException {
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            String sql = "SELECT id, user_id, book_id, request_date, request_type, status "
+                    + "FROM book_requests WHERE id = ?";
+            
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, requestId);
+            
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return extractBorrowRequestFromResultSet(rs);
+            }
+            return null;
+        } finally {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+            }
+        }
+    }
+}

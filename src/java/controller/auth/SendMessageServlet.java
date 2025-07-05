@@ -52,9 +52,9 @@ public class SendMessageServlet extends HttpServlet {
                 stmt.setString(3, message);
                 stmt.executeUpdate();
             }
+            
 
-            request.setAttribute("messageSent", true);
-            request.getRequestDispatcher("home.jsp").forward(request, response);
+            response.sendRedirect("home?messageSent=true");
 
         } catch (Exception e) {
             e.printStackTrace();
