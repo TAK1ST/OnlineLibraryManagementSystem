@@ -94,7 +94,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Log out</a>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">
+                                    <i class="fas fa-sign-out-alt me-1"></i>Log out
+                                </a>
                             </li>
                         </c:if>
                     </ul>
