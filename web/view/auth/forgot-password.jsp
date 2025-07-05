@@ -260,7 +260,7 @@
                 </c:if>
 
                 <div class="back-to-login">
-                    <a href="login.jsp">
+                    <a href="${pageContext.request.contextPath}/LoginServlet">
                         <i class="fas fa-arrow-left"></i>
                         Quay lại đăng nhập
                     </a>

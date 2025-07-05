@@ -444,7 +444,7 @@ public class UserDAO implements IUserDAO {
         try {
             cn = DBConnection.getConnection();
             if (cn != null) {
-                String sql = "SELECT id, name, email, password, role, status FROM dbo.users WHERE email = ?";
+                String sql = "SELECT id, name, email, password, role, status, avatar FROM dbo.users WHERE email = ?";
                 st = cn.prepareStatement(sql);
                 st.setString(1, email);
                 rs = st.executeQuery();

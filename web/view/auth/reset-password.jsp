@@ -266,7 +266,7 @@
                     ${success}
                 </div>
                 <div class="back-to-login">
-                    <a href="${pageContext.request.contextPath}/login">
+                    <a href="${pageContext.request.contextPath}/LoginServlet">
                         <i class="fas fa-arrow-left"></i>
                         Quay lại đăng nhập
                     </a>
@@ -329,7 +329,7 @@
                 </c:choose>
                 
                 <div class="back-to-login">
-                    <a href="${pageContext.request.contextPath}/login">
+                    <a href="${pageContext.request.contextPath}/LoginServlet">
                         <i class="fas fa-arrow-left"></i>
                         Quay lại đăng nhập
                     </a>

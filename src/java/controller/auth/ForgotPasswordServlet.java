@@ -25,7 +25,6 @@ public class ForgotPasswordServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Hiển thị trang forgot password
-        doPost(request, response);
         request.getRequestDispatcher("view/auth/forgot-password.jsp").forward(request, response);
     }
     
@@ -83,7 +82,7 @@ public class ForgotPasswordServlet extends HttpServlet {
                                  request.getServerName() + ":" + 
                                  request.getServerPort() + 
                                  request.getContextPath() + 
-                                 "/reset-password?token=" + resetToken;
+                                 "/resetpassword?token=" + resetToken;
                 
                 // Gửi email
                 sendMail.sendPasswordResetEmail(user.getEmail(), user.getName(), resetLink);

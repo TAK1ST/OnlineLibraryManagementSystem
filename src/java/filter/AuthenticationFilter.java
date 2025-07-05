@@ -43,6 +43,8 @@ public class AuthenticationFilter implements Filter {
         "/LoginServlet",
         "/RegisterServlet", 
         "/resetpassword",
+        "/resetpassword",           // Thêm servlet URL
+        "/ForgotPasswordServlet",
         "/login.jsp",
         "/register.jsp",
         "/forgot-password.jsp",
@@ -261,13 +263,19 @@ public class AuthenticationFilter implements Filter {
      * Kiểm tra xem đường dẫn có phải là URL công khai không
      */
     private boolean isPublicUrl(String path) {
-        // Kiểm tra exact match
-        if (PUBLIC_URLS.contains(path)) {
+        // Tách path và query parameters
+        String cleanPath = path;
+        if (path.contains("?")) {
+            cleanPath = path.substring(0, path.indexOf("?"));
+        }
+        
+        // Kiểm tra exact match với clean path
+        if (PUBLIC_URLS.contains(cleanPath)) {
             return true;
         }
         
         // Trang chủ công khai
-        if (path.equals("/") || path.equals("/home")) {
+        if (cleanPath.equals("/") || cleanPath.equals("/home")) {
             return true;
         }
         
@@ -278,8 +286,14 @@ public class AuthenticationFilter implements Filter {
      * Kiểm tra xem đường dẫn có phải là URL dành cho admin không
      */
     private boolean isAdminUrl(String path) {
+        // Tách path và query parameters cho admin URLs
+        String cleanPath = path;
+        if (path.contains("?")) {
+            cleanPath = path.substring(0, path.indexOf("?"));
+        }
+        
         for (String adminUrl : ADMIN_URLS) {
-            if (path.startsWith(adminUrl)) {
+            if (cleanPath.startsWith(adminUrl)) {
                 return true;
             }
         }
@@ -290,4 +304,4 @@ public class AuthenticationFilter implements Filter {
     public void destroy() {
         // Cleanup khi filter bị hủy
     }
-}   
+}
