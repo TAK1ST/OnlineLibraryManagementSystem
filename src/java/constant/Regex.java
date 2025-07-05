@@ -14,4 +14,6 @@ public class Regex {
                                                            + "ÉéÈèẺẻẼẽẸẹẾếỀềỂểỄễỆệÍíÌìỈỉĨĩỊịÓóÒòỎỏÕõỌọỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợ"
                                                            + "ÚúÙùỦủŨũỤụỨứỪừỬửỮữỰựÝýỲỳỶỷỸỹỴỵ\\s]{2,50}$";
     public static String        EMAIL_REGEX                = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    
+    public static String        SPECIAL_REGEX              = "^[!@#$%^&*(),.?\":{}|<>]$";
 }

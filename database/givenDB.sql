@@ -14,6 +14,7 @@ CREATE TABLE users (
     role varchar(20),
     status varchar (20) DEFAULT 'active'   --active/inactive
 );
+
 GO
 -- 2. BOOKS TABLE
 CREATE TABLE books (
@@ -71,6 +72,7 @@ CREATE TABLE system_config (
     description TEXT
 );
 GO
+-- 7.
 CREATE TABLE messages (
     id INT PRIMARY KEY IDENTITY(1,1),
     user_id INT NOT NULL,
@@ -79,6 +81,18 @@ CREATE TABLE messages (
     status VARCHAR(20) DEFAULT 'unread',
     created_at DATETIME DEFAULT GETDATE()
 );
+GO
+
+-- 8. PASSWORD RESET TOKENS TABLE (Required for reset password functionality)
+CREATE TABLE password_reset_tokens (
+    id INT PRIMARY KEY identity(1,1),
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expiration_time BIGINT NOT NULL,
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 GO
 
 --Trigger update overdue

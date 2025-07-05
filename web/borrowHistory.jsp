@@ -63,7 +63,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">Hi, ${sessionScope.loginedUser.name}!</span>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                    <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Log out</a>
