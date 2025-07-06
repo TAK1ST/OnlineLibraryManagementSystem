@@ -246,8 +246,8 @@
     <div class="reset-container">
         <div class="reset-header">
             <i class="fas fa-lock"></i>
-            <h1>Đặt lại mật khẩu</h1>
-            <p>Tạo mật khẩu mới cho tài khoản của bạn</p>
+            <h1>Reset Password</h1>
+            <p>Create a new password for your account.</p>
         </div>
         
         <div class="reset-form">
@@ -268,7 +268,7 @@
                 <div class="back-to-login">
                     <a href="${pageContext.request.contextPath}/LoginServlet">
                         <i class="fas fa-arrow-left"></i>
-                        Quay lại đăng nhập
+                        Back to Login
                     </a>
                 </div>
             </c:if>
@@ -282,48 +282,48 @@
                             
                             <div class="form-group">
                                 <label for="newPassword">
-                                    <i class="fas fa-key"></i> Mật khẩu mới
+                                    <i class="fas fa-key"></i> New Password
                                 </label>
                                 <input type="password" 
                                        class="form-control" 
                                        id="newPassword" 
                                        name="newPassword" 
                                        required
-                                       placeholder="Nhập mật khẩu mới">
+                                       placeholder="Enter New Password">
                             </div>
                             
                             <div class="form-group">
                                 <label for="confirmPassword">
-                                    <i class="fas fa-key"></i> Xác nhận mật khẩu
+                                    <i class="fas fa-key"></i> Confirm New Password
                                 </label>
                                 <input type="password" 
                                        class="form-control" 
                                        id="confirmPassword" 
                                        name="confirmPassword" 
                                        required
-                                       placeholder="Nhập lại mật khẩu mới">
+                                       placeholder="Confirm New Password">
                             </div>
                             
                             <div class="password-requirements">
-                                <h4><i class="fas fa-info-circle"></i> Yêu cầu mật khẩu:</h4>
+                                <h4><i class="fas fa-info-circle"></i> Password Requirements:</h4>
                                 <ul>
-                                    <li><i class="fas fa-check"></i> Ít nhất 8 ký tự</li>
-                                    <li><i class="fas fa-check"></i> Có chữ hoa (A-Z)</li>
-                                    <li><i class="fas fa-check"></i> Có chữ thường (a-z)</li>
-                                    <li><i class="fas fa-check"></i> Có số (0-9)</li>
-                                    <li><i class="fas fa-check"></i> Có ký tự đặc biệt (!@#$%^&*)</li>
+                                    <li><i class="fas fa-check"></i> At least 8 characters</li>
+                                    <li><i class="fas fa-check"></i> Contains uppercase letters (A–Z)</li>
+                                    <li><i class="fas fa-check"></i> Contains lowercase letters (a–z)</li>
+                                    <li><i class="fas fa-check"></i> Contains numbers (0–9)</li>
+                                    <li><i class="fas fa-check"></i> Contains special characters (!@#$%^&*)</li>
                                 </ul>
                             </div>
                             
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Đặt lại mật khẩu
+                                <i class="fas fa-save"></i> Reset Password
                             </button>
                         </form>
                     </c:when>
                     <c:otherwise>
                         <div class="alert alert-error">
                             <i class="fas fa-exclamation-triangle"></i>
-                            Liên kết không hợp lệ hoặc đã hết hạn.
+                            The link is invalid or has expired.
                         </div>
                     </c:otherwise>
                 </c:choose>
@@ -331,7 +331,7 @@
                 <div class="back-to-login">
                     <a href="${pageContext.request.contextPath}/LoginServlet">
                         <i class="fas fa-arrow-left"></i>
-                        Quay lại đăng nhập
+                        Back to login
                     </a>
                 </div>
             </c:if>
@@ -347,7 +347,7 @@
             // Kiểm tra mật khẩu khớp
             if (newPassword !== confirmPassword) {
                 e.preventDefault();
-                alert('Mật khẩu xác nhận không khớp!');
+                alert('The confirmation password does not match!');
                 return;
             }
             
@@ -355,7 +355,7 @@
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
             if (!passwordRegex.test(newPassword)) {
                 e.preventDefault();
-                alert('Mật khẩu không đáp ứng yêu cầu bảo mật!');
+                alert('The password does not meet the security requirements! To enhance your account security, we recommend including the following characters in your password.');
                 return;
             }
         });

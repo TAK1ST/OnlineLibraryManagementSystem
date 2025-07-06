@@ -207,8 +207,8 @@
         <div class="forgot-password-container">
             <div class="forgot-password-header">
                 <i class="fas fa-key"></i>
-                <h2>Quên mật khẩu?</h2>
-                <p>Nhập email để nhận liên kết đặt lại mật khẩu</p>
+                <h2>Forgot Password?</h2>
+                <p>Enter your email to receive the password reset link.</p>
             </div>
 
             <div class="forgot-password-form">
@@ -228,19 +228,19 @@
 
                 <c:if test="${empty success}">
                     <div class="form-info">
-                        <p><i class="fas fa-info-circle"></i> Chúng tôi sẽ gửi liên kết đặt lại mật khẩu đến email của bạn. Liên kết có hiệu lực trong 24 giờ.</p>
+                        <p><i class="fas fa-info-circle"></i> We will send a password reset link to your email. The link will be valid for 24 hours.</p>
                     </div>
 
                     <form method="post" action="${pageContext.request.contextPath}/ForgotPasswordServlet" id="forgotPasswordForm">
                         <div class="form-group">
                             <label for="email">
-                                <i class="fas fa-envelope"></i> Địa chỉ email
+                                <i class="fas fa-envelope"></i> Email Address
                             </label>
                             <input type="email" 
                                    id="email" 
                                    name="email" 
                                    required 
-                                   placeholder="Nhập địa chỉ email của bạn"
+                                   placeholder="Enter your email address."
                                    value="${param.email}"
                                    autocomplete="email">
                         </div>
@@ -249,12 +249,12 @@
 
                         <button type="submit" class="btn-primary">
                             <i class="fas fa-paper-plane"></i>
-                            Gửi liên kết đặt lại
+                            Send Reset Link
                         </button>
 
                         <div class="loading" id="loading">
                             <i class="fas fa-spinner"></i>
-                            Đang xử lý...
+                            Processing…
                         </div>
                     </form>
                 </c:if>
@@ -262,7 +262,7 @@
                 <div class="back-to-login">
                     <a href="${pageContext.request.contextPath}/LoginServlet">
                         <i class="fas fa-arrow-left"></i>
-                        Quay lại đăng nhập
+                        Back to Login
                     </a>
                 </div>
             </div>
@@ -275,13 +275,13 @@
 
                 if (!email) {
                     e.preventDefault();
-                    alert('Vui lòng nhập địa chỉ email.');
+                    alert('Please enter your email address.');
                     return;
                 }
 
                 if (!emailRegex.test(email)) {
                     e.preventDefault();
-                    alert('Vui lòng nhập địa chỉ email hợp lệ.');
+                    alert('Please enter a valid email address.');
                     return;
                 }
 

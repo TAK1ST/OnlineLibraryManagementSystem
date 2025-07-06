@@ -49,7 +49,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         
         // Validate email
         if (email == null || email.trim().isEmpty()) {
-            request.setAttribute("error", "Vui lòng nhập địa chỉ email.");
+            request.setAttribute("error", "Please enter your email address.");
             request.getRequestDispatcher("view/auth/forgot-password.jsp").forward(request, response);
             return;
         }
@@ -58,14 +58,14 @@ public class ForgotPasswordServlet extends HttpServlet {
         User user = userDAO.getEmail(email.trim());
         
         if (user == null) {
-            request.setAttribute("error", "Email không tồn tại trong hệ thống.");
+            request.setAttribute("error", "The email address does not exist in our system.");
             request.getRequestDispatcher("view/auth/forgot-password.jsp").forward(request, response);
             return;
         }
         
         // Kiểm tra trạng thái tài khoản
         if (!"active".equalsIgnoreCase(user.getStatus())) {
-            request.setAttribute("error", "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin.");
+            request.setAttribute("error", "Your account has been locked. Please contact the administrator.");
             request.getRequestDispatcher("view/auth/forgot-password.jsp").forward(request, response);
             return;
         }
@@ -88,16 +88,16 @@ public class ForgotPasswordServlet extends HttpServlet {
                 sendMail.sendPasswordResetEmail(user.getEmail(), user.getName(), resetLink);
                 
                 // Thông báo thành công
-                request.setAttribute("success", "Đường link đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.");
+                request.setAttribute("success", "A password reset link has been sent to your email. Please check your inbox.");
                 request.getRequestDispatcher("view/auth/forgot-password.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "Có lỗi xảy ra khi tạo yêu cầu đặt lại mật khẩu. Vui lòng thử lại.");
+                request.setAttribute("error", "An error occurred while creating the password reset request. Please try again.");
                 request.getRequestDispatcher("view/auth/forgot-password.jsp").forward(request, response);
             }
             
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại sau.");
+            request.setAttribute("error", "An error occurred. Please try again later.");
             request.getRequestDispatcher("view/auth/forgot-password.jsp").forward(request, response);
         }
     }

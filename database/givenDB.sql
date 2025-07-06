@@ -92,8 +92,118 @@ CREATE TABLE password_reset_tokens (
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
 GO
+
+-- Xóa các objects cũ nếu có
+DROP VIEW IF EXISTS vw_book_reviews_detail;
+DROP TRIGGER IF EXISTS trg_UpdateReactionCounts;
+DROP TRIGGER IF EXISTS trg_UpdateReviewTimestamp;
+DROP TABLE IF EXISTS review_reactions;
+DROP TABLE IF EXISTS book_reviews;
+GO
+
+-- Tạo bảng book_reviews để người dùng comment về sách
+CREATE TABLE book_reviews (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    rating INT CHECK (rating >= 1 AND rating <= 5), -- Đánh giá từ 1-5 sao
+    comment TEXT,
+    review_date DATETIME DEFAULT GETDATE(),
+    status VARCHAR(20) DEFAULT 'active', -- active/inactive/pending
+    likes_count INT DEFAULT 0,
+    dislikes_count INT DEFAULT 0,
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE NO ACTION,
+    -- Đảm bảo mỗi user chỉ có thể review 1 lần cho 1 cuốn sách
+    CONSTRAINT UC_UserBook_Review UNIQUE (user_id, book_id)
+);
+GO
+
+-- Trigger cập nhật updated_at khi có thay đổi
+CREATE TRIGGER trg_UpdateReviewTimestamp
+ON book_reviews
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    UPDATE br
+    SET updated_at = GETDATE()
+    FROM book_reviews br
+    INNER JOIN inserted i ON br.id = i.id;
+END;
+GO
+
+-- Bảng phụ để lưu likes/dislikes của users cho reviews (optional)
+CREATE TABLE review_reactions (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    review_id INT NOT NULL,
+    user_id INT NOT NULL,
+    reaction_type VARCHAR(10) CHECK (reaction_type IN ('like', 'dislike')),
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (review_id) REFERENCES book_reviews(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
+    -- Đảm bảo mỗi user chỉ có thể react 1 lần cho 1 review
+    CONSTRAINT UC_UserReview_Reaction UNIQUE (review_id, user_id)
+);
+GO
+
+-- Trigger cập nhật likes_count và dislikes_count
+CREATE TRIGGER trg_UpdateReactionCounts
+ON review_reactions
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Cập nhật likes_count và dislikes_count
+    UPDATE br
+    SET 
+        likes_count = (
+            SELECT COUNT(*) 
+            FROM review_reactions rr 
+            WHERE rr.review_id = br.id AND rr.reaction_type = 'like'
+        ),
+        dislikes_count = (
+            SELECT COUNT(*) 
+            FROM review_reactions rr 
+            WHERE rr.review_id = br.id AND rr.reaction_type = 'dislike'
+        )
+    FROM book_reviews br
+    WHERE br.id IN (
+        SELECT DISTINCT review_id FROM inserted
+        UNION
+        SELECT DISTINCT review_id FROM deleted
+    );
+END;
+GO
+
+-- View để hiển thị thông tin review chi tiết
+CREATE VIEW vw_book_reviews_detail AS
+SELECT 
+    br.id,
+    br.rating,
+    br.comment,
+    br.review_date,
+    br.likes_count,
+    br.dislikes_count,
+    u.name as reviewer_name,
+    u.email as reviewer_email,
+    b.title as book_title,
+    b.author as book_author,
+    b.isbn
+FROM book_reviews br
+INNER JOIN users u ON br.user_id = u.id
+INNER JOIN books b ON br.book_id = b.id
+WHERE br.status = 'active'
+AND u.status = 'active'
+AND b.status = 'active';
+GO
+
+-- SELECT book_title, AVG(CAST(rating AS FLOAT)) as avg_rating FROM book_reviews br INNER JOIN books b ON br.book_id = b.id GROUP BY book_title;
 
 --Trigger update overdue
 DROP TRIGGER IF EXISTS trg_UpdateOverdueStatus;
@@ -113,6 +223,68 @@ BEGIN
     WHERE br.return_date IS NULL 
       AND br.due_date < CAST(GETDATE() AS DATE)
       AND br.status = 'borrowed';
+END;
+GO
+
+-- Trigger tự động tạo fines khi status borrow_records chuyển thành 'overdue'
+DROP TRIGGER IF EXISTS trg_AutoCreateFines;
+GO
+
+CREATE TRIGGER trg_AutoCreateFines
+ON borrow_records
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Chỉ xử lý khi status thay đổi từ 'borrowed' thành 'overdue'
+    IF UPDATE(status)
+    BEGIN
+        -- Tạo fines cho những borrow_records chuyển sang overdue
+        INSERT INTO fines (borrow_id, fine_amount, paid_status)
+        SELECT 
+            i.id,
+            CASE 
+                WHEN DATEDIFF(DAY, i.due_date, GETDATE()) > 0 
+                THEN DATEDIFF(DAY, i.due_date, GETDATE()) * 1.00  -- $1 per day
+                ELSE 0.00
+            END as fine_amount,
+            'unpaid'
+        FROM inserted i
+        INNER JOIN deleted d ON i.id = d.id
+        WHERE d.status = 'borrowed' 
+          AND i.status = 'overdue'
+          AND i.return_date IS NULL
+          AND NOT EXISTS (
+              SELECT 1 FROM fines f WHERE f.borrow_id = i.id
+          );
+    END;
+END;
+GO
+
+-- Trigger cập nhật fine_amount khi có thay đổi
+DROP TRIGGER IF EXISTS trg_UpdateFineAmount;
+GO
+
+CREATE TRIGGER trg_UpdateFineAmount
+ON borrow_records
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Cập nhật fine_amount cho các borrow_records vẫn overdue
+    UPDATE f
+    SET fine_amount = CASE 
+        WHEN DATEDIFF(DAY, i.due_date, GETDATE()) > 0 
+        THEN DATEDIFF(DAY, i.due_date, GETDATE()) * 1.00
+        ELSE 0.00
+    END
+    FROM fines f
+    INNER JOIN inserted i ON f.borrow_id = i.id
+    WHERE i.status = 'overdue'
+      AND i.return_date IS NULL
+      AND f.paid_status = 'unpaid';
 END;
 GO
 
@@ -144,3 +316,19 @@ INSERT INTO fines (borrow_id, fine_amount, paid_status) VALUES
 INSERT INTO book_requests (user_id, book_id, request_date, request_type, status) VALUES
 (2, 4, '2025-06-20', 'borrow', 'approved'),  -- John mượn Pride and Prejudice, approved (ID 2)
 (3, 2, '2025-06-22', 'return', 'rejected');  -- Jane trả To Kill a Mockingbird, rejected (ID 3)
+
+-- Thêm một số sample data (sử dụng user_id có sẵn từ database)
+INSERT INTO book_reviews (user_id, book_id, rating, comment, status) VALUES
+(42, 1, 5, 'A masterpiece. I couldn’t put it down!', 'active'),
+(50, 1, 4, 'Beautifully written and thought-provoking.', 'active'),
+(54, 3, 5, 'Highly recommended for anyone who loves mystery novels.', 'active'),
+(70, 2, 4, 'I liked some parts, but others were not as engaging.', 'active');
+
+
+-- Thêm sample reactions
+INSERT INTO review_reactions (review_id, user_id, reaction_type) VALUES
+(1, 42, 'like'),
+(2, 50, 'like'),
+(3, 54, 'like'),
+(4, 70, 'like');
+

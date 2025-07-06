@@ -26,7 +26,7 @@ public class ResetPasswordServlet extends HttpServlet {
         String token = request.getParameter("token");
         
         if (token == null || token.trim().isEmpty()) {
-            request.setAttribute("error", "Token không hợp lệ.");
+            request.setAttribute("error", "Invalid token.");
             request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             return;
         }
@@ -37,12 +37,12 @@ public class ResetPasswordServlet extends HttpServlet {
                 request.setAttribute("token", token);
                 request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.");
+                request.setAttribute("error", "The password reset link is invalid or has expired.");
                 request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra khi kết nối database.");
+            request.setAttribute("error", "An error occurred while connecting to the database.");
             request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
         }
     }
@@ -57,20 +57,20 @@ public class ResetPasswordServlet extends HttpServlet {
         
         // Validate inputs
         if (token == null || token.trim().isEmpty()) {
-            request.setAttribute("error", "Token không hợp lệ.");
+            request.setAttribute("error", "Invalid token.");
             request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             return;
         }
         
         if (newPassword == null || newPassword.trim().isEmpty()) {
-            request.setAttribute("error", "Vui lòng nhập mật khẩu mới.");
+            request.setAttribute("error", "Please enter a new password.");
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             return;
         }
         
         if (confirmPassword == null || !newPassword.equals(confirmPassword)) {
-            request.setAttribute("error", "Mật khẩu xác nhận không khớp.");
+            request.setAttribute("error", "The confirmation password does not match.");
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             return;
@@ -78,7 +78,7 @@ public class ResetPasswordServlet extends HttpServlet {
         
         // Validate password strength
         if (!isValidPassword(newPassword)) {
-            request.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+            request.setAttribute("error", "The password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.");
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             return;
@@ -89,7 +89,7 @@ public class ResetPasswordServlet extends HttpServlet {
             User user = userDAO.getUserByToken(token);
             
             if (user == null) {
-                request.setAttribute("error", "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.");
+                request.setAttribute("error", "The password reset link is invalid or has expired.");
                 request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
                 return;
             }
@@ -99,22 +99,22 @@ public class ResetPasswordServlet extends HttpServlet {
                 // Xóa token đã sử dụng
                 userDAO.deleteToken(token);
                 
-                request.setAttribute("success", "Mật khẩu đã được đặt lại thành công. Bạn có thể đăng nhập bằng mật khẩu mới.");
+                request.setAttribute("success", "Your password has been successfully reset. You can now log in with your new password.");
                 request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "Có lỗi xảy ra khi đặt lại mật khẩu. Vui lòng thử lại.");
+                request.setAttribute("error", "An error occurred while resetting your password. Please try again.");
                 request.setAttribute("token", token);
                 request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
             }
             
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra khi kết nối database.");
+            request.setAttribute("error", "An error occurred while connecting to the database.");
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại sau.");
+            request.setAttribute("error", "An error occurred. Please try again later.");
             request.setAttribute("token", token);
             request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
         }

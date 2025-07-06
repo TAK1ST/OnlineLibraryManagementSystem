@@ -77,8 +77,8 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-            request.setAttribute("error", "Account locked due to too many failed attempts.");
-            request.getRequestDispatcher("view/auth/reset-password.jsp").forward(request, response);
+            request.setAttribute("error", "It seems you’ve forgotten your account password.");
+            request.getRequestDispatcher("view/auth/forgot-password.jsp").forward(request, response);
             return;
         }
         
@@ -96,7 +96,7 @@ public class LoginServlet extends HttpServlet {
             if (attemptsLeft > 0) {
                 request.setAttribute("error", "Email or password is invalid. Attempts left: " + attemptsLeft + "/3.");
             } else {
-                request.setAttribute("error", "Account locked due to too many failed attempts.");
+                request.setAttribute("error", "It seems you’ve forgotten your account password. I recommend resetting it by clicking the ‘Forgot Password’ button below.");
             }
 
             request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
