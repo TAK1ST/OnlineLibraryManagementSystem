@@ -100,6 +100,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/cart">
+                                    <i class="fas fa-shopping-cart me-1"></i>Cart
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <span class="nav-link">Hi, ${sessionScope.loginedUser.name}!</span>
                             </li>
                             <li class="nav-item">
