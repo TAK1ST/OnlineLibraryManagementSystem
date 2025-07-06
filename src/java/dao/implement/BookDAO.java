@@ -146,7 +146,7 @@ public class BookDAO implements IBookDAO {
             try {
                   cn = DBConnection.getConnection();
                   String sql = "SELECT TOP 4 [id],[title],[isbn],[author],[category],[published_year],"
-                          + "[total_copies],[available_copies],[status] "
+                          + "[total_copies],[available_copies],[status], [image_url]"
                           + "FROM [dbo].[books] "
                           + "ORDER BY [published_year] DESC, [id] DESC";
                   PreparedStatement st = cn.prepareStatement(sql);
@@ -162,6 +162,7 @@ public class BookDAO implements IBookDAO {
                         book.setTotalCopies(rs.getInt("total_copies"));
                         book.setAvailableCopies(rs.getInt("available_copies"));
                         book.setStatus(rs.getString("status"));
+                        book.setImageUrl(rs.getString("image_url"));
                         newBooks.add(book);
                   }
             } finally {

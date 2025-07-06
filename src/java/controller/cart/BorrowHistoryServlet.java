@@ -28,7 +28,7 @@ public class BorrowHistoryServlet extends HttpServlet {
         
         try {
             BorrowRequestDAO borrowRequestDAO = new BorrowRequestDAO();
-            List<BorrowRequest> borrowHistory = borrowRequestDAO.getBorrowRequestsByUser(loginedUser.getId());
+            List<BorrowRequest> borrowHistory = borrowRequestDAO.getBorrowRequestsByUserId(loginedUser.getId());
             request.setAttribute("borrowHistory", borrowHistory);
             request.getRequestDispatcher("/borrowHistory.jsp").forward(request, response);
         } catch (Exception e) {

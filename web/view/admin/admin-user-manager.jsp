@@ -128,7 +128,7 @@
                                     </div>
                                     <!-- User Table -->
                                     <div class="table-body" id="tableBody">
-                                          <jsp:include page="/view/dashboard/admin/user-list-fragment.jsp"/>
+                                          <jsp:include page="/view/admin/user-list-fragment.jsp"/>
                                     </div>
                               </div>
 
@@ -139,7 +139,7 @@
                         </div>
                   </div>
                   <!-- Include Modal -->
-                  <jsp:include page="/view/dashboard/admin/user-modal-fragment.jsp"/>
+                  <jsp:include page="/view/admin/user-modal-fragment.jsp"/>
 
                   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
                   <script>
@@ -159,7 +159,6 @@
                                     loadMoreUsers();
                               }
                         });
-
                         document.getElementById('searchBtn').addEventListener('click', function (e) {
                               e.preventDefault();
                               searchName = document.getElementById('searchName').value.trim();
@@ -170,7 +169,6 @@
                               document.getElementById('tableBody').innerHTML = '';
                               loadMoreUsers();
                         });
-
                         function loadMoreUsers() {
                               if (isLoading)
                                     return;
@@ -239,7 +237,6 @@
                               userModal.show();
                         <% } } %>
                         });
-
 //                      Update Motal Notification
                         window.addEventListener('DOMContentLoaded', function () {
                         <% 
@@ -258,6 +255,26 @@
                               alert("<%= errorMessage %>");
                         <% } %>
                         });
+                        // Scroll to top functionality
+                        window.onscroll = function () {
+                              const scrollBtn = document.getElementById("scrollToTopBtn");
+                              if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                                    scrollBtn.style.display = "block";
+                              } else {
+                                    scrollBtn.style.display = "none";
+                              }
+                        };
+
+                        function scrollToTop() {
+                              document.body.scrollTop = 0;
+                              document.documentElement.scrollTop = 0;
+                        }
                   </script>
       </body>
+
+      <!-- Scroll to Top Button -->
+      <button id="scrollToTopBtn" class="scroll-to-top-btn" onclick="scrollToTop()" title="Go to top">
+            <i class="fas fa-chevron-up"></i>
+      </button>
+
 </html>

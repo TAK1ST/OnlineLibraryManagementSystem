@@ -7,19 +7,39 @@
 <%@ page import="java.util.List,dto.BookInforRequestStatusDTO,dao.implement.BookDAO" %>
 <%! 
     private String determineRequestType(BookInforRequestStatusDTO dto) {
-        return dto.getRequestType() != null ? dto.getRequestType().trim().toLowerCase() : "borrow";
+        if (dto == null) return "borrow";
+        String type = dto.getRequestType();
+        return (type != null && !type.trim().isEmpty()) ? type.trim().toLowerCase() : "borrow";
     }
 
     private String getActualStatus(BookInforRequestStatusDTO dto) {
-        String rawStatus = dto.getStatusAction() != null ? dto.getStatusAction().trim().toLowerCase() : "pending";
-        System.out.println("getActualStatus - ID: " + dto.getId() + ", Raw Status: " + dto.getStatusAction() + ", Normalized: " + rawStatus);
-        if ("pending".equals(rawStatus) || "approved-borrow".equals(rawStatus) || "rejected".equals(rawStatus) || "borrowed".equals(rawStatus)) {
-            return rawStatus;
+        if (dto == null) return "pending";
+        
+        String rawStatus = dto.getStatusAction();
+        if (rawStatus == null || rawStatus.trim().isEmpty()) {
+            return "pending";
         }
+        
+        String normalizedStatus = rawStatus.trim().toLowerCase();
+        System.out.println("getActualStatus - ID: " + dto.getId() + ", Raw Status: " + rawStatus + ", Normalized: " + normalizedStatus);
+        
+        // Valid statuses
+        if ("pending".equals(normalizedStatus) || 
+            "approved-borrow".equals(normalizedStatus) || 
+            "approved-return".equals(normalizedStatus) ||
+            "rejected".equals(normalizedStatus) || 
+            "borrowed".equals(normalizedStatus) ||
+            "completed".equals(normalizedStatus)) {
+            return normalizedStatus;
+        }
+        
+        // Default to pending for unknown statuses
         return "pending";
     }
 
     private String getDisplayStatus(BookInforRequestStatusDTO dto) {
+        if (dto == null) return "PENDING";
+        
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
         
@@ -28,16 +48,22 @@
                 return "PENDING " + requestType.toUpperCase();
             case "approved-borrow":
                 return "APPROVED BORROW";
+            case "approved-return":
+                return "APPROVED RETURN";
             case "rejected":
                 return "REJECTED";
             case "borrowed":
                 return "BORROWED";
+            case "completed":
+                return "COMPLETED";
             default:
                 return status.toUpperCase();
         }
     }
 
     private int getStatusPriority(BookInforRequestStatusDTO dto) {
+        if (dto == null) return 5;
+        
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
         
@@ -52,8 +78,9 @@
     }
 
     private String getStatusBadgeClass(BookInforRequestStatusDTO dto) {
+        if (dto == null) return "bg-secondary";
+        
         String status = getActualStatus(dto);
-        String requestType = determineRequestType(dto);
         
         switch(status) {
             case "pending":
@@ -66,51 +93,86 @@
                 return "bg-danger";
             case "borrowed":
                 return "bg-success";
+            case "completed":
+                return "bg-success";
             default:
                 return "bg-secondary";
         }
     }
 
     private boolean shouldShowBorrowButton(BookInforRequestStatusDTO dto) {
+        if (dto == null) return false;
+        
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
         boolean shouldShow = "approved-borrow".equals(status) && "borrow".equals(requestType);
-        System.out.println("shouldShowBorrowButton - ID: " + dto.getId() + ", Status: " + status + ", Type: " + requestType + ", Show: " + shouldShow);
+        
+        System.out.println("shouldShowBorrowButton - ID: " + dto.getId() + 
+                          ", Status: " + status + ", Type: " + requestType + ", Show: " + shouldShow);
         return shouldShow;
     }
 
     private boolean shouldShowApproveButton(BookInforRequestStatusDTO dto, HttpServletRequest request) {
+        if (dto == null) return false;
+        
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
+        
         if (!"pending".equals(status) || !"borrow".equals(requestType)) {
             return false;
         }
-
-        // Kiểm tra số lượng bản sao sách
-        BookDAO bookDAO = new BookDAO();
-        entity.Book book = bookDAO.getBookById(dto.getBookId());
-        boolean shouldShow = book != null && book.getAvailableCopies() > 0 && "active".equalsIgnoreCase(book.getStatus());
-        System.out.println("shouldShowApproveButton - ID: " + dto.getId() + ", Book Available: " + (book != null ? book.getAvailableCopies() : "null") + ", Show: " + shouldShow);
-        return shouldShow;
+ 
+        // Check available copies
+        try {
+            BookDAO bookDAO = new BookDAO();
+            entity.Book book = bookDAO.getBookById(dto.getBookId());
+            boolean shouldShow = book != null && 
+                               book.getAvailableCopies() > 0 && 
+                               "active".equalsIgnoreCase(book.getStatus());
+            
+            System.out.println("shouldShowApproveButton - ID: " + dto.getId() + 
+                              ", Book Available: " + (book != null ? book.getAvailableCopies() : "null") + 
+                              ", Show: " + shouldShow);
+            return shouldShow;
+        } catch (Exception e) {
+            System.err.println("Error checking book availability: " + e.getMessage());
+            return false;
+        }
     }
 
     private boolean shouldShowRejectButton(BookInforRequestStatusDTO dto) {
+        if (dto == null) return false;
+        
         boolean shouldShow = "pending".equals(getActualStatus(dto));
         System.out.println("shouldShowRejectButton - ID: " + dto.getId() + ", Show: " + shouldShow);
         return shouldShow;
+    }
+
+    private String safeString(String value) {
+        return value != null ? value.trim() : "N/A";
+    }
+
+    private String formatFine(double fine) {
+        return String.format("%.2f", fine);
     }
 %>
 
 <%
     List<BookInforRequestStatusDTO> bookRequestList = (List<BookInforRequestStatusDTO>) request.getAttribute("bookStatusList");
-    String emptyMessage = request.getAttribute("emptyMessage") != null ? (String) request.getAttribute("emptyMessage") : "No book borrowing requests found!";
+    String emptyMessage = request.getAttribute("emptyMessage") != null ? 
+                         (String) request.getAttribute("emptyMessage") : 
+                         "No book borrowing requests found!";
 
     if (bookRequestList != null && !bookRequestList.isEmpty()) {
+        System.out.println("Rendering " + bookRequestList.size() + " book requests");
+        
         for (BookInforRequestStatusDTO b : bookRequestList) {
+            if (b == null) continue;
+            
             String id = String.valueOf(b.getId());
-            String isbn = b.getIsbn() != null ? b.getIsbn() : "N/A";
-            String title = b.getTitle() != null ? b.getTitle() : "N/A";
-            String username = b.getUsername() != null ? b.getUsername() : "N/A";
+            String isbn = safeString(b.getIsbn());
+            String title = safeString(b.getTitle());
+            String username = safeString(b.getUsername());
             double overdueFine = b.getOverdueFine();
 
             String requestType = determineRequestType(b);
@@ -119,7 +181,7 @@
             String badgeClass = getStatusBadgeClass(b);
             int priority = getStatusPriority(b);
 
-            System.out.println("Request ID: " + id + ", Status: " + actualStatus + 
+            System.out.println("Rendering Request - ID: " + id + ", Status: " + actualStatus + 
                              ", Type: " + requestType + ", Display: " + displayStatus + 
                              ", Fine: " + overdueFine + ", Priority: " + priority);
 %>
@@ -137,17 +199,19 @@
 
       <td class="title-cell">
             <div class="book-title"><%=title%></div>
-            <% if (requestType.equals("return") && overdueFine > 0) { %>
+            <% if ("return".equals(requestType) && overdueFine > 0) { %>
             <small class="text-danger">
                   <i class="fas fa-exclamation-triangle"></i>
-                  Return with fine: $<%=String.format("%.2f", overdueFine)%>
+                  Return with fine: $<%=formatFine(overdueFine)%>
             </small>
             <% } %>
       </td>
 
       <td class="username-cell">
             <span class="user-name"><%=username%></span>
-            <small class="text-muted d-block"><%=requestType.substring(0,1).toUpperCase() + requestType.substring(1)%> Request</small>
+            <small class="text-muted d-block">
+                  <%=requestType.substring(0,1).toUpperCase() + requestType.substring(1)%> Request
+            </small>
       </td>
 
       <td class="status-cell">
@@ -159,7 +223,7 @@
                   <div class="fine-info mt-1">
                         <small class="text-danger fw-bold">
                               <i class="fas fa-dollar-sign"></i>
-                              Fine: $<%=String.format("%.2f", overdueFine)%>
+                              Fine: $<%=formatFine(overdueFine)%>
                         </small>
                   </div>
                   <% } %>
@@ -181,7 +245,7 @@
                         <input type="hidden" name="requestId" value="<%=id%>">
                         <input type="hidden" name="action" value="approve">
                         <button type="button" class="btn btn-sm btn-success me-1 approve-btn" 
-                                onclick="document.getElementById('approve-form-<%=id%>').submit()"
+                                onclick="confirmApprove('<%=id%>', '<%=b.getBookId()%>')"
                                 data-request-id="<%=id%>" 
                                 data-status="<%=actualStatus%>_<%=requestType%>" 
                                 data-type="<%=requestType%>"
@@ -198,7 +262,8 @@
                         <input type="hidden" name="requestId" value="<%=id%>">
                         <input type="hidden" name="action" value="reject">
                         <button type="button" class="btn btn-sm btn-danger me-1 reject-btn"
-                                onclick="document.getElementById('reject-form-<%=id%>').submit()"
+                                onclick="if (confirm('Are you sure you want to reject this request?'))
+                                                  document.getElementById('reject-form-<%=id%>').submit()"
                                 data-request-id="<%=id%>"
                                 title="Reject request">
                               <i class="fas fa-times"></i> Reject
@@ -212,7 +277,8 @@
                         <input type="hidden" name="requestId" value="<%=id%>">
                         <input type="hidden" name="action" value="borrow">
                         <button type="button" class="btn btn-sm btn-primary borrow-btn"
-                                onclick="document.getElementById('borrow-form-<%=id%>').submit()"
+                                onclick="if (confirm('Are you sure you want to process this borrow?'))
+                                                  document.getElementById('borrow-form-<%=id%>').submit()"
                                 data-request-id="<%=id%>"
                                 title="Create borrow record">
                               <i class="fas fa-book"></i> Process Borrow
@@ -232,13 +298,13 @@
                         <% if (overdueFine > 0) { %>
                         <small class="text-danger d-block">
                               <i class="fas fa-exclamation-triangle"></i>
-                              Fine paid: $<%=String.format("%.2f", overdueFine)%>
+                              Fine paid: $<%=formatFine(overdueFine)%>
                         </small>
                         <% } %>
                   </div>
                   <% } else if ("rejected".equals(actualStatus)) { %>
                   <!-- Rejected Status -->
-                  <div class=" personally-status text-center">
+                  <div class="completed-status text-center">
                         <span class="badge bg-danger">
                               <i class="fas fa-times-circle"></i> Request Rejected
                         </span>
@@ -256,6 +322,16 @@
                               <i class="fas fa-thumbs-up"></i> Book borrowed
                         </small>
                   </div>
+                  <% } else if ("completed".equals(actualStatus)) { %>
+                  <!-- Completed Status -->
+                  <div class="completed-status text-center">
+                        <span class="badge bg-success">
+                              <i class="fas fa-check-circle"></i> Completed
+                        </span>
+                        <small class="text-success d-block mt-1">
+                              <i class="fas fa-check-double"></i> Transaction completed
+                        </small>
+                  </div>
                   <% } else if (!shouldShowApproveButton(b, request) && !shouldShowRejectButton(b) && !shouldShowBorrowButton(b)) { %>
                   <!-- Unknown Status -->
                   <div class="unknown-status text-center">
@@ -271,6 +347,7 @@
 <%
         }
     } else {
+        System.out.println("No book requests found - showing empty state");
 %>
 <tr>
       <td colspan="5" class="empty-state text-center py-5">
