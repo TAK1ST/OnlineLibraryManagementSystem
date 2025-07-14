@@ -12,7 +12,8 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role varchar(20),
-    status varchar (20) DEFAULT 'active'   --active/inactive
+    status varchar (20) DEFAULT 'active',   --active/inactive
+	avatar varchar (100),
 );
 GO
 -- 2. BOOKS TABLE
@@ -77,6 +78,14 @@ CREATE TABLE messages (
     subject NVARCHAR(255),
     message TEXT,
     status VARCHAR(20) DEFAULT 'unread',
+    created_at DATETIME DEFAULT GETDATE()
+);
+GO
+CREATE TABLE notifications (
+    id INT PRIMARY KEY IDENTITY,
+    user_id INT,
+    message NVARCHAR(255),
+    is_read BIT DEFAULT 0,
     created_at DATETIME DEFAULT GETDATE()
 );
 GO

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -79,6 +80,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/cart">
+                                    <i class="fas fa-shopping-cart me-1"></i>Cart
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <span class="nav-link">Hi, ${sessionScope.loginedUser.name}!</span>
                             </li>
                             <li class="nav-item">
@@ -117,7 +123,7 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <div class="row">
+                    <div class="row g-4">
                         <c:forEach items="${approvedRequests}" var="request">
                             <div class="col-md-6 book-item" id="book-${request.id}">
                                 <div class="book-card">
@@ -137,7 +143,10 @@
                                                     <strong>Categories:</strong> ${book.category}
                                                 </p>
                                                 <p class="card-text mb-3">
-                                                    <strong>Borrowed date:</strong> ${request.requestDate}
+                                                    <strong>Borrowed date:</strong> 
+                                                    <fmt:parseDate value="${request.requestDate}" pattern="yyyy-MM-dd" var="parsedDate"/>
+                                                    <fmt:formatDate value="${parsedDate}" pattern="dd-MM-yyyy"/>
+
                                                 </p>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <button class="return-btn" onclick="showReturnConfirmation(${request.id})">
