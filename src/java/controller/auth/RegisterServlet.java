@@ -4,7 +4,6 @@
  */
 package controller.auth;
 
-import constant.Regex;
 import dao.implement.UserDAO;
 import entity.User;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import util.SendMail;
+import util.AsyncSendMail;
 
 /**
  *
@@ -47,7 +46,7 @@ public class RegisterServlet extends HttpServlet {
         String password = request.getParameter("txtpassword");
         String confirmPassword = request.getParameter("txtconfirmpassword");
         
-        SendMail s = new SendMail();
+        AsyncSendMail s = new AsyncSendMail();
         
         // Validate input fields
         if (name == null || name.trim().isEmpty() || 

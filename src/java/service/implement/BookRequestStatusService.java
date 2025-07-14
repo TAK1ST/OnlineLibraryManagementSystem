@@ -13,6 +13,7 @@ import entity.BorrowRecord;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import util.DBConnection;
@@ -61,7 +62,16 @@ public class BookRequestStatusService {
             if (offset < 0) {
                   offset = 0;
             }
-            return bookRequestDAO.getBookRequestStatusBySearch(title, status, offset);
+            
+            // **FIX: Add logging**
+            System.out.println("Service - Getting book requests with params: title=" + title + 
+                            ", status=" + status + ", offset=" + offset);
+            
+            List<BookInforRequestStatusDTO> result = bookRequestDAO.getBookRequestStatusBySearch(title, status, offset);
+            
+            System.out.println("Service - Retrieved " + (result != null ? result.size() : 0) + " records");
+            
+            return result != null ? result : new ArrayList<>();
       }
 
       public boolean createBorrowRecord(int requestId) {
@@ -69,14 +79,14 @@ public class BookRequestStatusService {
             try {
                   cn = DBConnection.getConnection();
                   if (cn == null) {
-                        throw new SQLException("Không thể kết nối cơ sở dữ liệu");
+                        throw new SQLException("Cannot connect database");
                   }
                   cn.setAutoCommit(false);
 
-                  // Lấy yêu cầu
+                  //get request 
                   Optional<BookRequest> requestOpt = getBookRequestById(requestId);
                   if (!requestOpt.isPresent()) {
-                        throw new IllegalArgumentException("Yêu cầu không tìm thấy với ID: " + requestId);
+                        throw new IllegalArgumentException("Request not found with ID: " + requestId);
                   }
                   BookRequest request
                           = requestOpt.get();
@@ -156,5 +166,11 @@ public class BookRequestStatusService {
       { 
             BookRequest br = bookRequestDAO.getBookRequestById(id).get();
             return bookDAO.getBookById(br.getBookId());
+      }
+      
+      public boolean CheckBookAvailability(int id)
+      {
+            int availableCopies = bookDAO.getBookById(id).getAvailableCopies();
+            return availableCopies > 1;
       }
 }

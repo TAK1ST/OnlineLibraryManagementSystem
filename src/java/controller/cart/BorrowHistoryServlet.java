@@ -29,6 +29,7 @@ public class BorrowHistoryServlet extends HttpServlet {
         
         try {
             BorrowRequestDAO borrowRequestDAO = new BorrowRequestDAO();
+
             List<BorrowRequest> allBorrowHistory = borrowRequestDAO.getBorrowRequestsByUser(loginedUser.getId());
             
             // Lấy filter parameter
@@ -84,7 +85,7 @@ public class BorrowHistoryServlet extends HttpServlet {
             System.out.println("Sort By: " + sortBy);
             System.out.println("Total records after filter: " + borrowHistory.size());
             System.out.println("Borrowed Count: " + borrowedCount); // THÊM DEBUG
-            
+       
             request.setAttribute("borrowHistory", borrowHistory);
             request.setAttribute("currentFilter", filterStatus);
             request.setAttribute("currentSort", sortBy);

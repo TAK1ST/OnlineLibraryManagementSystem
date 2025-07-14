@@ -63,102 +63,111 @@ public class BookRequestDAO implements IBookRequestDAO {
       }
 
       @Override
-      public boolean updateBookRequestStatus(int requestId, String newStatus) {
-            String sql = "UPDATE book_requests SET status = ? WHERE id = ?";
-            try ( Connection cn = DBConnection.getConnection();  PreparedStatement prst = cn.prepareStatement(sql)) {
-
-                  if (cn == null) {
-                        System.err.println("Cannot establish database connection");
-                        return false;
-                  }
-
-                  prst.setString(1, newStatus);
-                  prst.setInt(2, requestId);
-
-                  int rowsUpdated = prst.executeUpdate();
-                  System.out.println("Updated " + rowsUpdated + " rows for request ID: " + requestId + " with status: " + newStatus);
-
-                  return rowsUpdated > 0;
-
-            } catch (SQLException e) {
-                  System.err.println("SQL Error updating book request status: " + e.getMessage());
-                  e.printStackTrace();
-                  return false;
+      public boolean updateBookRequestStatus(int requestId, String status) {
+            String query = "UPDATE book_requests SET status = ? WHERE id = ?";
+            try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
+                  stmt.setString(1, status);
+                  stmt.setInt(2, requestId);
+                  int rowsAffected = stmt.executeUpdate();
+                  return rowsAffected > 0;
             } catch (Exception e) {
-                  System.err.println("Error updating book request status: " + e.getMessage());
                   e.printStackTrace();
+                  System.err.println("Error updating book request status: " + e.getMessage());
                   return false;
             }
       }
 
       @Override
       public List<BookInforRequestStatusDTO> getBookRequestStatusBySearch(String title, String status, int offset) {
-            List<BookInforRequestStatusDTO> list = new ArrayList<>();
-            StringBuilder sql = new StringBuilder();
+            List<BookInforRequestStatusDTO> result = new ArrayList<>();
+            StringBuilder query = new StringBuilder(
+                    "SELECT br.id, b.title, b.isbn, b.available_copies, br.status, br.request_type, u.name as username, "
+                    + "br.user_id, br.book_id, brr.due_date, COALESCE(f.fine_amount, 0) as fine_amount "
+                    + "FROM book_requests br "
+                    + "LEFT JOIN books b ON br.book_id = b.id "
+                    + "INNER JOIN users u ON br.user_id = u.id "
+                    + "LEFT JOIN borrow_records brr ON br.user_id = brr.user_id AND br.book_id = brr.book_id AND brr.status IN ('borrowed', 'overdue') "
+                    + "LEFT JOIN fines f ON brr.id = f.borrow_id "
+                    + "WHERE 1=1 "
+            );
 
-            sql.append("SELECT br.id, b.title, b.isbn, b.available_copies, br.status, br.request_type, u.name as username, ")
-                    .append("br.user_id, br.book_id, brr.due_date ")
-                    .append("FROM book_requests br ")
-                    .append("JOIN books b ON br.book_id = b.id ")
-                    .append("JOIN users u ON br.user_id = u.id ")
-                    .append("LEFT JOIN borrow_records brr ON br.user_id = brr.user_id AND br.book_id = brr.book_id AND brr.status = 'borrowed' ")
-                    .append("WHERE 1=1 ");
+            List<Object> parameters = new ArrayList<>();
 
+            // Filter by title
             if (title != null && !title.trim().isEmpty()) {
-                  sql.append("AND b.title LIKE ? ");
+                  query.append("AND LOWER(b.title) LIKE LOWER(?) ");
+                  parameters.add("%" + title.trim() + "%");
             }
+
             if (status != null && !status.trim().isEmpty()) {
-                  sql.append("AND br.status = ? ");
+                  switch (status.trim().toLowerCase()) {
+                        case "pending_borrow":
+                              query.append("AND br.status = 'pending' AND br.request_type = 'borrow' ");
+                              break;
+                        case "pending_return":
+                              query.append("AND br.status = 'pending' AND br.request_type = 'return' ");
+                              break;
+                        case "approved-borrow":
+                              query.append("AND br.status = 'approved-borrow' ");
+                              break;
+                        case "approved-return":
+                              query.append("AND br.status = 'approved-return' ");
+                              break;
+                        default:
+                              query.append("AND LOWER(br.status) = LOWER(?) ");
+                              parameters.add(status.trim());
+                  }
             }
 
-            sql.append("ORDER BY CASE br.status ")
-                    .append("WHEN 'pending' THEN CASE br.request_type WHEN 'borrow' THEN 1 ELSE 2 END ")
-                    .append("WHEN 'approved' THEN CASE br.request_type WHEN 'borrow' THEN 3 ELSE 4 END ")
-                    .append("ELSE 5 END, br.id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+            // Order + Pagination
+            query.append(
+                    "ORDER BY "
+                    + "CASE "
+                    + "WHEN br.status = 'pending' AND br.request_type = 'borrow' THEN 1 "
+                    + "WHEN br.status = 'pending' AND br.request_type = 'return' THEN 2 "
+                    + "WHEN br.status = 'approved-borrow' THEN 3 "
+                    + "WHEN br.status = 'approved-return' THEN 4 "
+                    + "ELSE 5 "
+                    + "END, "
+                    + "br.request_date DESC, br.id DESC "
+                    + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+            );
 
-            try ( Connection cn = DBConnection.getConnection();  PreparedStatement pr = cn.prepareStatement(sql.toString())) {
+            parameters.add(offset);
+            parameters.add(RECORDS_PER_LOAD);
 
-                  int paramIndex = 1;
-                  if (title != null && !title.trim().isEmpty()) {
-                        pr.setString(paramIndex++, "%" + title + "%");
+            // Execute query
+            try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+
+                  for (int i = 0; i < parameters.size(); i++) {
+                        stmt.setObject(i + 1, parameters.get(i));
                   }
-                  if (status != null && !status.trim().isEmpty()) {
-                        pr.setString(paramIndex++, status.toLowerCase());
-                  }
-                  pr.setInt(paramIndex++, offset);
-                  pr.setInt(paramIndex, RECORDS_PER_LOAD);
 
-                  try ( ResultSet rs = pr.executeQuery()) {
-                        while (rs.next()) {
-                              BookInforRequestStatusDTO dto = new BookInforRequestStatusDTO();
-                              dto.setId(rs.getInt("id"));
-                              dto.setTitle(rs.getString("title"));
-                              dto.setIsbn(rs.getString("isbn"));
-                              dto.setAvailableCopies(rs.getInt("available_copies"));
-                              dto.setUsername(rs.getString("username"));
-                              dto.setUserId(rs.getInt("user_id"));
-                              dto.setBookId(rs.getInt("book_id"));
-                              dto.setStatusAction(rs.getString("status") != null ? rs.getString("status").toLowerCase() : "pending");
-                              dto.setRequestType(rs.getString("request_type") != null ? rs.getString("request_type").toLowerCase() : "borrow");
-
-                              // Calculate overdue fine if due date exists
-                              Date dueDate = rs.getDate("due_date");
-                              if (dueDate != null) {
-                                    dto.setDueDate(dueDate.toLocalDate());
-                                    dto.setOverdueFine(calculateOverdueFine(dueDate.toLocalDate()));
-                              } else {
-                                    dto.setOverdueFine(0.0);
-                              }
-
-                              System.out.println("DAO - Request ID: " + dto.getId() + ", Status: " + dto.getStatusAction());
-                              list.add(dto);
+                  ResultSet rs = stmt.executeQuery();
+                  while (rs.next()) {
+                        BookInforRequestStatusDTO dto = new BookInforRequestStatusDTO();
+                        dto.setId(rs.getInt("id"));
+                        dto.setTitle(rs.getString("title") != null ? rs.getString("title") : "Unknown");
+                        dto.setIsbn(rs.getString("isbn") != null ? rs.getString("isbn") : "N/A");
+                        dto.setAvailableCopies(rs.getInt("available_copies"));
+                        dto.setStatusAction(rs.getString("status"));
+                        dto.setRequestType(rs.getString("request_type"));
+                        dto.setUsername(rs.getString("username"));
+                        dto.setUserId(rs.getInt("user_id"));
+                        dto.setBookId(rs.getInt("book_id"));
+                        if (rs.getDate("due_date") != null) {
+                              dto.setDueDate(rs.getDate("due_date").toLocalDate());
                         }
+                        dto.setOverdueFine(rs.getDouble("fine_amount"));
+                        result.add(dto);
                   }
+
             } catch (Exception e) {
-                  System.err.println("Error in getBookRequestStatusBySearch: " + e.getMessage());
                   e.printStackTrace();
+                  System.err.println("Error fetching book requests: " + e.getMessage());
             }
-            return list;
+
+            return result;
       }
 
       private double calculateOverdueFine(LocalDate dueDate) {

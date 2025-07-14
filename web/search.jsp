@@ -1,4 +1,5 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="util.ImageDisplayHelper" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -493,7 +494,7 @@
                             <c:forEach items="${books}" var="book">
                                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                                     <div class="book-card card">
-                                        <img src="https://via.placeholder.com/300x400?text=${book.title}&bg=1ABC9C&color=FFFFFF" 
+                                        <img src="<%= ImageDisplayHelper.getBookImageUrl((entity.Book)pageContext.getAttribute("book")) %>" 
                                              class="card-img-top" alt="${book.title}">
                                         <div class="card-body">
                                             <h5 class="card-title">${book.title}</h5>
