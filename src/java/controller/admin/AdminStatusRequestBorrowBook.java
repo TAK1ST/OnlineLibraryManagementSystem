@@ -52,23 +52,15 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                   searchStatus = null;
             }
 
-            // **FIX: Properly map frontend status to backend status**
             if (searchStatus != null) {
                   searchStatus = mapFrontendStatusToBackend(searchStatus);
-                  System.out.println("Mapped search status: " + searchStatus); // Debug log
             }
-
-            // **FIX: Add debug logging**
-            System.out.println("Search params - Title: " + searchTitle + ", Status: " + searchStatus + ", Offset: " + offset);
 
             List<BookInforRequestStatusDTO> bookStatusList = service.getAllBookRequestStatusLazyLoading(searchTitle, searchStatus, offset);
             if (bookStatusList == null) {
                   bookStatusList = new ArrayList<>();
             }
-            
-            // **FIX: Add more debug logging**
-            System.out.println("Retrieved " + bookStatusList.size() + " book requests");
-            
+                        
             request.setAttribute("bookStatusList", bookStatusList);
 
             if (bookStatusList.isEmpty()) {
@@ -78,7 +70,7 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
             request.setAttribute("recordsPerPage", RECORDS_PER_LOAD);
             request.setAttribute("offset", offset);
             request.setAttribute("searchTitle", searchTitle);
-            request.setAttribute("searchStatus", request.getParameter("searchStatus")); // Keep original for form
+            request.setAttribute("searchStatus", request.getParameter("searchStatus")); 
 
             // Handle session messages
             HttpSession session = request.getSession();
