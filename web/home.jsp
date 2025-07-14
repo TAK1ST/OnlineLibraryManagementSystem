@@ -338,6 +338,11 @@
                         </c:if>
                         <c:if test="${not empty sessionScope.loginedUser}">
                             <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/MyStorageServlet">
+                                    <i class="fas fa-book"></i> My Storage
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/BorrowHistoryServlet">
                                     <i class="fas fa-history me-1"></i>Borrowed History
                                 </a>
@@ -346,6 +351,15 @@
                                 <a class="nav-link" href="${pageContext.request.contextPath}/cart">
                                     <i class="fas fa-shopping-cart me-1"></i>Cart
                                 </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link position-relative" href="#" id="notificationBell" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">0</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationBell" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                                    <li class="text-center text-muted">No notifications</li>
+                                </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
@@ -670,6 +684,44 @@
                         chatBox.style.display = "none";
                     }
                 }
+                document.getElementById('notificationBell').addEventListener('click', function () {
+        fetch('${pageContext.request.contextPath}/NotificationServlet')
+            .then(response => response.json())
+            .then(data => {
+                const dropdown = document.querySelector('.dropdown-menu');
+                dropdown.innerHTML = '';
+
+                if (data.length === 0) {
+                    dropdown.innerHTML = '<li class="text-center text-muted">No notifications</li>';
+                } else {
+                    data.forEach(noti => {
+                    const li = document.createElement('li');
+                    li.classList.add('dropdown-item');
+
+                    let dateStr = 'N/A';
+                    try {
+                        const date = new Date(noti.createdAt);
+                        if (!isNaN(date.getTime())) {
+                            dateStr = date.toLocaleString('vi-VN');
+                        }
+                    } catch (e) {
+                        console.error('Invalid date:', noti.createdAt);
+                    }
+
+                    li.innerHTML = `
+                    <div>
+                        <small class="text-muted">${dateStr}</small><br>
+                                            ${noti.message}
+                    </div>
+                        `;
+                        dropdown.appendChild(li);
+                    });
+
+
+                    document.getElementById('notificationCount').textContent = data.length;
+                }
+            });
+    });
         </script>
     </body>
 </html>
