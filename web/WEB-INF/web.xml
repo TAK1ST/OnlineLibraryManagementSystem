@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <listener>
+        <listener-name/>
+        <listener-class>listener.OnlineUserCounterListener</listener-class>
+    </listener>
+    <listener>
+        <listener-name/>
+        <listener-class>listener.OnlineUserTrackerListener</listener-class>
+    </listener>
     <!-- Filter Definitions -->
     <filter>
         <filter-name>LoginValidateFilter</filter-name>
@@ -150,6 +158,10 @@
         <servlet-name>ForgotPasswordServlet</servlet-name>
         <servlet-class>controller.auth.ForgotPasswordServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>OnlineUserListServlet</servlet-name>
+        <servlet-class>controller.auth.OnlineUserListServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -270,6 +282,10 @@
     <servlet-mapping>
         <servlet-name>ForgotPasswordServlet</servlet-name>
         <url-pattern>/ForgotPasswordServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OnlineUserListServlet</servlet-name>
+        <url-pattern>/OnlineUserListServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

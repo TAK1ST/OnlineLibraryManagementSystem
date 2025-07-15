@@ -311,7 +311,7 @@
                                     <li><i class="fas fa-check"></i> Contains uppercase letters (A–Z)</li>
                                     <li><i class="fas fa-check"></i> Contains lowercase letters (a–z)</li>
                                     <li><i class="fas fa-check"></i> Contains numbers (0–9)</li>
-                                    <li><i class="fas fa-check"></i> Contains special characters (!@#$%^&*)</li>
+                                    <li><i class="fas fa-check"></i> Contains special characters (,.'";:/?!@#$%^&*)</li>
                                 </ul>
                             </div>
                             
@@ -352,7 +352,7 @@
             }
             
             // Kiểm tra độ mạnh mật khẩu
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[,.'";:/@$!%*?&])[A-Za-z\d,.'";:/@$!%*?&]{8,}$/;
             if (!passwordRegex.test(newPassword)) {
                 e.preventDefault();
                 alert('The password does not meet the security requirements! To enhance your account security, we recommend including the following characters in your password.');

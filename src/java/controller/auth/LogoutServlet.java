@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.auth;
 
 import java.io.IOException;
@@ -13,9 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.logging.Logger;
+import service.implement.OnlineUserManager;
 
 /**
- * Servlet xử lý đăng xuất và xóa cookie Remember Me
+ * Servlet xử lý đăng xuất, xóa cookie Remember Me và remove user khỏi danh sách online
  * @author CAU_TU
  */
 @WebServlet(name = "LogoutServlet", urlPatterns = {"/logout"})
@@ -40,13 +37,27 @@ public class LogoutServlet extends HttpServlet {
         // Lấy session hiện tại
         HttpSession session = request.getSession(false);
         
-        // Nếu có session, hủy session
+        // Nếu có session, xử lý logout
         if (session != null) {
-            // Log thông tin user trước khi đăng xuất
+            // Lấy thông tin user trước khi invalidate session
             Object loginedUser = session.getAttribute("loginedUser");
+            
             if (loginedUser != null) {
+                // Log thông tin user trước khi đăng xuất
                 logger.info("User logged out: " + loginedUser.toString());
+                
+                // Lấy email để remove khỏi danh sách online
+                String email = extractEmail(loginedUser);
+                
+                // Remove user khỏi danh sách online
+                OnlineUserManager.removeUser(email);
+                
+                logger.info("User removed from online list: " + email);
+                logger.info("Remaining online users: " + OnlineUserManager.getOnlineUserCount());
             }
+            
+            // Remove attribute trước khi invalidate (sẽ trigger listener)
+            session.removeAttribute("loginedUser");
             
             // Hủy session
             session.invalidate();
@@ -79,6 +90,28 @@ public class LogoutServlet extends HttpServlet {
         response.addCookie(tokenCookie);
         
         logger.info("Remember Me cookies cleared");
+    }
+    
+    /**
+     * Trích xuất email từ user object
+     */
+    private String extractEmail(Object userObj) {
+        if (userObj != null) {
+            // Nếu userObj là User object, lấy email
+            try {
+                // Giả sử User object có method getEmail()
+                if (userObj.getClass().getMethod("getEmail") != null) {
+                    return (String) userObj.getClass().getMethod("getEmail").invoke(userObj);
+                }
+            } catch (Exception e) {
+                // Nếu không có method getEmail(), fallback sang toString()
+                logger.warning("Cannot extract email from user object: " + e.getMessage());
+            }
+            
+            // Fallback: sử dụng toString() (có thể là email)
+            return userObj.toString();
+        }
+        return null;
     }
 
     /**
@@ -116,6 +149,6 @@ public class LogoutServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Logout Servlet with Remember Me cookie cleanup";
+        return "Logout Servlet with Remember Me cookie cleanup and online user management";
     }
 }

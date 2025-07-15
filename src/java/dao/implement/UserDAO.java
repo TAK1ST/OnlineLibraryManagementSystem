@@ -311,7 +311,6 @@ public class UserDAO implements IUserDAO {
                         String status = rs.getString("status");
                         String avatar = rs.getString("avatar");
                         result = new User(id, name, email, hashedPassword, role, status, avatar);
-                        System.out.println("User authenticated successfully: " + email);
                     } else {
                         System.out.println("Password verification failed for user: " + email);
                         // Try direct comparison for debugging (remove this in production)
@@ -354,7 +353,7 @@ public class UserDAO implements IUserDAO {
         try {
             cn = DBConnection.getConnection();
             if (cn != null) {
-                String sql = "SELECT [id], [name], [email], [password], [role], [status] FROM [dbo].[users] WHERE [id] = ?";
+                String sql = "SELECT [id], [name], [email], [password], [role], [status], [avatar] FROM [dbo].[users] WHERE [id] = ?";
                 pst = cn.prepareStatement(sql);
                 pst.setInt(1, id);
                 rs = pst.executeQuery();

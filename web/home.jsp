@@ -1,4 +1,7 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="listener.OnlineUserCounterListener" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="service.implement.OnlineUserManager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -353,6 +356,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/OnlineUserListServlet"">
+                                    <i class="fas fa-wifi me-1"></i>Số người đang online: <%= OnlineUserCounterListener.getOnlineUsers() %>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">
                                     <i class="fas fa-sign-out-alt me-1"></i>Logout
                                 </a>
@@ -379,7 +387,7 @@
                     <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
                 </div>
                 <div class="slide-item">
-                    <img src="./hinh/4.jpg" alt="Ảnh 4">
+                    <img src="" alt="Ảnh 4">
                     <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
                 </div>
             </div>
