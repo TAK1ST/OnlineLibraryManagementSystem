@@ -4,6 +4,7 @@
  */
 package controller.auth;
 
+import constant.Regex;
 import dao.implement.UserDAO;
 import entity.User;
 import java.io.IOException;
@@ -104,7 +105,7 @@ public class RegisterServlet extends HttpServlet {
             int result = d.insertNewUser(name.trim(), email.trim(), password);
             if (result == 1) {
                 request.setAttribute("message", "Registration successful! Please log in.");
-                s.sendWelcomeEmail(email, name);
+                s.sendWelcomeEmailAsync(email, name);
                 request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "Registration failed. Please try again.");

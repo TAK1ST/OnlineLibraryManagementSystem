@@ -357,7 +357,7 @@
                         if (confirm('Are you sure you want to logout?')) {
                               showAlert('Logging out...', 'success');
                               setTimeout(() => {
-                                    window.location.href = '#';
+                                    window.location.href = 'LogoutServlet';
                               }, 1500);
                         }
                   }

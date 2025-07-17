@@ -141,17 +141,7 @@ Author : asus
 
                   document.addEventListener('DOMContentLoaded', function () {
                         console.log('Page loaded, initializing...');
-
-                        if (searchStatusRaw.includes('_')) {
-                              const parts = searchStatusRaw.split('_');
-                              searchStatus = parts[0]; // 'pending'
-                              requestType = parts[1];  // 'borrow' or 'return'
-                        } else {
-                              searchStatus = searchStatusRaw;
-                              requestType = '';
-                        }
-
-                        console.log("Parsed on load ? searchStatus:", searchStatus, "requestType:", requestType);
+                        console.log("Initial searchStatus:", searchStatus);
 
                         const tbody = document.getElementById('inventoryTableBody');
                         if (!tbody.innerHTML.trim() || tbody.innerHTML.trim() === '') {
@@ -167,8 +157,8 @@ Author : asus
                         searchTitle = document.getElementById('searchTitle').value.trim();
                         searchStatus = document.getElementById('searchStatus').value.trim();
 
-                        console.log("Search title:", searchTitle);
-                        console.log("Search status:", searchStatus);
+                        console.log("Search - searchTitle:", searchTitle);
+                        console.log("Search - searchStatus:", searchStatus);
 
                         offset = 0;
                         hasMoreData = true;
@@ -182,200 +172,191 @@ Author : asus
                   // Load more book requests via AJAX
                   function loadMoreBookRequests() {
                         if (isLoading || !hasMoreData) {
-                              console.log('Skip loading: isLoading=' + isLoading + ', hasMoreData=' + hasMoreData);
                               return;
                         }
 
                         console.log('Loading more book requests, offset=' + offset);
                         isLoading = true;
                         document.getElementById('loading').style.display = 'block';
-                        // Build URL with parameters
+
                         let url = 'statusrequestborrowbook?ajax=true&offset=' + offset;
                         if (searchTitle && searchTitle.trim() !== '') {
                               url += '&searchTitle=' + encodeURIComponent(searchTitle);
                         }
                         if (searchStatus && searchStatus.trim() !== '') {
-                              let statusQuery = searchStatus;
+                              url += '&searchStatus=' + encodeURIComponent(searchStatus);
+                        }
 
-                              if (requestType && searchStatus === 'pending') {
-                                    statusQuery = `${searchStatus}_${requestType}`;
-                                                      }
+                        console.log('Fetching URL:', url);
 
-                                                      url += '&searchStatus=' + encodeURIComponent(statusQuery);
-                                                }
+                        fetch(url)
+                                .then(response => response.text())
+                                .then(html => {
+                                      const trimmedHtml = html.trim();
+                                      if (isEmptyResponse(trimmedHtml)) {
+                                            handleEmptyResponse(trimmedHtml);
+                                      } else {
+                                            handleValidResponse(trimmedHtml);
+                                      }
+                                })
+                                .catch(error => {
+                                      console.error('Error loading book requests:', error);
+                                      handleError(error);
+                                })
+                                .finally(() => {
+                                      isLoading = false;
+                                      document.getElementById('loading').style.display = 'none';
+                                });
+                  }
 
-                                                console.log('Fetching URL:', url);
-                                                fetch(url)
-                                                        .then(response => {
-                                                              console.log('Response status:', response.status);
-                                                              if (!response.ok) {
-                                                                    throw new Error('Network response was not ok: ' + response.status + ' ' + response.statusText);
-                                                              }
-                                                              return response.text();
-                                                        })
-                                                        .then(html => {
-                                                              console.log('Received HTML length:', html.length);
-                                                              console.log('First 200 chars:', html.substring(0, 200)); // Debug log
+                  // Improved empty response detection
+                  function isEmptyResponse(html) {
+                        return html === '' ||
+                                html.length < 50 ||
+                                html.includes('class="empty-state"') ||
+                                html.includes('No book requests found') ||
+                                html.includes('No matching book borrowing requests found') ||
+                                html.includes('No Book Requests Found') ||
+                                !html.includes('<tr') || // No table rows
+                                html.includes('colspan="5"'); // Empty state row
+                  }
 
-                                                              const trimmedHtml = html.trim();
-                                                              // Better empty response detection
-                                                              if (isEmptyResponse(trimmedHtml)) {
-                                                                    console.log('Empty response detected');
-                                                                    handleEmptyResponse(trimmedHtml);
-                                                              } else {
-                                                                    console.log('Processing valid response');
-                                                                    handleValidResponse(trimmedHtml);
-                                                              }
-                                                        })
-                                                        .catch(error => {
-                                                              console.error('Error loading book requests:', error);
-                                                              console.error('Error stack:', error.stack);
-                                                              handleError(error);
-                                                        })
-                                                        .finally(() => {
-                                                              isLoading = false;
-                                                              document.getElementById('loading').style.display = 'none';
-                                                        });
-                                          }
+                  //Handle empty response
+                  function handleEmptyResponse(html) {
+                        hasMoreData = false;
+                        document.getElementById('noMoreData').style.display = 'block';
+                        if (offset === 0) {
+                              // First load and no data
+                              if (html.includes('class="empty-state"')) {
+                                    document.getElementById('inventoryTableBody').innerHTML = html;
+                              } else {
+                                    document.getElementById('inventoryTableBody').innerHTML =
+                                            '<tr><td colspan="5" class="empty-state text-center py-5">' +
+                                            '<div class="d-flex flex-column align-items-center">' +
+                                            '<div class="empty-icon mb-3"><i class="fas fa-book-open fa-4x text-muted"></i></div>' +
+                                            '<h5 class="text-muted mb-2">No Book Requests Found</h5>' +
+                                            '<p class="text-muted mb-0">No book borrowing requests found!</p>' +
+                                            '<small class="text-muted mt-2">Try adjusting your search filters or check back later</small>' +
+                                            '</div></td></tr>';
+                              }
+                        }
+                  }
 
-                                          // Improved empty response detection
-                                          function isEmptyResponse(html) {
-                                                return html === '' ||
-                                                        html.length < 50 ||
-                                                        html.includes('class="empty-state"') ||
-                                                        html.includes('No book requests found') ||
-                                                        html.includes('No matching book borrowing requests found') ||
-                                                        html.includes('No Book Requests Found') ||
-                                                        !html.includes('<tr') || // No table rows
-                                                        html.includes('colspan="5"'); // Empty state row
-                                          }
+                  function handleValidResponse(html) {
+                        const tableBody = document.getElementById('inventoryTableBody');
+                        if (offset === 0) {
+                              tableBody.innerHTML = html;
+                        } else {
+                              tableBody.insertAdjacentHTML('beforeend', html);
+                        }
 
-                                          //Handle empty response
-                                          function handleEmptyResponse(html) {
-                                                hasMoreData = false;
-                                                document.getElementById('noMoreData').style.display = 'block';
-                                                if (offset === 0) {
-                                                      // First load and no data
-                                                      if (html.includes('class="empty-state"')) {
-                                                            document.getElementById('inventoryTableBody').innerHTML = html;
-                                                      } else {
-                                                            document.getElementById('inventoryTableBody').innerHTML =
-                                                                    '<tr><td colspan="5" class="empty-state text-center py-5">' +
-                                                                    '<div class="d-flex flex-column align-items-center">' +
-                                                                    '<div class="empty-icon mb-3"><i class="fas fa-book-open fa-4x text-muted"></i></div>' +
-                                                                    '<h5 class="text-muted mb-2">No Book Requests Found</h5>' +
-                                                                    '<p class="text-muted mb-0">No book borrowing requests found!</p>' +
-                                                                    '<small class="text-muted mt-2">Try adjusting your search filters or check back later</small>' +
-                                                                    '</div></td></tr>';
-                                                      }
-                                                }
-                                          }
-
-                                          function handleValidResponse(html) {
-                                                const tableBody = document.getElementById('inventoryTableBody');
-                                                if (offset === 0) {
-                                                      tableBody.innerHTML = html;
-                                                } else {
-                                                      tableBody.insertAdjacentHTML('beforeend', html);
-                                                }
-
-                                                // count row <tr>
-                                                const newRows = html.match(/<tr[^>]*class="[^"]*\bbook-request-row\b[^"]*"/g);
-                                                const recordCount = newRows ? newRows.length : 0;
-                                                console.log(newRows);
-                                                console.log('Records received:', recordCount);
-                                                // update off by that row get
-                                                offset += recordCount;
-                                                if (recordCount === 0 || recordCount < recordsPerPage) {
-                                                      hasMoreData = false;
-                                                      document.getElementById('noMoreData').style.display = 'block';
-                                                }
-                                          }
+                        // count row <tr>
+                        const newRows = html.match(/<tr[^>]*class="[^"]*\bbook-request-row\b[^"]*"/g);
+                        const recordCount = newRows ? newRows.length : 0;
+                        console.log(newRows);
+                        console.log('Records received:', recordCount);
+                        // update off by that row get
+                        offset += recordCount;
+                        if (recordCount === 0 || recordCount < recordsPerPage) {
+                              hasMoreData = false;
+                              document.getElementById('noMoreData').style.display = 'block';
+                        }
+                  }
 
 
-                                          //Handle fetch errors
-                                          function handleError(error) {
-                                                if (offset === 0) {
-                                                      document.getElementById('inventoryTableBody').innerHTML =
-                                                              '<tr><td colspan="5" class="text-center text-danger py-4">' +
-                                                              '<i class="fas fa-exclamation-triangle me-2"></i>' +
-                                                              'Error loading data. Please try again.' +
-                                                              '</td></tr>';
-                                                } else {
-                                                      // Show error message for subsequent loads
-                                                      const errorRow = document.createElement('tr');
-                                                      errorRow.innerHTML = '<td colspan="5" class="text-center text-danger py-2">' +
-                                                              '<i class="fas fa-exclamation-triangle me-2"></i>' +
-                                                              'Error loading more data. Please try again.' +
-                                                              '</td>';
-                                                      document.getElementById('inventoryTableBody').appendChild(errorRow);
-                                                }
-                                          }
+                  //Handle fetch errors
+                  function handleError(error) {
+                        if (offset === 0) {
+                              document.getElementById('inventoryTableBody').innerHTML =
+                                      '<tr><td colspan="5" class="text-center text-danger py-4">' +
+                                      '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                                      'Error loading data. Please try again.' +
+                                      '</td></tr>';
+                        } else {
+                              // Show error message for subsequent loads
+                              const errorRow = document.createElement('tr');
+                              errorRow.innerHTML = '<td colspan="5" class="text-center text-danger py-2">' +
+                                      '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                                      'Error loading more data. Please try again.' +
+                                      '</td>';
+                              document.getElementById('inventoryTableBody').appendChild(errorRow);
+                        }
+                  }
 
-                                          //Infinite scroll handler
-                                          window.addEventListener('scroll', function () {
-                                                const scrollPosition = window.innerHeight + window.scrollY;
-                                                const documentHeight = document.body.offsetHeight;
-                                                if (scrollPosition >= documentHeight - 100 && !isLoading && hasMoreData) {
-                                                      console.log('Scroll triggered, loading more data...');
-                                                      loadMoreBookRequests();
-                                                }
-                                          });
+                  //Infinite scroll handler
+                  window.addEventListener('scroll', function () {
+                        const scrollPosition = window.innerHeight + window.scrollY;
+                        const documentHeight = document.body.offsetHeight;
+                        if (scrollPosition >= documentHeight - 100 && !isLoading && hasMoreData) {
+                              console.log('Scroll triggered, loading more data...');
+                              loadMoreBookRequests();
+                        }
+                  });
 
-                                          function logout() {
-                                                if (confirm('Are you sure you want to logout?')) {
-                                                      window.location.href = 'logout';
-                                                }
-                                          }
+                  function logout() {
+                        if (confirm('Are you sure you want to logout?')) {
+                              window.location.href = 'LogoutServlet';
+                        }
+                  }
 
-                                          function confirmApprove(requestId, bookId) {
-                                                console.log('Clicked approve for request:', requestId);
-                                                const formId = 'approve-form-' + requestId;
-                                                const form = document.getElementById(formId);
-                                                if (!form) {
-                                                      console.error('Form not found:', formId);
-                                                      return;
-                                                }
+                  function confirmApprove(requestId, bookId) {
+                        console.log('Clicked approve for request:', requestId);
+                        const formId = 'approve-form-' + requestId;
+                        const form = document.getElementById(formId);
+                        if (!form) {
+                              console.error('Form not found:', formId);
+                              return;
+                        }
 
-                                                if (confirm('Are you sure you want to approve this request?')) {
-                                                      form.submit();
-                                                }
-                                          }
+                        if (confirm('Are you sure you want to approve this request?')) {
+                              form.submit();
+                        }
+                  }
 // Add event delegation for approve buttons
-                                          document.getElementById('inventoryTableBody').addEventListener('click', function (e) {
-                                                if (e.target.closest('.approve-btn')) {
-                                                      const btn = e.target.closest('.approve-btn');
-                                                      const requestId = btn.dataset.requestId;
-                                                      const bookId = btn.dataset.bookId;
-                                                      if (!requestId || !bookId) {
-                                                            console.error('Missing data-* attributes on approve button');
-                                                            return;
-                                                      }
+                  document.getElementById('inventoryTableBody').addEventListener('click', function (e) {
+                        if (e.target.closest('.approve-btn')) {
+                              const btn = e.target.closest('.approve-btn');
+                              const requestId = btn.dataset.requestId;
+                              const bookId = btn.dataset.bookId;
+                              if (!requestId || !bookId) {
+                                    console.error('Missing data-* attributes on approve button');
+                                    return;
+                              }
 
-                                                      if (confirm('Are you sure you want to approve this request?')) {
-                                                            const form = document.getElementById('approve-form-' + requestId);
-                                                            if (form) {
-                                                                  form.submit();
-                                                            } else {
-                                                                  console.error('Approve form not found for ID:', requestId);
-                                                            }
-                                                      }
-                                                }
-                                          });
+                              if (confirm('Are you sure you want to approve this request?')) {
+                                    const form = document.getElementById('approve-form-' + requestId);
+                                    if (form) {
+                                          form.submit();
+                                    } else {
+                                          console.error('Approve form not found for ID:', requestId);
+                                    }
+                              }
+                        }
+                  });
 
-                                          // Scroll to top functionality
-                                          window.onscroll = function () {
-                                                const scrollBtn = document.getElementById("scrollToTopBtn");
-                                                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                                                      scrollBtn.style.display = "block";
-                                                } else {
-                                                      scrollBtn.style.display = "none";
-                                                }
-                                          };
-                                          function scrollToTop() {
-                                                document.body.scrollTop = 0;
-                                                document.documentElement.scrollTop = 0;
-                                          }
+                  // Scroll to top functionality
+                  window.onscroll = function () {
+                        const scrollBtn = document.getElementById("scrollToTopBtn");
+                        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                              scrollBtn.style.display = "block";
+                        } else {
+                              scrollBtn.style.display = "none";
+                        }
+                  };
+                  function scrollToTop() {
+                        document.body.scrollTop = 0;
+                        document.documentElement.scrollTop = 0;
+                  }
+
+                  //set timeout for alert
+                  setTimeout(() => {
+                        const alerts = document.querySelectorAll('.alert');
+                        alerts.forEach(alert => {
+                              alert.classList.remove('show');
+                              alert.classList.add('fade');
+                              setTimeout(() => alert.remove(), 1000);
+                        });
+                  }, 2000);
             </script>
       </body>
 </html>

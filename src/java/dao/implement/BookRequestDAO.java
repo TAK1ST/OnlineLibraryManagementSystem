@@ -4,6 +4,7 @@
  */
 package dao.implement;
 
+import constant.constance;
 import static constant.constance.RECORDS_PER_LOAD;
 import dao.interfaces.IBookRequestDAO;
 import dto.BookInforRequestStatusDTO;
@@ -30,7 +31,7 @@ public class BookRequestDAO implements IBookRequestDAO {
 
       private final BorrowRecordDAO borrowRecordDAO = new BorrowRecordDAO();
       private final BookDAO bookDAO = new BookDAO();
-
+      constance cs = new constance();
       public BookRequestDAO() {
       }
 
@@ -178,7 +179,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             LocalDate today = LocalDate.now();
             if (today.isAfter(dueDate)) {
                   long daysOverdue = ChronoUnit.DAYS.between(dueDate, today);
-                  return daysOverdue * 1.0; // $1 per day
+                  return daysOverdue * cs.OVERDUE_FINE_UNIT;
             }
             return 0.0;
       }

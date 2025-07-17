@@ -22,7 +22,7 @@
                               </a>
                               <h1>Book Management</h1>
                         </div>
-                        <a href="#" class="logout-btn">
+                        <a href="LogoutServlet" class="logout-btn">
                               <i class="fas fa-sign-out-alt"></i>
                               Logout
                         </a>

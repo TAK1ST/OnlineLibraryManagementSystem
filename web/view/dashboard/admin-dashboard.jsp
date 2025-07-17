@@ -57,9 +57,11 @@
                   <div class="main-content">
                         <!-- Header Section -->
                         <div class="header-section">
-                            <button class="logout-btn">
-                                    <i class="fas fa-sign-out-alt"></i> Logout
-                              </button>
+                              <a href="LogoutServlet">
+                                    <button class="logout-btn">
+                                          <i class="fas fa-sign-out-alt"></i> Logout
+                                    </button>
+                              </a>
                               <h1 class="stat-title">Library Statistics Dashboard</h1>
                               <p class="stat-subtitle">Comprehensive overview of library system</p>
                         </div>

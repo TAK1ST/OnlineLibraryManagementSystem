@@ -238,7 +238,7 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
                         return records;
                   }
                   prst = cn.prepareStatement(sql);
-                  // Fixed: Removed the unnecessary setDate parameter since the query doesn't have a date parameter
+                  
                   rs = prst.executeQuery();
                   while (rs.next()) {
                         records.add(mapRowToBorrowRecord(rs));
