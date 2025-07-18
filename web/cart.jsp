@@ -1,4 +1,5 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="util.ImageDisplayHelper" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -128,7 +129,7 @@
                             <div class="cart-item">
                                 <div class="row align-items-center">
                                     <div class="col-md-2">
-                                        <img src="https://via.placeholder.com/120x160?text=${item.book.title}" 
+                                        <img src="<%= ImageDisplayHelper.getBookThumbnailUrl((entity.Book)pageContext.getAttribute("book"), 120, 160) %>" 
                                              alt="${item.book.title}" class="img-fluid">
                                     </div>
                                     <div class="col-md-6 item-details">
@@ -206,4 +207,4 @@
             }
         </script>
     </body>
-</html> 
+</html>

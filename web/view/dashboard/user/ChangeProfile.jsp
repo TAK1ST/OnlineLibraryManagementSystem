@@ -529,7 +529,7 @@
                     <div class="avatar-container">
                         <div class="avatar-preview" id="avatarPreview">
                             <% if (us.getAvatar() != null && !us.getAvatar().isEmpty()) { %>
-                            <img src="<%= request.getContextPath() %>/<%= us.getAvatar() %>" alt="Avatar">
+                            <img src="<%= ImageDisplayHelper.getUserAvatarUrl(us) %>" alt="Avatar">
                             <% } else { %>
                             <%= us.getName().substring(0,1).toUpperCase() %>
                             <% } %>

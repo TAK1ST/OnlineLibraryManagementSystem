@@ -13,10 +13,9 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import java.io.File;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import service.implement.BookManagementService;
+import util.AsyncSupabaseImageService;
 
 /**
  *
@@ -119,27 +118,21 @@ public class AdminAddBookManager extends BaseAdminController {
                   try {
                         Part filePart = request.getPart("bookImage");
                         if (filePart != null && filePart.getSize() > 0) {
-                              System.out.println("Processing file upload...");
-                              String uploadPath = getServletContext().getRealPath("/Uploads");
-                              File uploadDir = new File(uploadPath);
-                              if (!uploadDir.exists()) {
-                                    boolean created = uploadDir.mkdirs();
-                                    System.out.println("Upload directory created: " + created);
+                              System.out.println("Processing file upload to Supabase...");
+                              
+                              // Upload to Supabase
+                              String supabaseUrl = AsyncSupabaseImageService.uploadImageAsync(filePart, "books").get();
+                              
+                              if (supabaseUrl != null) {
+                                    // Store the Supabase path in database (not full URL)
+                                    imageUrl = supabaseUrl.replace(
+                                          "https://icdmgutnvthphneaxxsq.supabase.co/storage/v1/object/public/image.library/", 
+                                          ""
+                                    );
+                                    System.out.println("File uploaded to Supabase successfully: " + supabaseUrl);
+                              } else {
+                                    System.err.println("Failed to upload to Supabase");
                               }
-
-                              String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                              System.out.println("Original filename: " + fileName);
-
-                              // Add timestamp to filename to avoid conflicts
-                              String timestamp = String.valueOf(System.currentTimeMillis());
-                              String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-                              String uniqueFileName = timestamp + "_" + fileName.substring(0, fileName.lastIndexOf(".")) + fileExtension;
-
-                              String fullPath = uploadPath + File.separator + uniqueFileName;
-                              filePart.write(fullPath);
-                              imageUrl = "/Uploads/" + uniqueFileName;
-                              System.out.println("File saved to: " + fullPath);
-                              System.out.println("Image URL: " + imageUrl);
                         }
                   } catch (Exception e) {
                         System.err.println("Error handling file upload: " + e.getMessage());

@@ -8,9 +8,7 @@ import constant.ViewURL;
 import static constant.constance.RECORDS_PER_LOAD;
 import entity.User;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -53,7 +51,6 @@ public class AdminUserDetail extends BaseAdminController {
             request.setAttribute("offset", 0);
             request.setAttribute("recordsPerPage", RECORDS_PER_LOAD);
 
-            // Chuyển tiếp đến admin-user-manager.jsp
             request.getRequestDispatcher(ViewURL.ADMIN_USER_MANAGEMENT).forward(request, response);
       }
 

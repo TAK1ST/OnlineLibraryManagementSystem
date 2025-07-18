@@ -12,52 +12,56 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import util.ImageDisplayHelper;
 
 @WebServlet(name = "HomeServlet", urlPatterns = {"/home"})
 public class HomeServlet extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+      @Override
+      protected void doGet(HttpServletRequest request, HttpServletResponse response)
+              throws ServletException, IOException {
 
-        try {
-            BookDAO dao = new BookDAO();
+            try {
+                  BookDAO dao = new BookDAO();
 
-            // Lấy sách mới nhất
-            List<Book> newBooks = dao.getNewBooks();
-            request.setAttribute("newBooks", newBooks);
+                  // Lấy sách mới nhất
+                  List<Book> newBooks = dao.getNewBooks();
+                  for (Book book : newBooks) {
+                        book.setImageUrl(ImageDisplayHelper.getBookImageUrl(book));
+                  }
+                  request.setAttribute("newBooks", newBooks);
 
-            // Lấy tất cả categories cho dropdown
-            List<String> categories = dao.getAllCategories();
-            request.setAttribute("categories", categories);
+                  // Lấy tất cả categories cho dropdown
+                  List<String> categories = dao.getAllCategories();
+                  request.setAttribute("categories", categories);
 
-            // Đọc cookie recentKeyword
-            String recentKeyword = null;
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("recentKeyword".equals(cookie.getName())) {
-                        try {
-                            recentKeyword = URLDecoder.decode(cookie.getValue(), "UTF-8");
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                  // Đọc cookie recentKeyword
+                  String recentKeyword = null;
+                  Cookie[] cookies = request.getCookies();
+                  if (cookies != null) {
+                        for (Cookie cookie : cookies) {
+                              if ("recentKeyword".equals(cookie.getName())) {
+                                    try {
+                                          recentKeyword = URLDecoder.decode(cookie.getValue(), "UTF-8");
+                                    } catch (Exception e) {
+                                          e.printStackTrace();
+                                    }
+                                    break;
+                              }
                         }
-                        break;
-                    }
-                }
-}
+                  }
 
-            if (recentKeyword != null && !recentKeyword.trim().isEmpty()) {
-                List<Book> recommendedBooks = dao.getBookByTitle(recentKeyword);
-                request.setAttribute("recommendedBooks", recommendedBooks);
-                request.setAttribute("recentKeyword", recentKeyword);
+                  if (recentKeyword != null && !recentKeyword.trim().isEmpty()) {
+                        List<Book> recommendedBooks = dao.getBookByTitle(recentKeyword);
+                        request.setAttribute("recommendedBooks", recommendedBooks);
+                        request.setAttribute("recentKeyword", recentKeyword);
+                  }
+
+            } catch (Exception e) {
+                  e.printStackTrace();
+                  request.setAttribute("error", "Đã xảy ra lỗi khi tải trang.");
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Đã xảy ra lỗi khi tải trang.");
-        }
-
-        request.getRequestDispatcher("home.jsp").forward(request, response);
-    }
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+      }
 }

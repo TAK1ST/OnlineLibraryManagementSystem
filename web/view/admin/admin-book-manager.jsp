@@ -123,7 +123,7 @@
                                                                               Edit
                                                                         </button>
 
-                                                                        <c:if test="${book.status ne 'inactive'}">
+                                                                        <c:if test="${book.status ne 'blocked'}">
                                                                               <button class="delete-btn" onclick="confirmDelete('${book.id}', '${book.title}')">
                                                                                     <i class="fas fa-trash"></i>
                                                                                     Delete
@@ -180,10 +180,10 @@
                   </c:if>
             </div>
             <!-- Delete Confirmation Modal -->
-            <jsp:include page="/view/dashboard/admin/delete-confirm-modal.jsp"/>
+            <jsp:include page="/view/admin/delete-confirm-modal.jsp"/>
 
             <!-- Edit Book Modal -->
-            <jsp:include page="/view/dashboard/admin/modal-edit-book.jsp"/>
+            <jsp:include page="/view/admin/modal-edit-book.jsp"/>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js">
             </script>
