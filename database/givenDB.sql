@@ -57,6 +57,7 @@ CREATE TABLE book_requests (
     id INT PRIMARY KEY identity(1,1),
     user_id INT NOT NULL,
     book_id INT NOT NULL,
+	quantity INT NOT NULL DEFAULT 1,
     request_date DATE ,
 	request_type VARCHAR(20) NOT NULL DEFAULT 'borrow' CHECK (request_type IN ('borrow', 'return')),
     status varchar(20) default 'pending',-- 'approved', 'rejected' 
