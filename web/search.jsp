@@ -70,13 +70,13 @@
                 background-color: rgba(0, 0, 0, 0.4);
                 z-index: 0;
             }
-            
+
             .banner .content{
                 position: relative;
                 z-index: 1;
                 text-align: center;
             }
-            
+
             .header{
                 font-size: 2.5rem;
                 letter-spacing: 2px;
@@ -84,7 +84,7 @@
                 color: white;
                 font-weight: 600;
             }
-            
+
             .header2{
                 font-size: 1.1rem;
                 font-weight: bold;
@@ -167,11 +167,11 @@
                 background: linear-gradient(90deg, var(--accent-light), var(--accent-dark));
                 border-radius: 2px;
             }
-            
+
             .btn-search{
                 margin-top: 30px;
-            }    
-            
+            }
+
             /* Book cards */
             .book-card {
                 border: none;
@@ -296,72 +296,80 @@
                 .banner {
                     height: 30vh;
                 }
-                
+
                 .header {
                     font-size: 2rem;
                 }
-                
+
                 .search-section {
                     margin: 0 0.5rem 1.5rem 0.5rem;
                     padding: 2rem 0;
                 }
-                
+
                 .section-title {
                     font-size: 2rem;
                 }
-                
+
                 .search-section form > div {
                     margin-bottom: 1rem;
                 }
             }
             .banner-container {
-            width: 100%;
-            max-width: 100%;
-            height: 400px;
-            overflow: hidden;
-            position: relative;
-            border: 2px solid #ddd; /* Để debug */
-        }
+                width: 100%;
+                max-width: 100%;
+                height: 400px;
+                overflow: hidden;
+                position: relative;
+                border: 2px solid #ddd; /* Để debug */
+            }
 
-        .banner-slide {
-            display: flex;
-            width: 400%; /* 4 slides = 400% */
-            height: 100%;
-            transition: transform 1s ease-in-out;
-        }
+            .banner-slide {
+                display: flex;
+                width: 400%; /* 4 slides = 400% */
+                height: 100%;
+                transition: transform 1s ease-in-out;
+            }
 
-        .slide-item {
-            position: relative;
-            width: 25%; /* Mỗi slide chiếm 25% của container */
-            flex-shrink: 0;
-            background: #f0f0f0; /* Màu nền để debug */
-        }
+            .slide-item {
+                position: relative;
+                width: 25%; /* Mỗi slide chiếm 25% của container */
+                flex-shrink: 0;
+                background: #f0f0f0; /* Màu nền để debug */
+            }
 
-        .slide-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
+            .slide-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
 
-        .caption {
-            position: absolute;
-            bottom: 170px; /* Điều chỉnh vị trí */
-            left: 0;
-            width: 100%;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-size: 24px;
-            text-align: center;
-            box-sizing: border-box;
-        }
+            .caption {
+                position: absolute;
+                bottom: 170px; /* Điều chỉnh vị trí */
+                left: 0;
+                width: 100%;
+                padding: 20px;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                font-size: 24px;
+                text-align: center;
+                box-sizing: border-box;
+            }
 
-        /* Debug styles */
-        .slide-item:nth-child(1) { background-color: #ff6b6b; }
-        .slide-item:nth-child(2) { background-color: #4ecdc4; }
-        .slide-item:nth-child(3) { background-color: #45b7d1; }
-        .slide-item:nth-child(4) { background-color: #96ceb4; }
+            /* Debug styles */
+            .slide-item:nth-child(1) {
+                background-color: #ff6b6b;
+            }
+            .slide-item:nth-child(2) {
+                background-color: #4ecdc4;
+            }
+            .slide-item:nth-child(3) {
+                background-color: #45b7d1;
+            }
+            .slide-item:nth-child(4) {
+                background-color: #96ceb4;
+            }
         </style>
     </head>
     <body>
@@ -400,9 +408,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
                                     <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
-                                </span>
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">
@@ -541,14 +549,14 @@
                 </c:choose>
             </div>
             <!-- Floating Action Buttons -->
-        <div class="floating-actions">
-            <button class="floating-btn pulse" title="Scroll to top" onclick="scrollToTop()">
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            <!--            <button class="floating-btn" title="Refresh page" onclick="location.reload()">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>-->
-        </div>
+            <div class="floating-actions">
+                <button class="floating-btn pulse" title="Scroll to top" onclick="scrollToTop()">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+                <!--            <button class="floating-btn" title="Refresh page" onclick="location.reload()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>-->
+            </div>
         </section>
         <footer class="footer text-white pt-4 pb-3 mt-5" style="background-color: #2F4256; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <div class="container text-center" style="padding-top: 30px">
@@ -563,68 +571,68 @@
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-         <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const slide = document.getElementById('slide');
-    const totalSlides = slide.children.length;
-    let index = 0;
+        <script>
+               document.addEventListener("DOMContentLoaded", function () {
+                   const slide = document.getElementById('slide');
+                   const totalSlides = slide.children.length;
+                   let index = 0;
 
-    function updateSlide() {
-        slide.style.transform = `translateX(-${index * 25}%)`;
-    }
+                   function updateSlide() {
+                       slide.style.transform = `translateX(-${index * 25}%)`;
+                   }
 
-    setInterval(() => {
-        index = (index + 1) % totalSlides;
-        updateSlide();
-    }, 3000);
-});
-</script>
+                   setInterval(() => {
+                       index = (index + 1) % totalSlides;
+                       updateSlide();
+                   }, 3000);
+               });
+        </script>
 
         <script>
             function addToCart(bookId) {
                 fetch('${pageContext.request.contextPath}/UpdateCartServlet?bookId=' + bookId + '&change=1')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Show success message with better styling
-                            const alertDiv = document.createElement('div');
-                            alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
-                            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-                            alertDiv.innerHTML = `
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Show success message with better styling
+                                const alertDiv = document.createElement('div');
+                                alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                                alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                                alertDiv.innerHTML = `
                                 <i class="fas fa-check-circle me-2"></i>Book added to cart successfully!
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             `;
-                            document.body.appendChild(alertDiv);
-                            
-                            // Auto remove after 3 seconds
-                            setTimeout(() => {
-                                if (alertDiv.parentNode) {
-                                    alertDiv.parentNode.removeChild(alertDiv);
-                                }
-                            }, 3000);
-                        } else {
-                            // Show error message
-                            const alertDiv = document.createElement('div');
-                            alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed';
-                            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-                            alertDiv.innerHTML = `
+                                document.body.appendChild(alertDiv);
+
+                                // Auto remove after 3 seconds
+                                setTimeout(() => {
+                                    if (alertDiv.parentNode) {
+                                        alertDiv.parentNode.removeChild(alertDiv);
+                                    }
+                                }, 3000);
+                            } else {
+                                // Show error message
+                                const alertDiv = document.createElement('div');
+                                alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+                                alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                                alertDiv.innerHTML = `
                                 <i class="fas fa-exclamation-circle me-2"></i>${data.message}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             `;
-                            document.body.appendChild(alertDiv);
-                            
-                            // Auto remove after 3 seconds
-                            setTimeout(() => {
-                                if (alertDiv.parentNode) {
-                                    alertDiv.parentNode.removeChild(alertDiv);
-                                }
-                            }, 3000);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Có lỗi xảy ra, vui lòng thử lại!');
-                    });
+                                document.body.appendChild(alertDiv);
+
+                                // Auto remove after 3 seconds
+                                setTimeout(() => {
+                                    if (alertDiv.parentNode) {
+                                        alertDiv.parentNode.removeChild(alertDiv);
+                                    }
+                                }, 3000);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Có lỗi xảy ra, vui lòng thử lại!');
+                        });
             }
         </script>
         <script>

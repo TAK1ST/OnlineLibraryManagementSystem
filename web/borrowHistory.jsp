@@ -74,11 +74,21 @@
                 margin: 5px 0 0 0;
                 color: #6c757d;
             }
-            .stats-pending { border-left: 4px solid #ffd700; }
-            .stats-approved { border-left: 4px solid #28a745; }
-            .stats-borrowed { border-left: 4px solid #007bff; }
-            .stats-returned { border-left: 4px solid #17a2b8; }
-            .stats-rejected { border-left: 4px solid #dc3545; }
+            .stats-pending {
+                border-left: 4px solid #ffd700;
+            }
+            .stats-approved {
+                border-left: 4px solid #28a745;
+            }
+            .stats-borrowed {
+                border-left: 4px solid #007bff;
+            }
+            .stats-returned {
+                border-left: 4px solid #17a2b8;
+            }
+            .stats-rejected {
+                border-left: 4px solid #dc3545;
+            }
         </style>
     </head>
     <body>
@@ -105,7 +115,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">Hi, ${sessionScope.loginedUser.name}!</span>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                    <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Log out</a>
@@ -118,7 +130,7 @@
 
         <div class="container mt-4">
             <h2 class="mb-4">Borrowed History</h2>
-            
+
             <!-- Hiển thị thông báo -->
             <c:if test="${not empty message}">
                 <div class="alert alert-${messageType} alert-dismissible fade show" role="alert">
@@ -190,7 +202,7 @@
 
             <!-- Danh sách lịch sử mượn -->
             <jsp:useBean id="bookDAO" class="dao.implement.BookDAO"/>
-            
+
             <c:choose>
                 <c:when test="${empty borrowHistory}">
                     <div class="text-center py-5">
@@ -249,7 +261,7 @@
                                             </c:choose>
                                         </span>
                                     </div>
-                                    
+
                                     <p class="mb-2">
                                         <strong>Author:</strong> ${book.author}
                                     </p>
@@ -260,7 +272,7 @@
                                         <strong>Request Date:</strong> 
                                         <fmt:formatDate value="${request.requestDate}" pattern="dd-MM-yyyy"/>
                                     </p>
-                                    
+
                                     <!-- Hiển thị thông tin thêm dựa trên status -->
                                     <c:choose>
                                         <c:when test="${request.status eq 'pending'}">
@@ -305,20 +317,20 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             // Auto-submit form when filter/sort changes
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const statusFilter = document.getElementById('statusFilter');
                 const sortBy = document.getElementById('sortBy');
                 const filterForm = document.getElementById('filterForm');
-                
+
                 if (statusFilter) {
-                    statusFilter.addEventListener('change', function() {
+                    statusFilter.addEventListener('change', function () {
                         console.log('Status filter changed to:', this.value);
                         filterForm.submit();
                     });
                 }
-                
+
                 if (sortBy) {
-                    sortBy.addEventListener('change', function() {
+                    sortBy.addEventListener('change', function () {
                         console.log('Sort changed to:', this.value);
                         filterForm.submit();
                     });
