@@ -4,6 +4,7 @@
  */
 package dao.implement;
 
+import constant.constance;
 import static constant.constance.RECORDS_PER_LOAD;
 import dao.interfaces.IBookRequestDAO;
 import dto.BookInforRequestStatusDTO;
@@ -30,7 +31,7 @@ public class BookRequestDAO implements IBookRequestDAO {
 
       private final BorrowRecordDAO borrowRecordDAO = new BorrowRecordDAO();
       private final BookDAO bookDAO = new BookDAO();
-
+      constance cs = new constance();
       public BookRequestDAO() {
       }
 
@@ -82,7 +83,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             List<BookInforRequestStatusDTO> result = new ArrayList<>();
             StringBuilder query = new StringBuilder(
                     "SELECT br.id, b.title, b.isbn, b.available_copies, br.status, br.request_type, u.name as username, "
-                    + "br.user_id, br.book_id, brr.due_date, COALESCE(f.fine_amount, 0) as fine_amount "
+                    + "br.user_id, br.book_id, br.quantity, brr.due_date, COALESCE(f.fine_amount, 0) as fine_amount "
                     + "FROM book_requests br "
                     + "LEFT JOIN books b ON br.book_id = b.id "
                     + "INNER JOIN users u ON br.user_id = u.id "
@@ -159,6 +160,7 @@ public class BookRequestDAO implements IBookRequestDAO {
                               dto.setDueDate(rs.getDate("due_date").toLocalDate());
                         }
                         dto.setOverdueFine(rs.getDouble("fine_amount"));
+                        dto.setQuantity(rs.getInt("quantity")); 
                         result.add(dto);
                   }
 
@@ -178,7 +180,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             LocalDate today = LocalDate.now();
             if (today.isAfter(dueDate)) {
                   long daysOverdue = ChronoUnit.DAYS.between(dueDate, today);
-                  return daysOverdue * 1.0; // $1 per day
+                  return daysOverdue * cs.OVERDUE_FINE_UNIT;
             }
             return 0.0;
       }

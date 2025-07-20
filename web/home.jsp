@@ -1,6 +1,4 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<%@ page import="util.ImageDisplayHelper" %>
-<%@ page import="entity.Book" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -698,9 +696,9 @@
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                <span class="nav-link">
                                     <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
-                                </a>
+                                </span>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">
@@ -757,67 +755,62 @@
                         <button type="submit" class="btn btn-primary w-100 btn-search">
                             <i class="fas fa-search me-2"></i>Find
                         </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                              <ul class="navbar-nav ms-auto">
-                                    <c:if test="${empty sessionScope.loginedUser}">
-                                          <li class="nav-item">
-                                                <a class="nav-link" href="${pageContext.request.contextPath}/LoginServlet">
-                                                      <i class="fas fa-sign-in-alt me-1"></i>Login
-                                                </a>
-                                          </li>
-                                          <li class="nav-item">
-                                                <a class="nav-link" href="${pageContext.request.contextPath}/RegisterServlet">
-                                                      <i class="fas fa-user-plus me-1"></i>Register
-                                                </a>
-                                          </li>
-                                    </c:if>
-                                    <c:if test="${not empty sessionScope.loginedUser}">
-                                          <li class="nav-item">
-                                                <a class="nav-link" href="${pageContext.request.contextPath}/BorrowHistoryServlet">
-                                                      <i class="fas fa-history me-1"></i>Borrowed History
-                                                </a>
-                                          </li>
-                                          <li class="nav-item">
-                                                <a class="nav-link" href="${pageContext.request.contextPath}/cart">
-                                                      <i class="fas fa-shopping-cart me-1"></i>Cart
-                                                </a>
-                                          </li>
-                                          <li class="nav-item">
-                                                <span class="nav-link">
-                                                      <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
-                                                </span>
-                                          </li>
-                                          <li class="nav-item">
-                                                <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">
-                                                      <i class="fas fa-sign-out-alt me-1"></i>Logout
-                                                </a>
-                                          </li>
-                                    </c:if>
-                              </ul>
-                        </div>
-                  </div>
-            </nav>
+                    </div>
+                </form>
+            </div>
+        </section>
 
-            <!-- Phần Hero -->
-            <div class="banner-container">
-                  <div class="banner-slide" id="slide">
-                        <div class="slide-item">
-                              <img src="./hinh/OIP.jpg" alt="Ảnh 1">
-                              <div class="caption">Welcome to the Online Library</div>
+        <!-- Sách mới -->
+        <section class="new-books">
+            <div class="container">
+                <h2 class="section-title text-center">NEW BOOKS</h2>
+                <div class="row">
+                    <c:forEach items="${newBooks}" var="book">
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="book-card card">
+                                <img src="https://via.placeholder.com/300x400?text=${book.title}&bg=1ABC9C&color=FFFFFF" 
+                                     class="card-img-top" alt="${book.title}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${book.title}</h5>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i>Author: ${book.author}
+                                        </small>
+                                    </p>
+                                    <p class="card-text">
+                                        <span class="badge bg-primary me-2">${book.category}</span>
+                                        <c:if test="${book.availableCopies > 0}">
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Still have books
+                                            </span>
+                                        </c:if>
+                                        <c:if test="${book.availableCopies == 0}">
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Out of book
+                                            </span>
+                                        </c:if>
+                                    </p>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            <i class="fas fa-book me-1"></i>Available: ${book.availableCopies}/${book.totalCopies}
+                                        </small>
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}" 
+                                           class="btn btn-primary">
+                                            <i class="fas fa-eye me-2"></i>See details
+                                        </a>
+                                        <c:if test="${not empty sessionScope.loginedUser && book.availableCopies > 0}">
+                                            <button onclick="addToCart(${book.id})" class="btn btn-outline-primary">
+                                                <i class="fas fa-cart-plus me-2"></i>Add to cart
+                                            </button>
+                                        </c:if>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="slide-item">
-                              <img src="./hinh/R.jpg" alt="Ảnh 2">
-                              <div class="caption">Explore thousands of books and expand your knowledge</div>
-                        </div>
-                        <div class="slide-item">
-                              <img src="./hinh/1.jpg" alt="Ảnh 3">
-                              <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
-                        </div>
-                        <div class="slide-item">
-                              <img src="./hinh/4.jpg" alt="Ảnh 4">
-                              <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
-                        </div>
-                  </div>
+                    </c:forEach>
+                </div>
             </div>
         </section>
 
@@ -888,31 +881,6 @@
                     </form>
                 </div>
 
-            <!-- Phần tìm kiếm -->
-            <section class="search-section">
-                  <div class="container">
-                        <form action="${pageContext.request.contextPath}/search" method="GET" class="row justify-content-center">
-                              <div class="col-md-3 mb-3">
-                                    <input type="text" name="title" class="form-control" placeholder="Title">
-                              </div>
-                              <div class="col-md-3 mb-3">
-                                    <input type="text" name="author" class="form-control" placeholder="Author">
-                              </div>
-                              <div class="col-md-3 mb-3">
-                                    <select name="category" class="form-select">
-                                          <option value="">All category</option>
-                                          <c:forEach items="${categories}" var="category">
-                                                <option value="${category}" ${param.category eq category ? 'selected' : ''}>${category}</option>
-                                          </c:forEach>
-                                    </select>
-                              </div>
-                              <div class="col-md-2 mb-3">
-                                    <button type="submit" class="btn btn-primary w-100 btn-search">
-                                          <i class="fas fa-search me-2"></i>Find
-                                    </button>
-                              </div>
-                        </form>
-                  </div>
             </section>
         </c:if>
         <!-- Footer -->

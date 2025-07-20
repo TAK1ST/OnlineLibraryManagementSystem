@@ -23,9 +23,26 @@ public class BookInforRequestStatusDTO {
       private int userId;
       private int bookId;
       private LocalDate dueDate;
+      private int quantity;
 
       public BookInforRequestStatusDTO() {
       }
+
+    public BookInforRequestStatusDTO(int id, String title, String isbn, int availableCopies, String statusAction, String requestType, String username, double overdueFine, int userId, int bookId, LocalDate dueDate, int quantity) {
+        this.id = id;
+        this.title = title;
+        this.isbn = isbn;
+        this.availableCopies = availableCopies;
+        this.statusAction = statusAction;
+        this.requestType = requestType;
+        this.username = username;
+        this.overdueFine = overdueFine;
+        this.userId = userId;
+        this.bookId = bookId;
+        this.dueDate = dueDate;
+        this.quantity = quantity;
+    }
+      
 
       public int getId() {
             return id;
@@ -114,4 +131,13 @@ public class BookInforRequestStatusDTO {
       public void setDueDate(LocalDate dueDate) {
             this.dueDate = dueDate;
       }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+      
 }

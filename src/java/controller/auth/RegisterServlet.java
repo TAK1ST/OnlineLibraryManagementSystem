@@ -103,14 +103,14 @@ public class RegisterServlet extends HttpServlet {
             
             // Insert new user with hashed password
             int result = d.insertNewUser(name.trim(), email.trim(), password);
-//            if (result == 1) {
-//                request.setAttribute("message", "Registration successful! Please log in.");
-//                s.sendWelcomeEmail(email, name);
-//                request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
-//            } else {
-//                request.setAttribute("error", "Registration failed. Please try again.");
-//                request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
-//            }
+            if (result == 1) {
+                request.setAttribute("message", "Registration successful! Please log in.");
+                s.sendWelcomeEmailAsync(email, name);
+                request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
+            } else {
+                request.setAttribute("error", "Registration failed. Please try again.");
+                request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "An error occurred during registration. Please try again.");

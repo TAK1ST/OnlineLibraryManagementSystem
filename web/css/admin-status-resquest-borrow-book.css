@@ -123,6 +123,10 @@ body {
 
 /* Alert Messages */
 .alert {
+      position: fixed;
+      top: 120px;
+      right: 10px; 
+      z-index: 1;
       margin: 0;
       border: none;
       border-radius: var(--border-radius);

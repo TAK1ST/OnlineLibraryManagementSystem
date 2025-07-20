@@ -13,87 +13,89 @@ import util.DBConnection;
 
 public class BorrowRequestDAO implements IBorrowRequestDAO {
 
-    
-    @Override
-    public boolean createBorrowRequest(int userId, int bookId, Date requestDate, String status) 
-            throws SQLException, ClassNotFoundException {
-        Connection conn = null;
-        try {
-            conn = DBConnection.getConnection();
-            String sql = "INSERT INTO book_requests "
-                    + "(user_id, book_id, request_date, status) "
-                    + "VALUES (?, ?, ?, ?)";
-            
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            stmt.setInt(2, bookId);
-            stmt.setDate(3, requestDate);
-            stmt.setString(4, status);
-            
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } finally {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
+      @Override
+      public boolean createBorrowRequest(int userId, int bookId, Date requestDate, String status)
+              throws SQLException, ClassNotFoundException {
+            Connection conn = null;
+            try {
+                  conn = DBConnection.getConnection();
+                  String sql = "INSERT INTO book_requests "
+                          + "(user_id, book_id, request_date, status) "
+                          + "VALUES (?, ?, ?, ?)";
+
+                  PreparedStatement stmt = conn.prepareStatement(sql);
+                  stmt.setInt(1, userId);
+                  stmt.setInt(2, bookId);
+                  stmt.setDate(3, requestDate);
+                  stmt.setString(4, status);
+
+                  int rowsAffected = stmt.executeUpdate();
+                  return rowsAffected > 0;
+            } finally {
+                  if (conn != null && !conn.isClosed()) {
+                        conn.close();
+                  }
             }
-        }
-    }
+      }
 
-    @Override
-    public List<BorrowRequest> getBorrowRequestsByUser(int userId) 
-            throws SQLException, ClassNotFoundException {
-        Connection conn = null;
-        List<BorrowRequest> requests = new ArrayList<>();
-        try {
-            conn = DBConnection.getConnection();
-            String sql = "SELECT id, user_id, book_id, request_date, status "
-                    + "FROM book_requests "
-                    + "WHERE user_id = ? ORDER BY request_date DESC";
-            
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                requests.add(extractBorrowRequestFromResultSet(rs));
+      public List<BorrowRequest> getBorrowRequestsByUser(int userId)
+              throws SQLException, ClassNotFoundException {
+            Connection conn = null;
+            List<BorrowRequest> requests = new ArrayList<>();
+            try {
+                  conn = DBConnection.getConnection();
+                  String sql = "SELECT id, user_id, book_id, request_date, status "
+                          + "FROM book_requests "
+                          + "WHERE user_id = ? ORDER BY request_date DESC";
+
+                  PreparedStatement stmt = conn.prepareStatement(sql);
+                  stmt.setInt(1, userId);
+
+                  ResultSet rs = stmt.executeQuery();
+                  while (rs.next()) {
+                        requests.add(extractBorrowRequestFromResultSet(rs));
+                  }
+            } finally {
+                  if (conn != null && !conn.isClosed()) {
+                        conn.close();
+                  }
             }
-        } finally {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
+            return requests;
+      }
+
+      @Override
+      public List<BorrowRequest> getApprovedRequestsByUser(int userId)
+              throws SQLException, ClassNotFoundException {
+            Connection conn = null;
+            List<BorrowRequest> requests = new ArrayList<>();
+            try {
+                  conn = DBConnection.getConnection();
+
+                  // Chỉ lấy những sách đang được mượn (status = 'borrowed') 
+                  // và chưa có yêu cầu trả sách (không có record nào với request_type = 'return' và status = 'pending')
+                  String sql = "SELECT id, user_id, book_id, request_date, request_type, status "
+                          + "FROM book_requests "
+                          + "WHERE user_id = ? AND status = 'borrowed' "
+                          + "AND book_id NOT IN ("
+                          + "    SELECT book_id FROM book_requests "
+                          + "    WHERE user_id = ? AND request_type = 'return' AND status = 'pending'"
+                          + ") "
+                          + "ORDER BY request_date DESC";
+
+                  PreparedStatement stmt = conn.prepareStatement(sql);
+                  stmt.setInt(1, userId);
+                  stmt.setInt(2, userId);
+
+                  ResultSet rs = stmt.executeQuery();
+
+                  while (rs.next()) {
+                        requests.add(extractBorrowRequestFromResultSet(rs));
+
+                  }
+            } catch (ClassNotFoundException | SQLException e) {
+                  e.printStackTrace();
             }
-        }
-        return requests;
-    }
-
-    @Override
-    public List<BorrowRequest> getApprovedRequestsByUser(int userId)
-            throws SQLException, ClassNotFoundException {
-        Connection conn = null;
-        List<BorrowRequest> requests = new ArrayList<>();
-        try {
-            conn = DBConnection.getConnection();
-
-            // Chỉ lấy những sách đang được mượn (status = 'borrowed') 
-            // và chưa có yêu cầu trả sách (không có record nào với request_type = 'return' và status = 'pending')
-            String sql = "SELECT id, user_id, book_id, request_date, request_type, status "
-                    + "FROM book_requests "
-                    + "WHERE user_id = ? AND status = 'borrowed' "
-                    + "AND book_id NOT IN ("
-                    + "    SELECT book_id FROM book_requests "
-                    + "    WHERE user_id = ? AND request_type = 'return' AND status = 'pending'"
-                    + ") "
-                    + "ORDER BY request_date DESC";
-
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, userId);
-            stmt.setInt(2, userId);
-
-            ResultSet rs = stmt.executeQuery();
-            
-            while (rs.next()) {
-                requests.add(extractBorrowRequestFromResultSet(rs));
-
-            }
+            return requests;
       }
 
       @Override
@@ -119,9 +121,8 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
                         conn.close();
                   }
             }
-        }
-        return requests;
-    }
+            return requests;
+      }
 
       private BorrowRequest extractBorrowRequestFromResultSet(ResultSet rs) throws SQLException {
             BorrowRequest request = new BorrowRequest();
@@ -172,28 +173,28 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
             }
       }
 
-    // Thêm phương thức để lấy thông tin BorrowRequest theo ID (nếu cần)
-    public BorrowRequest getBorrowRequestById(int requestId) throws SQLException, ClassNotFoundException {
-        Connection conn = null;
-        try {
-            conn = DBConnection.getConnection();
-            String sql = "SELECT id, user_id, book_id, request_date, request_type, status "
-                    + "FROM book_requests WHERE id = ?";
-            
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, requestId);
-            
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return extractBorrowRequestFromResultSet(rs);
-            }
-            return null;
-        } finally {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
+      // Thêm phương thức để lấy thông tin BorrowRequest theo ID (nếu cần)
+      public BorrowRequest getBorrowRequestById(int requestId) throws SQLException, ClassNotFoundException {
+            Connection conn = null;
+            try {
+                  conn = DBConnection.getConnection();
+                  String sql = "SELECT id, user_id, book_id, request_date, request_type, status "
+                          + "FROM book_requests WHERE id = ?";
+
+                  PreparedStatement stmt = conn.prepareStatement(sql);
+                  stmt.setInt(1, requestId);
+
+                  ResultSet rs = stmt.executeQuery();
+                  if (rs.next()) {
+                        return extractBorrowRequestFromResultSet(rs);
+                  }
+                  return null;
+            } finally {
+                  if (conn != null && !conn.isClosed()) {
+                        conn.close();
+                  }
             }
         }
-    }
     public void insertBorrowRequest(int userId, int bookId, int quantity) throws SQLException, ClassNotFoundException {
         String sql = "INSERT INTO borrow_requests (user_id, book_id, quantity, status, request_date) "
                    + "VALUES (?, ?, ?, 'pending', GETDATE())";
@@ -209,4 +210,3 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
         }
     }
 }
-
