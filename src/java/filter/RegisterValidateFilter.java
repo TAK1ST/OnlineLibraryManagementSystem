@@ -132,9 +132,9 @@ public class RegisterValidateFilter implements Filter {
                 request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
                 return;
 
-            } else if (password.length() < 6) {
+            } else if (password.length() < 8) {
 
-                request.setAttribute("error", "Password must be at least 6 characters long.");
+                request.setAttribute("error", "Password must be at least 8 characters long.");
                 request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
                 return;
 

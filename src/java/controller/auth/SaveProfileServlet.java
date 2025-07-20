@@ -7,6 +7,8 @@ package controller.auth;
 import dao.implement.UserDAO;
 import entity.User;
 import java.io.IOException;
+import java.io.File;
+import java.nio.file.Paths;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
@@ -14,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-import util.AsyncSupabaseImageService;
+import java.util.UUID;
 
 /**
  *
@@ -26,6 +28,8 @@ import util.AsyncSupabaseImageService;
         maxRequestSize = 1024 * 1024 * 50 // 50MB
 )
 public class SaveProfileServlet extends HttpServlet {
+
+    private static final String UPLOAD_DIRECTORY = "uploads/avatars";
 
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -178,24 +182,51 @@ public class SaveProfileServlet extends HttpServlet {
 
     private String handleAvatarUpload(Part filePart, HttpServletRequest request) {
         try {
-            // Use Supabase instead of local storage
-            String imageUrl = AsyncSupabaseImageService.uploadImageAsync(filePart, "avatars").get();
-            
-            if (imageUrl != null) {
-                // Store the Supabase path in database (not full URL)
-                String imagePath = imageUrl.replace(
-                    "https://icdmgutnvthphneaxxsq.supabase.co/storage/v1/object/public/image.library/", 
-                    ""
-                );
-                return imagePath;
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+            // Validate file type
+            String contentType = filePart.getContentType();
+            if (!isValidImageType(contentType)) {
+                return null;
             }
-            
-            return null;
-            
+
+            // Generate unique filename
+            String fileExtension = getFileExtension(fileName);
+            String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
+
+            // Create upload directory if it doesn't exist
+            String uploadPath = request.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            // Save file
+            String filePath = uploadPath + File.separator + uniqueFileName;
+            filePart.write(filePath);
+
+            // Return relative path for database storage
+            return UPLOAD_DIRECTORY + "/" + uniqueFileName;
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private boolean isValidImageType(String contentType) {
+        return contentType != null && (contentType.equals("image/jpeg")
+                || contentType.equals("image/jpg")
+                || contentType.equals("image/png")
+                || contentType.equals("image/gif")
+                || contentType.equals("image/webp"));
+    }
+
+    private String getFileExtension(String fileName) {
+        if (fileName == null || fileName.lastIndexOf(".") == -1) {
+            return ".jpg"; // default extension
+        }
+        return fileName.substring(fileName.lastIndexOf("."));
     }
 
     private boolean isPasswordStrong(String password) {
