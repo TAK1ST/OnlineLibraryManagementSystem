@@ -50,7 +50,7 @@
                 border: none;
             }
             .modal-confirm .modal-header {
-                border-bottom: none;   
+                border-bottom: none;
                 position: relative;
             }
             .modal-confirm .modal-footer {
@@ -85,7 +85,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">Hi, ${sessionScope.loginedUser.name}!</span>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                    <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Log out</a>
@@ -98,7 +100,7 @@
 
         <div class="container mt-4">
             <h2 class="mb-4">My Storage</h2>
-            
+
             <!-- Hiển thị thông báo -->
             <div id="messageAlert" class="alert alert-success alert-dismissible fade" role="alert" style="display: none;">
                 <span id="messageText"></span>
@@ -108,9 +110,9 @@
             <!-- Danh sách sách đã mượn -->
             <jsp:useBean id="borrowRequestDAO" class="dao.implement.BorrowRequestDAO"/>
             <jsp:useBean id="bookDAO" class="dao.implement.BookDAO"/>
-            
+
             <c:set var="approvedRequests" value="${borrowRequestDAO.getApprovedRequestsByUser(sessionScope.loginedUser.id)}"/>
-            
+
             <c:choose>
                 <c:when test="${empty approvedRequests}">
                     <div class="text-center py-5">
@@ -185,66 +187,66 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            let currentRequestId = null;
-            const returnModal = new bootstrap.Modal(document.getElementById('returnConfirmModal'));
-            
-            function showReturnConfirmation(requestId) {
-                currentRequestId = requestId;
-                returnModal.show();
-            }
-            
-            document.getElementById('confirmReturnBtn').addEventListener('click', function() {
-                if (currentRequestId) {
-                    returnBook(currentRequestId);
-                }
-            });
-            
-            function returnBook(requestId) {
-                fetch('${pageContext.request.contextPath}/ReturnBookServlet', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'requestId=' + requestId
-                })
-                .then(response => response.json())
-                .then(data => {
-                    returnModal.hide();
-                    
-                    if (data.success) {
-                        // Remove book card
-                        document.getElementById('book-' + requestId).remove();
-                        
-                        // Show success message
-                        showMessage(data.message, 'success');
-                        
-                        // If no more books, show empty state
-                        if (document.getElementsByClassName('book-item').length === 0) {
-                            location.reload();
-                        }
-                    } else {
-                        showMessage(data.message, 'danger');
-                    }
-                })
-                .catch(error => {
-                    returnModal.hide();
-                    showMessage('Error returning book: ' + error, 'danger');
-                });
-            }
-            
-            function showMessage(message, type) {
-                const alert = document.getElementById('messageAlert');
-                const messageText = document.getElementById('messageText');
-                
-                alert.className = 'alert alert-' + type + ' alert-dismissible fade show';
-                messageText.textContent = message;
-                alert.style.display = 'block';
-                
-                setTimeout(() => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }, 3000);
-            }
+                                                        let currentRequestId = null;
+                                                        const returnModal = new bootstrap.Modal(document.getElementById('returnConfirmModal'));
+
+                                                        function showReturnConfirmation(requestId) {
+                                                            currentRequestId = requestId;
+                                                            returnModal.show();
+                                                        }
+
+                                                        document.getElementById('confirmReturnBtn').addEventListener('click', function () {
+                                                            if (currentRequestId) {
+                                                                returnBook(currentRequestId);
+                                                            }
+                                                        });
+
+                                                        function returnBook(requestId) {
+                                                            fetch('${pageContext.request.contextPath}/ReturnBookServlet', {
+                                                                method: 'POST',
+                                                                headers: {
+                                                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                                                },
+                                                                body: 'requestId=' + requestId
+                                                            })
+                                                                    .then(response => response.json())
+                                                                    .then(data => {
+                                                                        returnModal.hide();
+
+                                                                        if (data.success) {
+                                                                            // Remove book card
+                                                                            document.getElementById('book-' + requestId).remove();
+
+                                                                            // Show success message
+                                                                            showMessage(data.message, 'success');
+
+                                                                            // If no more books, show empty state
+                                                                            if (document.getElementsByClassName('book-item').length === 0) {
+                                                                                location.reload();
+                                                                            }
+                                                                        } else {
+                                                                            showMessage(data.message, 'danger');
+                                                                        }
+                                                                    })
+                                                                    .catch(error => {
+                                                                        returnModal.hide();
+                                                                        showMessage('Error returning book: ' + error, 'danger');
+                                                                    });
+                                                        }
+
+                                                        function showMessage(message, type) {
+                                                            const alert = document.getElementById('messageAlert');
+                                                            const messageText = document.getElementById('messageText');
+
+                                                            alert.className = 'alert alert-' + type + ' alert-dismissible fade show';
+                                                            messageText.textContent = message;
+                                                            alert.style.display = 'block';
+
+                                                            setTimeout(() => {
+                                                                const bsAlert = new bootstrap.Alert(alert);
+                                                                bsAlert.close();
+                                                            }, 3000);
+                                                        }
         </script>
     </body>
 </html> 

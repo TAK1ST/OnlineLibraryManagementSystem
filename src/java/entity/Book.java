@@ -20,8 +20,9 @@ public class Book {
       private int availableCopies;
       private String status;
       private String imageUrl;
+      private int borrowedCount;
 
-      public Book(int id, String title, String isbn, String author, String category, int publishedYear, int totalCopies, int availableCopies, String status, String imageUrl) {
+      public Book(int id, String title, String isbn, String author, String category, int publishedYear, int totalCopies, int availableCopies, String status, String imageUrl, int borrowedCount) {
             this.id = id;
             this.title = title;
             this.isbn = isbn;
@@ -32,6 +33,7 @@ public class Book {
             this.availableCopies = availableCopies;
             this.status = status;
             this.imageUrl = imageUrl;
+            this.borrowedCount = 0;
       }
 
       public Book() {
@@ -116,5 +118,13 @@ public class Book {
       public void setImageUrl(String imageUrl) {
             this.imageUrl = imageUrl;
       }
+
+    public int getBorrowedCount() {
+        return borrowedCount;
+    }
+
+    public void setBorrowedCount(int borrowedCount) {
+        this.borrowedCount = borrowedCount;
+    }
 
 }

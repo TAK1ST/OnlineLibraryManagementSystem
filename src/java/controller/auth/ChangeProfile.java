@@ -38,7 +38,7 @@ public class ChangeProfile extends HttpServlet {
 
         if (user == null) {
             // If no user in session, redirect to login
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("view/auth/login.jsp");
             return;
         }
 

@@ -15,7 +15,7 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import util.AsyncSendMail;
+import util.SendMail;
 
 /**
  *
@@ -111,7 +111,7 @@ public class RegisterHashPasswordFilter implements Filter {
             String name = request.getParameter("txtname");
             String email = request.getParameter("txtemail");
             String password = request.getParameter("txtpassword");
-            AsyncSendMail s = new AsyncSendMail();
+            SendMail s = new SendMail();
             
             if (name == null || name.trim().isEmpty()
                     || email == null || email.trim().isEmpty()
@@ -129,7 +129,7 @@ public class RegisterHashPasswordFilter implements Filter {
             int result = testDAO.insertNewUser(name.trim(), email.trim(), password);
             if (result == 1) {
                 request.setAttribute("message", "Registration successful! Please log in.");
-                s.sendWelcomeEmailAsync(email, name);
+                s.sendWelcomeEmail(email, name);
                 request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
                 chain.doFilter(request, response);//=============================================================================
             } else {

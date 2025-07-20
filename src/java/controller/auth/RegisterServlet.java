@@ -13,7 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import util.AsyncSendMail;
+import util.SendMail;
 
 /**
  *
@@ -47,44 +47,44 @@ public class RegisterServlet extends HttpServlet {
         String password = request.getParameter("txtpassword");
         String confirmPassword = request.getParameter("txtconfirmpassword");
         
-        AsyncSendMail s = new AsyncSendMail();
+        SendMail s = new SendMail();
         
-        // Validate input fields
-        if (name == null || name.trim().isEmpty() || 
-            email == null || email.trim().isEmpty() ||
-            password == null || password.trim().isEmpty() ||
-            confirmPassword == null || confirmPassword.trim().isEmpty()) {
-            request.setAttribute("error", "All fields are required.");
-            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
-            return;
-        }
-        
-        if (!name.matches(Regex.NAME_REGEX)) {
-            request.setAttribute("error", "Invalid name. Letters and spaces only.");
-            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
-            return;
-        }
-        
-        // Validate email format
-        if (!email.matches(Regex.EMAIL_REGEX)) {
-            request.setAttribute("error", "Invalid email format.");
-            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
-            return;
-        }
-        
-        // Validate password length
-        if (password.length() < 6) {
-            request.setAttribute("error", "Password must be at least 6 characters long.");
-            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
-            return;
-        }
-        
-        // Check password confirmation
-        if (!password.equals(confirmPassword)) {
-            request.setAttribute("error", "Passwords do not match!");
-            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
-            return;
-        }
+//        // Validate input fields
+//        if (name == null || name.trim().isEmpty() || 
+//            email == null || email.trim().isEmpty() ||
+//            password == null || password.trim().isEmpty() ||
+//            confirmPassword == null || confirmPassword.trim().isEmpty()) {
+//            request.setAttribute("error", "All fields are required.");
+//            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+//            return;
+//        }
+//        
+//        if (!name.matches(Regex.NAME_REGEX)) {
+//            request.setAttribute("error", "Invalid name. Letters and spaces only.");
+//            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+//            return;
+//        }
+//        
+//        // Validate email format
+//        if (!email.matches(Regex.EMAIL_REGEX)) {
+//            request.setAttribute("error", "Invalid email format.");
+//            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+//            return;
+//        }
+//        
+//        // Validate password length
+//        if (password.length() < 6) {
+//            request.setAttribute("error", "Password must be at least 6 characters long.");
+//            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+//            return;
+//        }
+//        
+//        // Check password confirmation
+//        if (!password.equals(confirmPassword)) {
+//            request.setAttribute("error", "Passwords do not match!");
+//            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+//            return;
+//        }
 
         UserDAO d = new UserDAO();
         User existingUser = d.getEmail(email.trim());
@@ -96,26 +96,26 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
         
-        try {
-            // Debug: Test BCrypt before inserting
-            UserDAO testDAO = new UserDAO();
-            testDAO.testBCrypt(password);
-            
-            // Insert new user with hashed password
-            int result = d.insertNewUser(name.trim(), email.trim(), password);
-            if (result == 1) {
-                request.setAttribute("message", "Registration successful! Please log in.");
-                s.sendWelcomeEmailAsync(email, name);
-                request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
-            } else {
-                request.setAttribute("error", "Registration failed. Please try again.");
-                request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "An error occurred during registration. Please try again.");
-            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
-        }
+//        try {
+//            // Debug: Test BCrypt before inserting
+//            UserDAO testDAO = new UserDAO();
+//            testDAO.testBCrypt(password);
+//            
+//            // Insert new user with hashed password
+//            int result = d.insertNewUser(name.trim(), email.trim(), password);
+//            if (result == 1) {
+//                request.setAttribute("message", "Registration successful! Please log in.");
+//                s.sendWelcomeEmail(email, name);
+//                request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
+//            } else {
+//                request.setAttribute("error", "Registration failed. Please try again.");
+//                request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            request.setAttribute("error", "An error occurred during registration. Please try again.");
+//            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+//        }
     }
 
     /**

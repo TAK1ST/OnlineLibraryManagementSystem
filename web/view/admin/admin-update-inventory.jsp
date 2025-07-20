@@ -142,7 +142,7 @@
                                         <td><strong>${book.totalCopies}</strong></td>
                                         <td><span class="available-count">${book.availableCopies}</span></td>
                                         <td>
-                                            <form action="${pageContext.request.contextPath}/updateinventory" method="post" style="margin: 0;">
+<!--                                            <form action="${pageContext.request.contextPath}/updateinventory" method="post" style="margin: 0;">
                                                 <input type="hidden" name="action" value="update">
                                                 <input type="hidden" name="bookId" value="${book.id}">
                                                 <div class="action-group">
@@ -158,7 +158,123 @@
                                                         <i class="fas fa-eye"></i> Details
                                                     </a>
                                                 </div>
+                                            </form>-->
+                                            <!-- FIX: Cập nhật form để phù hợp với logic cộng dồn -->
+                                            <form action="${pageContext.request.contextPath}/updateinventory" method="post" style="margin: 0;">
+                                                <input type="hidden" name="action" value="update">
+                                                <input type="hidden" name="bookId" value="${book.id}">
+                                                <div class="action-group">
+                                                    <div class="input-group">
+                                                        <label for="quantityToAdd_${book.id}">Add Quantity:</label>
+                                                        <!-- FIX: Thay đổi để hiển thị số lượng cần thêm thay vì tổng số -->
+                                                        <button type="button" onclick="decrement(this)">−</button>
+                                                        <input type="number" name="totalCopies" id="quantityToAdd_${book.id}" 
+                                                               value="0" min="0" max="1000" required 
+                                                               placeholder="Quantity to add">
+                                                        <button type="button" onclick="increment(this)">+</button>
+                                                    </div>
+                                                    <div class="info-display">
+                                                        <!-- FIX: Sử dụng quantity thay vì totalCopies, và kiểm tra borrowedCount -->
+                                                        <small>Current: ${book.totalCopies} | Available: ${book.totalCopies - book.borrowedCount} | Borrowed: ${book.borrowedCount}</small>
+
+                                                        <!-- FIX: Nếu dùng Map thay vì field trong Book -->
+                                                        <%-- <small>Current: ${book.quantity} | Available: ${book.quantity - borrowedCountMap[book.id]} | Borrowed: ${borrowedCountMap[book.id]}</small> --%>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary btn-small">
+                                                        <i class="fas fa-plus"></i> Add Stock
+                                                    </button>
+                                                    <a href="bookdetail?id=${book.id}" class="btn btn-secondary btn-small">
+                                                        <i class="fas fa-eye"></i> Details
+                                                    </a>
+                                                </div>
                                             </form>
+
+                                            <script>
+                                                // FIX: Cập nhật JavaScript functions
+                                                function increment(button) {
+                                                    const input = button.previousElementSibling;
+                                                    const currentValue = parseInt(input.value) || 0;
+                                                    input.value = currentValue + 1;
+                                                }
+
+                                                function decrement(button) {
+                                                    const input = button.nextElementSibling;
+                                                    const currentValue = parseInt(input.value) || 0;
+                                                    if (currentValue > 0) {
+                                                        input.value = currentValue - 1;
+                                                    }
+                                                }
+                                            </script>
+
+                                            <style>
+                                                /* FIX: Thêm CSS cho form mới */
+                                                .action-group {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: 8px;
+                                                }
+
+                                                .input-group {
+                                                    display: flex;
+                                                    align-items: center;
+                                                    gap: 5px;
+                                                }
+
+                                                .input-group label {
+                                                    font-weight: bold;
+                                                    margin-right: 10px;
+                                                }
+
+                                                .input-group button {
+                                                    width: 30px;
+                                                    height: 30px;
+                                                    border: 1px solid #ccc;
+                                                    background: #f8f9fa;
+                                                    cursor: pointer;
+                                                }
+
+                                                .input-group button:hover {
+                                                    background: #e9ecef;
+                                                }
+
+                                                .input-group input[type="number"] {
+                                                    width: 80px;
+                                                    padding: 5px;
+                                                    text-align: center;
+                                                    border: 1px solid #ccc;
+                                                    border-radius: 4px;
+                                                }
+
+                                                .info-display {
+                                                    font-size: 12px;
+                                                    color: #666;
+                                                }
+
+                                                .btn {
+                                                    padding: 8px 12px;
+                                                    margin: 2px;
+                                                    border: none;
+                                                    border-radius: 4px;
+                                                    cursor: pointer;
+                                                    text-decoration: none;
+                                                    display: inline-block;
+                                                }
+
+                                                .btn-primary {
+                                                    background-color: #007bff;
+                                                    color: white;
+                                                }
+
+                                                .btn-secondary {
+                                                    background-color: #6c757d;
+                                                    color: white;
+                                                }
+
+                                                .btn:hover {
+                                                    opacity: 0.8;
+                                                }
+                                            </style>
+
                                         </td>
                                     </tr>
                                 </c:forEach>

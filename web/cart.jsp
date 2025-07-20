@@ -90,7 +90,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">Hi, ${sessionScope.loginedUser.name}!</span>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                    <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Log out</a>
@@ -103,7 +105,7 @@
 
         <div class="container mt-4">
             <h2 class="mb-4">Your Cart</h2>
-            
+
             <!-- Hiển thị thông báo -->
             <c:if test="${not empty message}">
                 <div class="alert alert-${messageType} alert-dismissible fade show" role="alert">
@@ -162,7 +164,7 @@
                                 </div>
                             </div>
                         </c:forEach>
-                        
+
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <a href="${pageContext.request.contextPath}/home" class="btn btn-outline-primary">
                                 <i class="fas fa-arrow-left me-2"></i>Continue
@@ -180,31 +182,31 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            function updateQuantity(bookId, change) {
-                fetch('${pageContext.request.contextPath}/UpdateCartServlet?bookId=' + bookId + '&change=' + change)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert(data.message);
-                        }
-                    });
-            }
-            
-            function removeFromCart(bookId) {
-                if (confirm('Bạn có chắc muốn xóa sách này khỏi giỏ?')) {
-                    fetch('${pageContext.request.contextPath}/RemoveFromCartServlet?bookId=' + bookId)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                location.reload();
-                            } else {
-                                alert(data.message);
-                            }
-                        });
-                }
-            }
+                                            function updateQuantity(bookId, change) {
+                                                fetch('${pageContext.request.contextPath}/UpdateCartServlet?bookId=' + bookId + '&change=' + change)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.success) {
+                                                                location.reload();
+                                                            } else {
+                                                                alert(data.message);
+                                                            }
+                                                        });
+                                            }
+
+                                            function removeFromCart(bookId) {
+                                                if (confirm('Bạn có chắc muốn xóa sách này khỏi giỏ?')) {
+                                                    fetch('${pageContext.request.contextPath}/RemoveFromCartServlet?bookId=' + bookId)
+                                                            .then(response => response.json())
+                                                            .then(data => {
+                                                                if (data.success) {
+                                                                    location.reload();
+                                                                } else {
+                                                                    alert(data.message);
+                                                                }
+                                                            });
+                                                }
+                                            }
         </script>
     </body>
 </html>
