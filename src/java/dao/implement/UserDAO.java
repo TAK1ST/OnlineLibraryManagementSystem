@@ -1,3 +1,4 @@
+
 package dao.implement;
 
 import static constant.constance.RECORDS_PER_LOAD;
@@ -354,7 +355,7 @@ public class UserDAO implements IUserDAO {
         try {
             cn = DBConnection.getConnection();
             if (cn != null) {
-                String sql = "SELECT [id], [name], [email], [password], [role], [status] FROM [dbo].[users] WHERE [id] = ?";
+                String sql = "SELECT [id], [name], [email], [password], [role], [status], [avatar] FROM [dbo].[users] WHERE [id] = ?";
                 pst = cn.prepareStatement(sql);
                 pst.setInt(1, id);
                 rs = pst.executeQuery();
@@ -399,7 +400,7 @@ public class UserDAO implements IUserDAO {
         try {
             cn = DBConnection.getConnection();
             if (cn != null) {
-                String sql = "SELECT [id], [name], [email], [password], [role], [status] FROM [dbo].[users] WHERE [name] = ?";
+                String sql = "SELECT [id], [name], [email], [password], [role], [status],avatar FROM [dbo].[users] WHERE [name] = ?";
                 pst = cn.prepareStatement(sql);
                 pst.setString(1, name);
                 rs = pst.executeQuery();
@@ -444,7 +445,7 @@ public class UserDAO implements IUserDAO {
         try {
             cn = DBConnection.getConnection();
             if (cn != null) {
-                String sql = "SELECT id, name, email, password, role, status FROM dbo.users WHERE email = ?";
+                String sql = "SELECT id, name, email, password, role, status,avatar FROM dbo.users WHERE email = ?";
                 st = cn.prepareStatement(sql);
                 st.setString(1, email);
                 rs = st.executeQuery();
@@ -494,13 +495,14 @@ public class UserDAO implements IUserDAO {
             // Hash password before saving
             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
 
-            String sql = "INSERT INTO users (name, email, password, role, status) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO users (name, email, password, role, status,avatar) VALUES (?, ?, ?, ?, ?, ?)";
             pst = cn.prepareStatement(sql);
             pst.setString(1, user.getName());
             pst.setString(2, user.getEmail());
             pst.setString(3, hashedPassword);
             pst.setString(4, user.getRole());
             pst.setString(5, user.getStatus());
+            pst.setString(6, user.getAvatar());
 
             int rowsInserted = pst.executeUpdate();
             if (rowsInserted > 0) {

@@ -1,5 +1,6 @@
 package service.implement;
 
+import constant.constance;
 import dao.implement.BookDAO;
 import dao.implement.BookRequestDAO;
 import dao.implement.BorrowRecordDAO;
@@ -31,7 +32,7 @@ public class BookRequestStatusService {
       private final IBookRequestDAO bookRequestDAO;
       private final IBorrowRecordDAO borrowRecordDAO;
       private final IBookDAO bookDAO;
-
+      constance cs = new constance();
       public BookRequestStatusService(IBookRequestDAO bookRequestDAO, IBorrowRecordDAO borrowRecordDAO, IBookDAO bookDAO) {
             this.bookRequestDAO = bookRequestDAO;
             this.borrowRecordDAO = borrowRecordDAO;
@@ -62,10 +63,6 @@ public class BookRequestStatusService {
             if (offset < 0) {
                   offset = 0;
             }
-            
-            // **FIX: Add logging**
-            System.out.println("Service - Getting book requests with params: title=" + title + 
-                            ", status=" + status + ", offset=" + offset);
             
             List<BookInforRequestStatusDTO> result = bookRequestDAO.getBookRequestStatusBySearch(title, status, offset);
             
@@ -113,7 +110,7 @@ public class BookRequestStatusService {
                   borrowRecord.setUserId(request.getUserId());
                   borrowRecord.setBookId(request.getBookId());
                   borrowRecord.setBorrowDate(LocalDate.now());
-                  borrowRecord.setDueDate(LocalDate.now().plusDays(14));
+                  borrowRecord.setDueDate(LocalDate.now().plusDays(cs.DEFAULT_BORROW_DURATION));
                   borrowRecord.setStatus("borrowed");
 
                   borrowRecordDAO.save(borrowRecord);

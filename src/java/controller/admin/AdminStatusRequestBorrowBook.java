@@ -13,7 +13,6 @@ import entity.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -60,7 +59,7 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
             if (bookStatusList == null) {
                   bookStatusList = new ArrayList<>();
             }
-                        
+
             request.setAttribute("bookStatusList", bookStatusList);
 
             if (bookStatusList.isEmpty()) {
@@ -70,7 +69,7 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
             request.setAttribute("recordsPerPage", RECORDS_PER_LOAD);
             request.setAttribute("offset", offset);
             request.setAttribute("searchTitle", searchTitle);
-            request.setAttribute("searchStatus", request.getParameter("searchStatus")); 
+            request.setAttribute("searchStatus", request.getParameter("searchStatus"));
 
             // Handle session messages
             HttpSession session = request.getSession();
@@ -155,29 +154,30 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
             if (frontendStatus == null || frontendStatus.trim().isEmpty()) {
                   return null;
             }
-            
+
             String status = frontendStatus.toLowerCase().trim();
-            
+            System.err.println(status);
+
             switch (status) {
                   case "pending_borrow":
-                      return "pending";
+                        return "pending";
                   case "pending_return":
-                      return "pending"; 
+                        return "pending";
                   case "approved_borrow":
                   case "approved-borrow":
-                      return "approved-borrow";
+                        return "approved-borrow";
                   case "approved_return":
                   case "approved-return":
-                      return "approved-return";
+                        return "approved-return";
                   case "borrowed":
-                      return "borrowed";
+                        return "borrowed";
                   case "completed":
-                      return "completed";
+                        return "completed";
                   case "rejected":
-                      return "rejected";
+                        return "rejected";
                   default:
-                      // Return original status if no mapping found
-                      return frontendStatus;
+                        // Return original status if no mapping found
+                        return frontendStatus;
             }
       }
 
@@ -189,15 +189,15 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                   String requestType = bookRequest.getRequestType() != null ? bookRequest.getRequestType().toLowerCase() : "borrow";
                   String currentStatus = bookRequest.getStatus() != null ? bookRequest.getStatus().toLowerCase() : "pending";
 
-                  // Validate current status
-                  if (!"pending".equals(currentStatus) && !"pending-return".equals(currentStatus)) {
+                  // Validate current status - chỉ accept pending requests
+                  if (!"pending".equals(currentStatus)) {
                         throw new IllegalStateException("Request must be in pending state, current state: " + currentStatus);
                   }
 
                   String newStatus;
                   String actionType;
 
-                  if ("borrow".equalsIgnoreCase(requestType) && "pending".equals(currentStatus)) {
+                  if ("borrow".equalsIgnoreCase(requestType)) {
                         // Validate book availability for borrow requests
                         Book book = service.getBookDAO(requestId);
                         if (book == null) {
@@ -211,11 +211,12 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                         }
                         newStatus = "approved-borrow";
                         actionType = "borrow";
-                  } else if ("return".equalsIgnoreCase(requestType) && "pending-return".equals(currentStatus)) {
+                  } else if ("return".equalsIgnoreCase(requestType)) {
+                        // For return requests, no additional validation needed
                         newStatus = "approved-return";
                         actionType = "return";
                   } else {
-                        throw new IllegalStateException("Invalid request type or status combination: " + requestType + "/" + currentStatus);
+                        throw new IllegalStateException("Invalid request type: " + requestType);
                   }
 
                   // Update status
@@ -301,14 +302,14 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                         throw new Exception("Failed to process book return");
                   }
 
-                  // Update status to returned
-                  boolean statusUpdated = service.updateBookRequestStatus(requestId, "returned");
+                  // Update status to completed (thay vì returned)
+                  boolean statusUpdated = service.updateBookRequestStatus(requestId, "completed");
                   if (!statusUpdated) {
-                        throw new Exception("Failed to update status to returned");
+                        throw new Exception("Failed to update status to completed");
                   }
 
                   session.setAttribute("successMessage", "Book return processed successfully for request #" + requestId + "!");
-                  System.out.println("Processed return for request ID: " + requestId + ", new status: returned");
+                  System.out.println("Processed return for request ID: " + requestId + ", new status: completed");
             } catch (Exception e) {
                   System.err.println("Error in processReturn: " + e.getMessage());
                   throw e;

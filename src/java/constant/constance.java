@@ -4,6 +4,7 @@
  */
 package constant;
 
+import dao.implement.SystemConfigDAO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +14,13 @@ import java.util.List;
  * @author asus
  */
 public class constance {
-
+      
+      // Set System config
+      SystemConfigDAO scd = new SystemConfigDAO();
+      public float OVERDUE_FINE_UNIT = scd.getOverdueFineUnit();
+      public float BORROW_UNIT_PRICE = scd.getBorrowUnitPrice();
+      public int DEFAULT_BORROW_DURATION = scd.getDefaultBorrowDuration();
+      
       // Valid statuses that can be processed
       public static final List<String> VALID_STATUSES = new ArrayList<>(
               Arrays.asList(

@@ -21,7 +21,6 @@
         }
         
         String normalizedStatus = rawStatus.trim().toLowerCase();
-        System.out.println("getActualStatus - ID: " + dto.getId() + ", Raw Status: " + rawStatus + ", Normalized: " + normalizedStatus);
         
         // Valid statuses
         if ("pending".equals(normalizedStatus) || 
@@ -56,6 +55,8 @@
                 return "BORROWED";
             case "completed":
                 return "COMPLETED";
+            case "returned":
+                return "RETURNED";
             default:
                 return status.toUpperCase();
         }
@@ -107,8 +108,6 @@
         String requestType = determineRequestType(dto);
         boolean shouldShow = "approved-borrow".equals(status) && "borrow".equals(requestType);
         
-        System.out.println("shouldShowBorrowButton - ID: " + dto.getId() + 
-                          ", Status: " + status + ", Type: " + requestType + ", Show: " + shouldShow);
         return shouldShow;
     }
 
@@ -118,27 +117,51 @@
         String status = getActualStatus(dto);
         String requestType = determineRequestType(dto);
         
-        if (!"pending".equals(status) || !"borrow".equals(requestType)) {
+        // Chỉ hiển thị approve button cho pending requests
+        if (!"pending".equals(status)) {
             return false;
         }
- 
-        // Check available copies
-        try {
-            BookDAO bookDAO = new BookDAO();
-            entity.Book book = bookDAO.getBookById(dto.getBookId());
-            boolean shouldShow = book != null && 
-                               book.getAvailableCopies() > 0 && 
-                               "active".equalsIgnoreCase(book.getStatus());
-            
-            System.out.println("shouldShowApproveButton - ID: " + dto.getId() + 
-                              ", Book Available: " + (book != null ? book.getAvailableCopies() : "null") + 
-                              ", Show: " + shouldShow);
-            return shouldShow;
-        } catch (Exception e) {
-            System.err.println("Error checking book availability: " + e.getMessage());
-            return false;
+        
+        // Với borrow request, kiểm tra available copies
+        if ("borrow".equals(requestType)) {
+            try {
+                BookDAO bookDAO = new BookDAO();
+                entity.Book book = bookDAO.getBookById(dto.getBookId());
+                boolean shouldShow = book != null && 
+                                   book.getAvailableCopies() > 0 && 
+                                   "active".equalsIgnoreCase(book.getStatus());
+                
+                System.out.println("shouldShowApproveButton BORROW - ID: " + dto.getId() + 
+                                  ", Book Available: " + (book != null ? book.getAvailableCopies() : "null") + 
+                                  ", Show: " + shouldShow);
+                return shouldShow;
+            } catch (Exception e) {
+                System.err.println("Error checking book availability: " + e.getMessage());
+                return false;
+            }
         }
+        
+        // Với return request, luôn hiển thị approve button
+        if ("return".equals(requestType)) {
+            System.out.println("shouldShowApproveButton RETURN - ID: " + dto.getId() + ", Show: true");
+            return true;
+        }
+        
+        return false;
     }
+
+      private boolean shouldShowCompleteReturnButton(BookInforRequestStatusDTO dto) {
+              if (dto == null) return false;
+
+              String status = getActualStatus(dto);
+              String requestType = determineRequestType(dto);
+
+              boolean shouldShow = "approved-return".equals(status) && "return".equals(requestType);
+              System.out.println("shouldShowCompleteReturnButton - ID: " + dto.getId() + 
+                                ", Status: " + status + ", Type: " + requestType + ", Show: " + shouldShow);
+              return shouldShow;
+          }
+
 
     private boolean shouldShowRejectButton(BookInforRequestStatusDTO dto) {
         if (dto == null) return false;
@@ -240,7 +263,7 @@
       <td class="action-cell">
             <div class="action-buttons d-flex flex-wrap gap-1">
                   <% if (shouldShowApproveButton(b, request)) { %>
-                  <!-- Approve Button -->
+                  <!-- Approve Button (cho cả borrow và return) -->
                   <form id="approve-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
                         <input type="hidden" name="requestId" value="<%=id%>">
                         <input type="hidden" name="action" value="approve">
@@ -251,7 +274,12 @@
                                 data-type="<%=requestType%>"
                                 data-fine="<%=overdueFine%>"
                                 title="Approve <%=requestType%> request">
-                              <i class="fas fa-check"></i> Approve
+                              <i class="fas fa-check"></i> 
+                              <% if ("return".equals(requestType)) { %>
+                              Approve Return
+                              <% } else { %>
+                              Approve
+                              <% } %>
                         </button>
                   </form>
                   <% } %>
@@ -267,6 +295,22 @@
                                 data-request-id="<%=id%>"
                                 title="Reject request">
                               <i class="fas fa-times"></i> Reject
+                        </button>
+                  </form>
+                  <% } %>
+
+                  <!-- Update the Complete Return Button section -->
+                  <% if (shouldShowCompleteReturnButton(b)) { %>
+                  <!-- Complete Return Button -->
+                  <form id="complete-return-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
+                        <input type="hidden" name="requestId" value="<%=id%>">
+                        <input type="hidden" name="action" value="return">
+                        <button type="button" class="btn btn-sm btn-info me-1 complete-return-btn"
+                                onclick="if (confirm('Are you sure you want to complete this return?'))
+                                                  document.getElementById('complete-return-form-<%=id%>').submit()"
+                                data-request-id="<%=id%>"
+                                title="Complete return and mark as completed">
+                              <i class="fas fa-check-double"></i> Complete Return
                         </button>
                   </form>
                   <% } %>
