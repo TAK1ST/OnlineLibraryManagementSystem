@@ -195,7 +195,7 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
                   }
             }
         }
-    }
+    
     public void insertBorrowRequest(int userId, int bookId, int quantity) throws SQLException, ClassNotFoundException {
         String sql = "INSERT INTO borrow_requests (user_id, book_id, quantity, status, request_date) "
                    + "VALUES (?, ?, ?, 'pending', GETDATE())";
