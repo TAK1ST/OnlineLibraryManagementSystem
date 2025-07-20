@@ -83,7 +83,7 @@ public class BookRequestDAO implements IBookRequestDAO {
             List<BookInforRequestStatusDTO> result = new ArrayList<>();
             StringBuilder query = new StringBuilder(
                     "SELECT br.id, b.title, b.isbn, b.available_copies, br.status, br.request_type, u.name as username, "
-                    + "br.user_id, br.book_id, brr.due_date, COALESCE(f.fine_amount, 0) as fine_amount "
+                    + "br.user_id, br.book_id, br.quantity, brr.due_date, COALESCE(f.fine_amount, 0) as fine_amount "
                     + "FROM book_requests br "
                     + "LEFT JOIN books b ON br.book_id = b.id "
                     + "INNER JOIN users u ON br.user_id = u.id "
@@ -160,6 +160,7 @@ public class BookRequestDAO implements IBookRequestDAO {
                               dto.setDueDate(rs.getDate("due_date").toLocalDate());
                         }
                         dto.setOverdueFine(rs.getDouble("fine_amount"));
+                        dto.setQuantity(rs.getInt("quantity")); 
                         result.add(dto);
                   }
 

@@ -118,7 +118,10 @@
         String requestType = determineRequestType(dto);
         
         // Chỉ hiển thị approve button cho pending requests
-        if (!"pending".equals(status)) {
+        if (!"pending".equals(status)) ssage());
+                return false;
+            }
+        }{
             return false;
         }
         
@@ -150,18 +153,17 @@
         return false;
     }
 
-      private boolean shouldShowCompleteReturnButton(BookInforRequestStatusDTO dto) {
-              if (dto == null) return false;
+    private boolean shouldShowCompleteReturnButton(BookInforRequestStatusDTO dto) {
+        if (dto == null) return false;
 
-              String status = getActualStatus(dto);
-              String requestType = determineRequestType(dto);
+        String status = getActualStatus(dto);
+        String requestType = determineRequestType(dto);
 
-              boolean shouldShow = "approved-return".equals(status) && "return".equals(requestType);
-              System.out.println("shouldShowCompleteReturnButton - ID: " + dto.getId() + 
-                                ", Status: " + status + ", Type: " + requestType + ", Show: " + shouldShow);
-              return shouldShow;
-          }
-
+        boolean shouldShow = "approved-return".equals(status) && "return".equals(requestType);
+        System.out.println("shouldShowCompleteReturnButton - ID: " + dto.getId() + 
+                          ", Status: " + status + ", Type: " + requestType + ", Show: " + shouldShow);
+        return shouldShow;
+    }
 
     private boolean shouldShowRejectButton(BookInforRequestStatusDTO dto) {
         if (dto == null) return false;
@@ -177,6 +179,15 @@
 
     private String formatFine(double fine) {
         return String.format("%.2f", fine);
+    }
+    
+    private int getQuantity(BookInforRequestStatusDTO dto) {
+        if (dto == null) return 1;
+        try {
+            return dto.getQuantity() > 0 ? dto.getQuantity() : 1;
+        } catch (Exception e) {
+            return 1;
+        }
     }
 %>
 
@@ -197,6 +208,7 @@
             String title = safeString(b.getTitle());
             String username = safeString(b.getUsername());
             double overdueFine = b.getOverdueFine();
+            int quantity = getQuantity(b);
 
             String requestType = determineRequestType(b);
             String actualStatus = getActualStatus(b);
@@ -206,7 +218,8 @@
 
             System.out.println("Rendering Request - ID: " + id + ", Status: " + actualStatus + 
                              ", Type: " + requestType + ", Display: " + displayStatus + 
-                             ", Fine: " + overdueFine + ", Priority: " + priority);
+                             ", Fine: " + overdueFine + ", Priority: " + priority + 
+                             ", Quantity: " + quantity);
 %>
 
 <tr class="book-request-row priority-<%=priority%>" 
@@ -214,179 +227,200 @@
     data-status="<%=actualStatus%>_<%=requestType%>" 
     data-type="<%=requestType%>"
     data-raw-status="<%=actualStatus%>"
-    data-fine="<%=overdueFine%>">
+    data-fine="<%=overdueFine%>"
+    data-quantity="<%=quantity%>">
 
-      <td class="isbn-cell">
-            <span class="fw-bold"><%=isbn%></span>
-      </td>
+    <td class="isbn-cell">
+        <span class="fw-bold"><%=isbn%></span>
+    </td>
 
-      <td class="title-cell">
-            <div class="book-title"><%=title%></div>
-            <% if ("return".equals(requestType) && overdueFine > 0) { %>
-            <small class="text-danger">
-                  <i class="fas fa-exclamation-triangle"></i>
-                  Return with fine: $<%=formatFine(overdueFine)%>
+    <td class="title-cell">
+        <div class="book-title"><%=title%></div>
+        <% if ("return".equals(requestType) && overdueFine > 0) { %>
+        <small class="text-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            Return with fine: $<%=formatFine(overdueFine)%>
+        </small>
+        <% } %>
+    </td>
+    
+    <td class="quantity-cell text-center">
+        <div class="quantity-container">
+            <span class="badge bg-light text-dark fw-bold fs-6 quantity-badge">
+                <i class="fas fa-hashtag"></i> <%=quantity%>
+            </span>
+            <% if (quantity > 1) { %>
+            <small class="text-muted d-block mt-1">
+                Multiple copies
             </small>
             <% } %>
-      </td>
+        </div>
+    </td>
 
-      <td class="username-cell">
-            <span class="user-name"><%=username%></span>
-            <small class="text-muted d-block">
-                  <%=requestType.substring(0,1).toUpperCase() + requestType.substring(1)%> Request
-            </small>
-      </td>
+    <td class="username-cell">
+        <span class="user-name"><%=username%></span>
+        <small class="text-muted d-block">
+            <%=requestType.substring(0,1).toUpperCase() + requestType.substring(1)%> Request
+        </small>
+    </td>
 
-      <td class="status-cell">
-            <div class="status-container">
-                  <span class="badge <%=badgeClass%> status-badge">
-                        <%=displayStatus%>
-                  </span>
-                  <% if (overdueFine > 0) { %>
-                  <div class="fine-info mt-1">
-                        <small class="text-danger fw-bold">
-                              <i class="fas fa-dollar-sign"></i>
-                              Fine: $<%=formatFine(overdueFine)%>
-                        </small>
-                  </div>
-                  <% } %>
-                  <% if (priority <= 3) { %>
-                  <div class="priority-indicator mt-1">
-                        <small class="badge bg-warning text-dark">
-                              <i class="fas fa-exclamation"></i> Action Required
-                        </small>
-                  </div>
-                  <% } %>
+    <td class="status-cell">
+        <div class="status-container">
+            <span class="badge <%=badgeClass%> status-badge">
+                <%=displayStatus%>
+            </span>
+            <% if (overdueFine > 0) { %>
+            <div class="fine-info mt-1">
+                <small class="text-danger fw-bold">
+                    <i class="fas fa-dollar-sign"></i>
+                    Fine: $<%=formatFine(overdueFine)%>
+                </small>
             </div>
-      </td>
-
-      <td class="action-cell">
-            <div class="action-buttons d-flex flex-wrap gap-1">
-                  <% if (shouldShowApproveButton(b, request)) { %>
-                  <!-- Approve Button (cho cả borrow và return) -->
-                  <form id="approve-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
-                        <input type="hidden" name="requestId" value="<%=id%>">
-                        <input type="hidden" name="action" value="approve">
-                        <button type="button" class="btn btn-sm btn-success me-1 approve-btn" 
-                                onclick="confirmApprove('<%=id%>', '<%=b.getBookId()%>')"
-                                data-request-id="<%=id%>" 
-                                data-status="<%=actualStatus%>_<%=requestType%>" 
-                                data-type="<%=requestType%>"
-                                data-fine="<%=overdueFine%>"
-                                title="Approve <%=requestType%> request">
-                              <i class="fas fa-check"></i> 
-                              <% if ("return".equals(requestType)) { %>
-                              Approve Return
-                              <% } else { %>
-                              Approve
-                              <% } %>
-                        </button>
-                  </form>
-                  <% } %>
-
-                  <% if (shouldShowRejectButton(b)) { %>
-                  <!-- Reject Button -->
-                  <form id="reject-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
-                        <input type="hidden" name="requestId" value="<%=id%>">
-                        <input type="hidden" name="action" value="reject">
-                        <button type="button" class="btn btn-sm btn-danger me-1 reject-btn"
-                                onclick="if (confirm('Are you sure you want to reject this request?'))
-                                                  document.getElementById('reject-form-<%=id%>').submit()"
-                                data-request-id="<%=id%>"
-                                title="Reject request">
-                              <i class="fas fa-times"></i> Reject
-                        </button>
-                  </form>
-                  <% } %>
-
-                  <!-- Update the Complete Return Button section -->
-                  <% if (shouldShowCompleteReturnButton(b)) { %>
-                  <!-- Complete Return Button -->
-                  <form id="complete-return-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
-                        <input type="hidden" name="requestId" value="<%=id%>">
-                        <input type="hidden" name="action" value="return">
-                        <button type="button" class="btn btn-sm btn-info me-1 complete-return-btn"
-                                onclick="if (confirm('Are you sure you want to complete this return?'))
-                                                  document.getElementById('complete-return-form-<%=id%>').submit()"
-                                data-request-id="<%=id%>"
-                                title="Complete return and mark as completed">
-                              <i class="fas fa-check-double"></i> Complete Return
-                        </button>
-                  </form>
-                  <% } %>
-
-                  <% if (shouldShowBorrowButton(b)) { %>
-                  <!-- Process Borrow Button -->
-                  <form id="borrow-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
-                        <input type="hidden" name="requestId" value="<%=id%>">
-                        <input type="hidden" name="action" value="borrow">
-                        <button type="button" class="btn btn-sm btn-primary borrow-btn"
-                                onclick="if (confirm('Are you sure you want to process this borrow?'))
-                                                  document.getElementById('borrow-form-<%=id%>').submit()"
-                                data-request-id="<%=id%>"
-                                title="Create borrow record">
-                              <i class="fas fa-book"></i> Process Borrow
-                        </button>
-                  </form>
-                  <% } %>
-
-                  <% if ("approved-return".equals(actualStatus)) { %>
-                  <!-- Approved Return Status -->
-                  <div class="completed-status text-center">
-                        <span class="badge bg-primary">
-                              <i class="fas fa-check-circle"></i> Return Approved
-                        </span>
-                        <small class="text-muted d-block mt-1">
-                              Ready for book collection
-                        </small>
-                        <% if (overdueFine > 0) { %>
-                        <small class="text-danger d-block">
-                              <i class="fas fa-exclamation-triangle"></i>
-                              Fine paid: $<%=formatFine(overdueFine)%>
-                        </small>
-                        <% } %>
-                  </div>
-                  <% } else if ("rejected".equals(actualStatus)) { %>
-                  <!-- Rejected Status -->
-                  <div class="completed-status text-center">
-                        <span class="badge bg-danger">
-                              <i class="fas fa-times-circle"></i> Request Rejected
-                        </span>
-                        <small class="text-muted d-block mt-1">
-                              No further action needed
-                        </small>
-                  </div>
-                  <% } else if ("borrowed".equals(actualStatus)) { %>
-                  <!-- Borrowed Status -->
-                  <div class="completed-status text-center">
-                        <span class="badge bg-success">
-                              <i class="fas fa-check-double"></i> Borrowed
-                        </span>
-                        <small class="text-success d-block mt-1">
-                              <i class="fas fa-thumbs-up"></i> Book borrowed
-                        </small>
-                  </div>
-                  <% } else if ("completed".equals(actualStatus)) { %>
-                  <!-- Completed Status -->
-                  <div class="completed-status text-center">
-                        <span class="badge bg-success">
-                              <i class="fas fa-check-circle"></i> Completed
-                        </span>
-                        <small class="text-success d-block mt-1">
-                              <i class="fas fa-check-double"></i> Transaction completed
-                        </small>
-                  </div>
-                  <% } else if (!shouldShowApproveButton(b, request) && !shouldShowRejectButton(b) && !shouldShowBorrowButton(b)) { %>
-                  <!-- Unknown Status -->
-                  <div class="unknown-status text-center">
-                        <span class="badge bg-secondary">
-                              <i class="fas fa-question"></i> <%=actualStatus%>
-                        </span>
-                        <small class="text-muted d-block mt-1">Contact administrator</small>
-                  </div>
-                  <% } %>
+            <% } %>
+            <% if (priority <= 3) { %>
+            <div class="priority-indicator mt-1">
+                <small class="badge bg-warning text-dark">
+                    <i class="fas fa-exclamation"></i> Action Required
+                </small>
             </div>
-      </td>
+            <% } %>
+        </div>
+    </td>
+
+    <td class="action-cell">
+        <div class="action-buttons d-flex flex-wrap gap-1">
+            <% if (shouldShowApproveButton(b, request)) { %>
+            <!-- Approve Button (cho cả borrow và return) -->
+            <form id="approve-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
+                <input type="hidden" name="requestId" value="<%=id%>">
+                <input type="hidden" name="action" value="approve">
+                <input type="hidden" name="quantity" value="<%=quantity%>">
+                <button type="button" class="btn btn-sm btn-success me-1 approve-btn" 
+                        onclick="confirmApprove('<%=id%>', '<%=b.getBookId()%>')"
+                        data-request-id="<%=id%>" 
+                        data-status="<%=actualStatus%>_<%=requestType%>" 
+                        data-type="<%=requestType%>"
+                        data-fine="<%=overdueFine%>"
+                        data-quantity="<%=quantity%>"
+                        title="Approve <%=requestType%> request">
+                    <i class="fas fa-check"></i> 
+                    <% if ("return".equals(requestType)) { %>
+                    Approve Return
+                    <% } else { %>
+                    Approve
+                    <% } %>
+                </button>
+            </form>
+            <% } %>
+
+            <% if (shouldShowRejectButton(b)) { %>
+            <!-- Reject Button -->
+            <form id="reject-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
+                <input type="hidden" name="requestId" value="<%=id%>">
+                <input type="hidden" name="action" value="reject">
+                <input type="hidden" name="quantity" value="<%=quantity%>">
+                <button type="button" class="btn btn-sm btn-danger me-1 reject-btn"
+                        onclick="if (confirm('Are you sure you want to reject this request?'))
+                                          document.getElementById('reject-form-<%=id%>').submit()"
+                        data-request-id="<%=id%>"
+                        data-quantity="<%=quantity%>"
+                        title="Reject request">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+            </form>
+            <% } %>
+
+            <% if (shouldShowCompleteReturnButton(b)) { %>
+            <!-- Complete Return Button -->
+            <form id="complete-return-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
+                <input type="hidden" name="requestId" value="<%=id%>">
+                <input type="hidden" name="action" value="return">
+                <input type="hidden" name="quantity" value="<%=quantity%>">
+                <button type="button" class="btn btn-sm btn-info me-1 complete-return-btn"
+                        onclick="if (confirm('Are you sure you want to complete this return?'))
+                                          document.getElementById('complete-return-form-<%=id%>').submit()"
+                        data-request-id="<%=id%>"
+                        data-quantity="<%=quantity%>"
+                        title="Complete return and mark as completed">
+                    <i class="fas fa-check-double"></i> Complete Return
+                </button>
+            </form>
+            <% } %>
+
+            <% if (shouldShowBorrowButton(b)) { %>
+            <!-- Process Borrow Button -->
+            <form id="borrow-form-<%=id%>" action="statusrequestborrowbook" method="POST" style="display:inline;">
+                <input type="hidden" name="requestId" value="<%=id%>">
+                <input type="hidden" name="action" value="borrow">
+                <input type="hidden" name="quantity" value="<%=quantity%>">
+                <button type="button" class="btn btn-sm btn-primary borrow-btn"
+                        onclick="if (confirm('Are you sure you want to process this borrow?'))
+                                          document.getElementById('borrow-form-<%=id%>').submit()"
+                        data-request-id="<%=id%>"
+                        data-quantity="<%=quantity%>"
+                        title="Create borrow record">
+                    <i class="fas fa-book"></i> Process Borrow
+                </button>
+            </form>
+            <% } %>
+
+            <% if ("approved-return".equals(actualStatus)) { %>
+            <!-- Approved Return Status -->
+            <div class="completed-status text-center">
+                <span class="badge bg-primary">
+                    <i class="fas fa-check-circle"></i> Return Approved
+                </span>
+                <small class="text-muted d-block mt-1">
+                    Ready for book collection
+                </small>
+                <% if (overdueFine > 0) { %>
+                <small class="text-danger d-block">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Fine paid: $<%=formatFine(overdueFine)%>
+                </small>
+                <% } %>
+            </div>
+            <% } else if ("rejected".equals(actualStatus)) { %>
+            <!-- Rejected Status -->
+            <div class="completed-status text-center">
+                <span class="badge bg-danger">
+                    <i class="fas fa-times-circle"></i> Request Rejected
+                </span>
+                <small class="text-muted d-block mt-1">
+                    No further action needed
+                </small>
+            </div>
+            <% } else if ("borrowed".equals(actualStatus)) { %>
+            <!-- Borrowed Status -->
+            <div class="completed-status text-center">
+                <span class="badge bg-success">
+                    <i class="fas fa-check-double"></i> Borrowed
+                </span>
+                <small class="text-success d-block mt-1">
+                    <i class="fas fa-thumbs-up"></i> Book borrowed
+                </small>
+            </div>
+            <% } else if ("completed".equals(actualStatus)) { %>
+            <!-- Completed Status -->
+            <div class="completed-status text-center">
+                <span class="badge bg-success">
+                    <i class="fas fa-check-circle"></i> Completed
+                </span>
+                <small class="text-success d-block mt-1">
+                    <i class="fas fa-check-double"></i> Transaction completed
+                </small>
+            </div>
+            <% } else if (!shouldShowApproveButton(b, request) && !shouldShowRejectButton(b) && !shouldShowBorrowButton(b) && !shouldShowCompleteReturnButton(b)) { %>
+            <!-- Unknown Status -->
+            <div class="unknown-status text-center">
+                <span class="badge bg-secondary">
+                    <i class="fas fa-question"></i> <%=actualStatus%>
+                </span>
+                <small class="text-muted d-block mt-1">Contact administrator</small>
+            </div>
+            <% } %>
+        </div>
+    </td>
 </tr>
 <%
         }
@@ -394,18 +428,18 @@
         System.out.println("No book requests found - showing empty state");
 %>
 <tr>
-      <td colspan="5" class="empty-state text-center py-5">
-            <div class="d-flex flex-column align-items-center">
-                  <div class="empty-icon mb-3">
-                        <i class="fas fa-book-open fa-4x text-muted"></i>
-                  </div>
-                  <h5 class="text-muted mb-2">No Book Requests Found</h5>
-                  <p class="text-muted mb-0"><%=emptyMessage%></p>
-                  <small class="text-muted mt-2">
-                        Try adjusting your search filters or check back later
-                  </small>
+    <td colspan="6" class="empty-state text-center py-5">
+        <div class="d-flex flex-column align-items-center">
+            <div class="empty-icon mb-3">
+                <i class="fas fa-book-open fa-4x text-muted"></i>
             </div>
-      </td>
+            <h5 class="text-muted mb-2">No Book Requests Found</h5>
+            <p class="text-muted mb-0"><%=emptyMessage%></p>
+            <small class="text-muted mt-2">
+                Try adjusting your search filters or check back later
+            </small>
+        </div>
+    </td>
 </tr>
 <%
     }
