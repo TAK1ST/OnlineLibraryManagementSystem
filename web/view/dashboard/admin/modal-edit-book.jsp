@@ -97,7 +97,7 @@
                                           <div class="col-md-6">
                                                 <div class="form-row mb-3">
                                                       <label for="modalImageUrl" class="modal-label">Image URL</label>
-                                                      <input type="url" class="form-control modal-input" id="modalImageUrl" name="imageUrl" placeholder="https://example.com/image.jpg">
+                                                      <input type="url" class="form-control modal-input" id="modalImageUrl" name="imageUrl" placeholder="https://example.com/image.jpg"  readonly>
                                                 </div>
                                           </div>
                                     </div>
