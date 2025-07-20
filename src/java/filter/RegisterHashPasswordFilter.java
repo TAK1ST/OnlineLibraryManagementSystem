@@ -5,6 +5,7 @@
 package filter;
 
 import dao.implement.UserDAO;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -117,12 +118,18 @@ public class RegisterHashPasswordFilter implements Filter {
                     || email == null || email.trim().isEmpty()
                     || password == null || password.trim().isEmpty()) {
 
-                request.setAttribute("mess", "Tạo tài khoản mới để bắt đầu");
+                request.setAttribute("mess", "Create a new account to get started.");
                 request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
                 return;
             }
             // Debug: Test BCrypt before inserting
             UserDAO testDAO = new UserDAO();
+            User existingUser = testDAO.getEmail(email.trim());
+            if (existingUser != null) {
+                request.setAttribute("error", "Email is already registered. Please use a different email.");
+                request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
+                return;
+            }
             testDAO.testBCrypt(password);
 
             // Insert new user with hashed password
