@@ -303,7 +303,7 @@
         <welcome-file>home</welcome-file>
     </welcome-file-list>
     <!-- Error Pages -->
-    <error-page>
+<!--    <error-page>
         <error-code>404</error-code>
         <location>/view/error/404.jsp</location>
     </error-page>
@@ -314,5 +314,5 @@
     <error-page>
         <error-code>403</error-code>
         <location>/view/error/403.jsp</location>
-    </error-page>
+    </error-page>-->
 </web-app>

@@ -2,6 +2,9 @@
 Created on : May 29, 2025, 10:25:36 PM 
 Author : asus 
 --%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="en">
       <head>

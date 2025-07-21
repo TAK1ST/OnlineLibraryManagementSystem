@@ -38,7 +38,7 @@ public class BorrowHistoryServlet extends HttpServlet {
             
             // Đếm số lượng theo từng status TRƯỚC KHI filter
             long pendingCount = allBorrowHistory.stream().filter(br -> "pending".equalsIgnoreCase(br.getStatus())).count();
-            long approvedCount = allBorrowHistory.stream().filter(br -> "approved".equalsIgnoreCase(br.getStatus())).count();
+            long approvedCount = allBorrowHistory.stream().filter(br -> "approved-borrow".equalsIgnoreCase(br.getStatus())).count();
             long borrowedCount = allBorrowHistory.stream().filter(br -> "borrowed".equalsIgnoreCase(br.getStatus())).count(); // THÊM DÒNG NÀY
             long returnedCount = allBorrowHistory.stream().filter(br -> "returned".equalsIgnoreCase(br.getStatus())).count();
             long rejectedCount = allBorrowHistory.stream().filter(br -> "rejected".equalsIgnoreCase(br.getStatus())).count();

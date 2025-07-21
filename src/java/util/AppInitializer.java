@@ -27,7 +27,7 @@ public class AppInitializer implements ServletContextListener {
                   rs.next();
                   int count = rs.getInt(1);
                   String pw_hash = BCrypt.hashpw("adminpassword", BCrypt.gensalt());
-                  
+                  System.out.println(pw_hash);
                   if (count == 0) {
                         String insertSql = "INSERT INTO users (username, password, role, status, avatar) VALUES (?, ?, ?, ?,)";
                         PreparedStatement insertStmt = cn.prepareStatement(insertSql);

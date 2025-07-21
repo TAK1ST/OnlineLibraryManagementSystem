@@ -90,6 +90,7 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                   response.setContentType("text/html; charset=UTF-8");
                   request.getRequestDispatcher(ViewURL.BOOK_REQUEST_LIST_FRAGMENT).include(request, response);
             } else {
+                  System.out.println("come to status request borrow book");
                   request.getRequestDispatcher(ViewURL.ADMIN_STATUS_REQUEST_BORROW_BOOK).forward(request, response);
             }
       }
