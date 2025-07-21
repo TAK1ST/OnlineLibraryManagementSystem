@@ -183,7 +183,7 @@
                                                     <button type="submit" class="btn btn-primary btn-small">
                                                         <i class="fas fa-plus"></i> Add Stock
                                                     </button>
-                                                    <a href="bookdetail?id=${book.id}" class="btn btn-secondary btn-small">
+                                                    <a href="editbook?id=${book.id}" class="btn btn-secondary btn-small">
                                                         <i class="fas fa-eye"></i> Details
                                                     </a>
                                                 </div>

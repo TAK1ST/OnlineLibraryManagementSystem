@@ -841,5 +841,92 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
 
         return list;
     }
+    
+    // Thêm method helper để đếm số sách đang được mượn
+    public int getBorrowedCount(int bookId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.getConnection();
+            String query = "SELECT COUNT(*) FROM borrow_records WHERE book_id = ? AND status = 'borrowed'";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, bookId);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // FIX: Đóng resource đúng cách
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+    
+    // FIX: Thêm method để lấy số lượng hiện tại
+    public int getCurrentQuantity(int bookId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.getConnection();
+            String query = "SELECT [total_copies] FROM books WHERE id = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, bookId);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("quantity");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
 
 }

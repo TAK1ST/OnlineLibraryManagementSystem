@@ -75,7 +75,8 @@ public class AdminUpdateInventory extends BaseAdminController {
             // Thay vì sửa Book, tạo Map để lưu borrowedCount
             Map<Integer, Integer> borrowedCountMap = new HashMap<>();
             for (Book book : books) {
-                int borrowedCount = getBorrowedCount(book.getId());
+                BookDAO bookDao = new BookDAO();
+                int borrowedCount = bookDao.getBorrowedCount(book.getId());
                 borrowedCountMap.put(book.getId(), borrowedCount);
             }
 
@@ -139,10 +140,11 @@ public class AdminUpdateInventory extends BaseAdminController {
 
                 if (quantityToAdd >= 0) {
                     // Kiểm tra số sách đang được mượn trước khi cập nhật
-                    int borrowedCount = getBorrowedCount(bookId);
+                    BookDAO bookDao = new BookDAO();
+                    int borrowedCount = bookDao.getBorrowedCount(bookId);
 
                     // FIX: Lấy số lượng hiện tại để kiểm tra
-                    int currentQuantity = getCurrentQuantity(bookId);
+                    int currentQuantity = bookDao.getCurrentQuantity(bookId);
                     int newTotalQuantity = currentQuantity + quantityToAdd;
 
                     if (newTotalQuantity >= borrowedCount) {
@@ -172,94 +174,7 @@ public class AdminUpdateInventory extends BaseAdminController {
 
         doGet(request, response);
     }
-
-    // Thêm method helper để đếm số sách đang được mượn
-    private int getBorrowedCount(int bookId) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            conn = DBConnection.getConnection();
-            String query = "SELECT COUNT(*) FROM borrow_records WHERE book_id = ? AND status = 'borrowed'";
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, bookId);
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // FIX: Đóng resource đúng cách
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return 0;
-    }
-
-    // FIX: Thêm method để lấy số lượng hiện tại
-    private int getCurrentQuantity(int bookId) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            conn = DBConnection.getConnection();
-            String query = "SELECT [total_copies] FROM books WHERE id = ?";
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, bookId);
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("quantity");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return 0;
-    }
-
+    
     @Override
     public String getServletInfo() {
         return "Admin Update Inventory Servlet";
