@@ -194,5 +194,20 @@ public class BorrowRequestDAO implements IBorrowRequestDAO {
                         conn.close();
                   }
             }
-      }
+        }
+    }
+    public void insertBorrowRequest(int userId, int bookId, int quantity) throws SQLException, ClassNotFoundException {
+        String sql = "INSERT INTO borrow_requests (user_id, book_id, quantity, status, request_date) "
+                   + "VALUES (?, ?, ?, 'pending', GETDATE())";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ps.setInt(2, bookId);
+            ps.setInt(3, quantity);
+
+            ps.executeUpdate();
+        }
+    }
 }
