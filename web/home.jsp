@@ -1,5 +1,8 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="listener.OnlineUserCounterListener" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="service.implement.OnlineUserManager" %>
 <!DOCTYPE html>
 <html>
       <head>
@@ -643,7 +646,50 @@
                         color: #155724;
                         margin-left: 20px;
                   }
+                  .online-counter {
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        background: linear-gradient(135deg, var(--accent-light), var(--accent-dark));
+                        color: white;
+                        padding: 8px 12px;
+                        border-radius: 20px;
+                        font-size: 12px;
+                        font-weight: 500;
+                        box-shadow: 0 4px 15px rgba(26, 188, 156, 0.3);
+                        z-index: 1000;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                  }
 
+                  .online-counter:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(26, 188, 156, 0.4);
+                        text-decoration: none;
+                        color: white;
+                  }
+
+                  .online-counter i {
+                        margin-right: 5px;
+                  }
+
+                  /* Adjust chat icon position to avoid overlap */
+                  #chat-icon {
+                        bottom: 60px !important; /* Move up to avoid overlap with online counter */
+                  }
+
+                  @media (max-width: 768px) {
+                        .online-counter {
+                              font-size: 11px;
+                              padding: 6px 10px;
+                              bottom: 15px;
+                              right: 15px;
+                        }
+
+                        #chat-icon {
+                              bottom: 55px !important;
+                        }
+                  }
             </style>
       </head>
       <body>
@@ -718,18 +764,18 @@
                               <img src="./hinh/OIP.jpg" alt="Ảnh 1">
                               <div class="caption">Welcome to the Online Library</div>
                         </div>
-                        <div class="slide-item">
-                              <img src="./hinh/R.jpg" alt="Ảnh 2">
-                              <div class="caption">Explore thousands of books and expand your knowledge</div>
-                        </div>
-                        <div class="slide-item">
-                              <img src="./hinh/1.jpg" alt="Ảnh 3">
-                              <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
-                        </div>
-                        <div class="slide-item">
-                              <img src="./hinh/4.jpg" alt="Ảnh 4">
-                              <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
-                        </div>
+                        <!--                        <div class="slide-item">
+                                                      <img src="./hinh/R.jpg" alt="Ảnh 2">
+                                                      <div class="caption">Explore thousands of books and expand your knowledge</div>
+                                                </div>
+                                                <div class="slide-item">
+                                                      <img src="./hinh/1.jpg" alt="Ảnh 3">
+                                                      <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
+                                                </div>
+                                                <div class="slide-item">
+                                                      <img src="./hinh/4.jpg" alt="Ảnh 4">
+                                                      <div class="caption">Every book is a door – an online library that opens up the world for you.</div>
+                                                </div>-->
                   </div>
             </div>
 
@@ -882,7 +928,16 @@
                         </div>
 
                   </section>
+
             </c:if>
+
+            <c:if test="${not empty sessionScope.loginedUser}">
+                  <a href="${pageContext.request.contextPath}/OnlineUserListServlet" class="online-counter">
+                        <i class="fas fa-wifi"></i>Online: <%= OnlineUserCounterListener.getOnlineUsers() %> users
+                  </a>
+            </c:if>
+
+
             <!-- Footer -->
             <footer class="footer text-white pt-4 pb-3 mt-5" style="background-color: #2F4256; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                   <div class="container text-center" style="padding-top: 30px">

@@ -54,7 +54,7 @@ public class SearchBookServlet extends HttpServlet {
                     } else {
                         recentKeyword.setPath(contextPath + "/");
                     }
-                    recentKeyword.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
+                    recentKeyword.setMaxAge(7*24*3600); // 7 ngày
                     recentKeyword.setHttpOnly(false);
                     response.addCookie(recentKeyword);
 
