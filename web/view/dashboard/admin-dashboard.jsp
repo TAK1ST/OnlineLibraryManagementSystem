@@ -50,6 +50,9 @@
                         </a>
                         <a href="overduebook" class="nav-link">
                               <i class="fas fa-boxes"></i> Overdue Book
+                        </a>                        
+                        <a href="ChatServlet" class="nav-link">
+                              <i class="fas fa-boxes"></i> Response User
                         </a>
                   </div>
 
