@@ -1,4 +1,5 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="util.ImageDisplayHelper" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -70,7 +71,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
-                    <i class="fas fa-book-reader me-2"></i>Thư viện trực tuyến
+                    <i class="fas fa-book-reader me-2"></i>Online Library
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -85,14 +86,16 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="${pageContext.request.contextPath}/BorrowHistoryServlet">
-                                    <i class="fas fa-history"></i> Lịch sử mượn
+                                    <i class="fas fa-history"></i>Borrowed History
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link">Xin chào, ${sessionScope.loginedUser.name}!</span>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                    <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Đăng xuất</a>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Log out</a>
                             </li>
                         </c:if>
                     </ul>
@@ -101,8 +104,8 @@
         </nav>
 
         <div class="container mt-4">
-            <h2 class="mb-4">Giỏ sách của bạn</h2>
-            
+            <h2 class="mb-4">Your Cart</h2>
+
             <!-- Hiển thị thông báo -->
             <c:if test="${not empty message}">
                 <div class="alert alert-${messageType} alert-dismissible fade show" role="alert">
@@ -115,10 +118,10 @@
                 <c:when test="${empty cart}">
                     <div class="empty-cart">
                         <i class="fas fa-shopping-cart"></i>
-                        <h3>Giỏ sách trống</h3>
-                        <p class="text-muted">Hãy thêm sách vào giỏ để mượn</p>
+                        <h3>Empty</h3>
+                        <p class="text-muted">Please! Add books to your cart to borrow.</p>
                         <a href="${pageContext.request.contextPath}/home" class="btn btn-primary">
-                            <i class="fas fa-book me-2"></i>Xem danh sách sách
+                            <i class="fas fa-book me-2"></i>View book list
                         </a>
                     </div>
                 </c:when>
@@ -128,18 +131,18 @@
                             <div class="cart-item">
                                 <div class="row align-items-center">
                                     <div class="col-md-2">
-                                        <img src="https://via.placeholder.com/120x160?text=${item.book.title}" 
+                                        <img src="<%= ImageDisplayHelper.getBookThumbnailUrl((entity.Book)pageContext.getAttribute("book"), 120, 160) %>" 
                                              alt="${item.book.title}" class="img-fluid">
                                     </div>
                                     <div class="col-md-6 item-details">
                                         <h5>${item.book.title}</h5>
-                                        <p class="text-muted mb-1">Tác giả: ${item.book.author}</p>
-                                        <p class="text-muted mb-1">Thể loại: ${item.book.category}</p>
+                                        <p class="text-muted mb-1">Author: ${item.book.author}</p>
+                                        <p class="text-muted mb-1">Category: ${item.book.category}</p>
                                         <c:if test="${item.book.availableCopies > 0}">
-                                            <span class="badge bg-success">Còn ${item.book.availableCopies} cuốn</span>
+                                            <span class="badge bg-success">Still have ${item.book.availableCopies} book</span>
                                         </c:if>
                                         <c:if test="${item.book.availableCopies == 0}">
-                                            <span class="badge bg-danger">Hết sách</span>
+                                            <span class="badge bg-danger">Out of book</span>
                                         </c:if>
                                     </div>
                                     <div class="col-md-2">
@@ -153,7 +156,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 text-end">
+                                    <div class="col-md-2 text-end pe-5">
                                         <button class="remove-btn" onclick="removeFromCart(${item.book.id})">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -161,14 +164,14 @@
                                 </div>
                             </div>
                         </c:forEach>
-                        
+
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <a href="${pageContext.request.contextPath}/home" class="btn btn-outline-primary">
-                                <i class="fas fa-arrow-left me-2"></i>Tiếp tục xem sách
+                                <i class="fas fa-arrow-left me-2"></i>Continue
                             </a>
                             <form action="${pageContext.request.contextPath}/SubmitBorrowRequestServlet" method="POST">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-check me-2"></i>Xác nhận mượn sách
+                                    <i class="fas fa-check me-2"></i>Confirm book borrowing
                                 </button>
                             </form>
                         </div>
@@ -179,31 +182,31 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            function updateQuantity(bookId, change) {
-                fetch('${pageContext.request.contextPath}/UpdateCartServlet?bookId=' + bookId + '&change=' + change)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert(data.message);
-                        }
-                    });
-            }
-            
-            function removeFromCart(bookId) {
-                if (confirm('Bạn có chắc muốn xóa sách này khỏi giỏ?')) {
-                    fetch('${pageContext.request.contextPath}/RemoveFromCartServlet?bookId=' + bookId)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                location.reload();
-                            } else {
-                                alert(data.message);
-                            }
-                        });
-                }
-            }
+                                            function updateQuantity(bookId, change) {
+                                                fetch('${pageContext.request.contextPath}/UpdateCartServlet?bookId=' + bookId + '&change=' + change)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.success) {
+                                                                location.reload();
+                                                            } else {
+                                                                alert(data.message);
+                                                            }
+                                                        });
+                                            }
+
+                                            function removeFromCart(bookId) {
+                                                if (confirm('Bạn có chắc muốn xóa sách này khỏi giỏ?')) {
+                                                    fetch('${pageContext.request.contextPath}/RemoveFromCartServlet?bookId=' + bookId)
+                                                            .then(response => response.json())
+                                                            .then(data => {
+                                                                if (data.success) {
+                                                                    location.reload();
+                                                                } else {
+                                                                    alert(data.message);
+                                                                }
+                                                            });
+                                                }
+                                            }
         </script>
     </body>
-</html> 
+</html>

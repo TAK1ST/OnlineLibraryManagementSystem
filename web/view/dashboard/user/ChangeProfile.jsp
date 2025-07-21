@@ -5,13 +5,14 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page  import="entity.User" %>
+<%@page import="entity.User" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-        <title>Change Profile</title>
+        <title>Profile Management</title>
         <style>
             * {
                 margin: 0;
@@ -20,129 +21,206 @@
             }
 
             body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #ECF0F1 0%, #1ABC9C 100%);
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
                 min-height: 100vh;
-                padding: 20px;
+                color: #333;
+                line-height: 1.6;
             }
 
-            .container {
-                max-width: 1200px;
-                margin: 0 auto;
+            .app-container {
+                display: flex;
+                min-height: 100vh;
+            }
+
+            /* Modern Sidebar */
+            .sidebar {
+                width: 280px;
+                background: rgba(26, 188, 156, 0.1);
+                backdrop-filter: blur(20px);
+                border-right: 1px solid rgba(26, 188, 156, 0.2);
+                padding: 2rem 0;
+                position: fixed;
+                height: 100vh;
+                z-index: 100;
+            }
+
+            .sidebar-header {
+                padding: 0 2rem 2rem;
+                border-bottom: 1px solid rgba(26, 188, 156, 0.1);
+                margin-bottom: 2rem;
+            }
+
+            .sidebar-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #ECFDF1;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .sidebar-nav {
+                padding: 0 1rem;
+            }
+
+            .nav-item {
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-link {
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 1rem;
+                color: rgba(236, 253, 241, 0.8);
+                text-decoration: none;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+                font-weight: 500;
+            }
+
+            .nav-link:hover {
+                background: rgba(26, 188, 156, 0.1);
+                color: #ECFDF1;
+                transform: translateX(4px);
+            }
+
+            .nav-link.active {
+                background: rgba(26, 188, 156, 0.2);
+                color: #ECFDF1;
+            }
+
+            .nav-link i {
+                width: 20px;
+                margin-right: 0.75rem;
+            }
+
+            /* Main Content Area */
+            .main-content {
+                flex: 1;
+                margin-left: 280px;
+                padding: 2rem;
+                max-width: calc(100vw - 280px);
+            }
+
+            .content-header {
+                background: rgba(26, 188, 156, 0.1);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
+                padding: 2rem;
+                margin-bottom: 2rem;
+                border: 1px solid rgba(26, 188, 156, 0.2);
+                text-align: center;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #ECFDF1;
+                margin-bottom: 0.5rem;
+            }
+
+            .page-subtitle {
+                font-size: 1.1rem;
+                color: rgba(236, 253, 241, 0.8);
+            }
+
+            /* Alert Messages */
+            .alert {
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                animation: slideIn 0.3s ease;
+            }
+
+            .alert-success {
+                background: linear-gradient(135deg, #1ABC9C, #16A085);
+                color: white;
+            }
+
+            .alert-error {
+                background: linear-gradient(135deg, #E74C3C, #C0392B);
+                color: white;
+            }
+
+            .alert-close {
+                margin-left: auto;
+                background: none;
+                border: none;
+                color: inherit;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0;
+                line-height: 1;
+            }
+
+            /* Profile Cards */
+            .profile-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 30px;
+                gap: 2rem;
             }
 
-            .card {
-                background: white;
+            .profile-card {
+                background: rgba(236, 253, 241, 0.95);
                 border-radius: 20px;
+                padding: 2rem;
                 box-shadow: 0 20px 40px rgba(44, 62, 80, 0.1);
-                padding: 40px;
-                position: relative;
-                overflow: hidden;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 25px 50px rgba(44, 62, 80, 0.15);
-            }
-
-            .card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 5px;
-                background: linear-gradient(90deg, #1ABC9C, #16A085, #2C3E50);
+                border: 1px solid rgba(26, 188, 156, 0.3);
+                backdrop-filter: blur(10px);
             }
 
             .card-header {
-                text-align: center;
-                margin-bottom: 35px;
-                padding-bottom: 20px;
-                border-bottom: 2px solid #ECF0F1;
-            }
-
-            .card-header h2 {
-                color: #2C3E50;
-                font-size: 24px;
-                font-weight: 600;
-                margin-bottom: 8px;
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                gap: 10px;
+                gap: 0.75rem;
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid rgba(26, 188, 156, 0.1);
             }
 
-            .card-header p {
-                color: #7F8C8D;
-                font-size: 14px;
+            .card-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #2C3E50;
             }
 
-            .icon {
-                width: 30px;
-                height: 30px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #1ABC9C, #16A085);
-                color: white;
-                font-size: 16px;
+            .card-icon {
+                font-size: 1.5rem;
+                color: #1ABC9C;
             }
 
-            /* Profile Picture Section */
+            /* Avatar Section */
             .avatar-section {
                 text-align: center;
-                margin-bottom: 30px;
+                margin-bottom: 2rem;
             }
 
             .avatar-container {
                 position: relative;
                 display: inline-block;
-                margin-bottom: 20px;
+                margin-bottom: 1rem;
             }
 
-            .avatar-preview {
+            .avatar-image {
                 width: 120px;
                 height: 120px;
                 border-radius: 50%;
-                background: linear-gradient(135deg, #1ABC9C, #16A085);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 48px;
-                font-weight: bold;
-                box-shadow: 0 10px 30px rgba(26, 188, 156, 0.3);
-                transition: all 0.3s ease;
-                cursor: pointer;
-                overflow: hidden;
-                position: relative;
-            }
-
-            .avatar-preview:hover {
-                transform: scale(1.05);
-                box-shadow: 0 15px 40px rgba(26, 188, 156, 0.4);
-            }
-
-            .avatar-preview img {
-                width: 100%;
-                height: 100%;
                 object-fit: cover;
-                border-radius: 50%;
+                border: 4px solid #1ABC9C;
+                box-shadow: 0 10px 30px rgba(26, 188, 156, 0.3);
             }
 
-            .avatar-upload-overlay {
+            .avatar-overlay {
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0,0,0,0.5);
+                background: rgba(44, 62, 80, 0.5);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -152,222 +230,223 @@
                 cursor: pointer;
             }
 
-            .avatar-container:hover .avatar-upload-overlay {
+            .avatar-container:hover .avatar-overlay {
                 opacity: 1;
             }
 
-            .avatar-upload-text {
+            .avatar-upload-btn {
+                background: none;
+                border: none;
                 color: white;
-                font-size: 14px;
-                font-weight: 500;
-                text-align: center;
+                font-size: 1.5rem;
+                cursor: pointer;
             }
 
-            .file-input {
+            .file-input-hidden {
                 display: none;
             }
 
-            .upload-btn {
-                background: linear-gradient(135deg, #3498DB, #2980B9);
-                color: white;
-                border: none;
-                padding: 12px 24px;
-                border-radius: 25px;
-                font-size: 14px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                margin-top: 10px;
-            }
-
-            .upload-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-            }
-
-            /* Form Styles */
+            /* Form Styling */
             .form-group {
-                margin-bottom: 25px;
-                position: relative;
+                margin-bottom: 1.5rem;
             }
 
-            .form-group label {
+            .form-label {
                 display: block;
+                font-weight: 600;
                 color: #2C3E50;
-                font-weight: 500;
-                margin-bottom: 8px;
-                font-size: 14px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
             }
 
-            .form-group input {
+            .form-input {
                 width: 100%;
-                padding: 15px 20px;
-                border: 2px solid #ECF0F1;
+                padding: 0.75rem 1rem;
+                border: 2px solid rgba(26, 188, 156, 0.2);
                 border-radius: 12px;
-                font-size: 16px;
-                color: #2C3E50;
-                background: #FAFBFC;
+                font-size: 1rem;
                 transition: all 0.3s ease;
+                background: #fff;
+            }
+
+            .form-input:focus {
                 outline: none;
-            }
-
-            .form-group input:focus {
                 border-color: #1ABC9C;
-                background: white;
                 box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
-                transform: translateY(-2px);
             }
 
-            .form-group input[readonly] {
-                background: #f8f9fa;
-                color: #6c757d;
+            .form-input:read-only {
+                background: rgba(236, 253, 241, 0.5);
                 cursor: not-allowed;
-                border-color: #e9ecef;
             }
 
-            .password-group {
+            .password-field {
                 position: relative;
             }
 
             .password-toggle {
                 position: absolute;
-                right: 15px;
+                right: 0.75rem;
                 top: 50%;
                 transform: translateY(-50%);
                 background: none;
                 border: none;
-                color: #7F8C8D;
+                color: #34495E;
                 cursor: pointer;
-                font-size: 18px;
-                padding: 5px;
+                font-size: 1rem;
+                padding: 0.25rem;
             }
 
             .password-toggle:hover {
                 color: #1ABC9C;
             }
 
-            .status-badge, .role-badge {
-                display: inline-block;
-                padding: 8px 16px;
+            /* Status Badges */
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
                 border-radius: 20px;
-                font-size: 12px;
+                font-size: 0.85rem;
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
-                margin-top: 5px;
             }
 
-            .status-badge {
-                background: linear-gradient(135deg, #16A085, #1ABC9C);
-                color: white;
-            }
-
-            .role-badge {
-                background: linear-gradient(135deg, #34495E, #2C3E50);
-                color: white;
-            }
-
-            .submit-btn {
-                width: 100%;
-                padding: 18px;
+            .status-user {
                 background: linear-gradient(135deg, #1ABC9C, #16A085);
                 color: white;
+            }
+
+            .status-active {
+                background: linear-gradient(135deg, #1ABC9C, #16A085);
+                color: white;
+            }
+
+            /* Password Requirements */
+            .password-requirements {
+                margin-top: 0.5rem;
+                padding: 0.75rem;
+                background: rgba(236, 253, 241, 0.3);
+                border-radius: 8px;
+                border-left: 4px solid #1ABC9C;
+            }
+
+            .requirement-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.85rem;
+                color: #34495E;
+            }
+
+            .requirement-item.valid {
+                color: #1ABC9C;
+            }
+
+            .requirement-item i {
+                font-size: 0.75rem;
+            }
+
+            /* Password Match Indicator */
+            .password-match {
+                margin-top: 0.5rem;
+                padding: 0.5rem;
+                border-radius: 8px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .password-match.match {
+                background: rgba(26, 188, 156, 0.2);
+                color: #16A085;
+            }
+
+            .password-match.no-match {
+                background: rgba(231, 76, 60, 0.2);
+                color: #C0392B;
+            }
+
+            /* Buttons */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.75rem 1.5rem;
                 border: none;
                 border-radius: 12px;
-                font-size: 16px;
+                font-size: 1rem;
                 font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 1px;
+                text-decoration: none;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                margin-top: 20px;
-                box-shadow: 0 8px 20px rgba(26, 188, 156, 0.3);
+                text-align: center;
+                min-width: 140px;
+                justify-content: center;
             }
 
-            .submit-btn:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 12px 30px rgba(26, 188, 156, 0.4);
+            .btn-primary {
+                background: linear-gradient(135deg, #2C3E50, #34495E);
+                color: white;
             }
 
-            .submit-btn:active {
-                transform: translateY(-1px);
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #1A252F, #2C3E50);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(44, 62, 80, 0.4);
             }
 
-            .password-submit-btn {
-                background: linear-gradient(135deg, #E74C3C, #C0392B);
-                box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+            .btn-secondary {
+                background: linear-gradient(135deg, #1ABC9C, #16A085);
+                color: white;
             }
 
-            .password-submit-btn:hover {
-                box-shadow: 0 12px 30px rgba(231, 76, 60, 0.4);
+            .btn-secondary:hover {
+                background: linear-gradient(135deg, #17A2B8, #138496);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(26, 188, 156, 0.4);
             }
 
-            /* Password Strength Indicator */
-            .password-strength {
-                height: 4px;
-                background: #ECF0F1;
-                border-radius: 2px;
-                margin-top: 8px;
-                overflow: hidden;
+            /* Responsive Design */
+            @media (max-width: 1024px) {
+                .profile-grid {
+                    grid-template-columns: 1fr;
+                }
             }
 
-            .password-strength-bar {
-                height: 100%;
-                width: 0%;
-                transition: all 0.3s ease;
-                border-radius: 2px;
-            }
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 100%;
+                    position: relative;
+                    height: auto;
+                }
 
-            .strength-weak {
-                background: #E74C3C;
-                width: 25%;
-            }
-            .strength-fair {
-                background: #F39C12;
-                width: 50%;
-            }
-            .strength-good {
-                background: #F1C40F;
-                width: 75%;
-            }
-            .strength-strong {
-                background: #27AE60;
-                width: 100%;
-            }
+                .main-content {
+                    margin-left: 0;
+                    max-width: 100%;
+                    padding: 1rem;
+                }
 
-            .password-requirements {
-                font-size: 12px;
-                color: #7F8C8D;
-                margin-top: 8px;
-                list-style: none;
-            }
+                .app-container {
+                    flex-direction: column;
+                }
 
-            .password-requirements li {
-                padding: 2px 0;
-                position: relative;
-                padding-left: 20px;
-            }
+                .page-title {
+                    font-size: 2rem;
+                }
 
-            .password-requirements li::before {
-                content: '✗';
-                position: absolute;
-                left: 0;
-                color: #E74C3C;
-                font-weight: bold;
-            }
-
-            .password-requirements li.valid::before {
-                content: '✓';
-                color: #27AE60;
+                .profile-card {
+                    padding: 1.5rem;
+                }
             }
 
             /* Animations */
-            @keyframes fadeInUp {
+            @keyframes slideIn {
                 from {
                     opacity: 0;
-                    transform: translateY(30px);
+                    transform: translateY(-20px);
                 }
                 to {
                     opacity: 1;
@@ -375,349 +454,328 @@
                 }
             }
 
-            .card {
-                animation: fadeInUp 0.6s ease-out;
-            }
-
-            .card:nth-child(2) {
-                animation-delay: 0.2s;
-            }
-
-            /* Alert Styles */
-            .alert {
-                margin-bottom: 30px;
-                border-radius: 12px;
-                padding: 0;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-                animation: slideInDown 0.5s ease-out;
-                grid-column: 1 / -1;
-            }
-
-            .alert-success {
-                background: linear-gradient(135deg, #27AE60, #2ECC71);
-            }
-
-            .alert-error {
-                background: linear-gradient(135deg, #E74C3C, #EC7063);
-            }
-
-            .alert-content {
-                display: flex;
-                align-items: center;
-                padding: 15px 20px;
-                color: white;
-            }
-
-            .alert-icon {
-                font-size: 18px;
-                margin-right: 12px;
-            }
-
-            .alert-text {
-                flex: 1;
-                font-weight: 500;
-                font-size: 14px;
-            }
-
-            .alert-close {
-                background: none;
-                border: none;
-                color: white;
-                font-size: 20px;
-                cursor: pointer;
-                padding: 0 5px;
-                opacity: 0.8;
-                transition: opacity 0.3s ease;
-            }
-
-            .alert-close:hover {
-                opacity: 1;
-            }
-
-            @keyframes slideInDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-100px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            @media (max-width: 768px) {
-                .container {
-                    grid-template-columns: 1fr;
-                    gap: 20px;
-                    padding: 10px;
-                }
-
-                .card {
-                    padding: 30px 25px;
-                }
-
-                .card-header h2 {
-                    font-size: 20px;
-                }
-
-                .avatar-preview {
-                    width: 100px;
-                    height: 100px;
-                    font-size: 40px;
-                }
-
-                .form-group input {
-                    padding: 12px 15px;
-                    font-size: 14px;
-                }
-
-                .submit-btn {
-                    padding: 15px;
-                    font-size: 14px;
-                }
+            .fade-in {
+                animation: slideIn 0.5s ease;
             }
         </style>
     </head>
     <body>
         <%
-         if(session.getAttribute("loginedUser")==null){
+         if (session.getAttribute("loginedUser") == null) {
              response.sendRedirect("index.jsp");
-         }
-         else{
-            User us=(User) session.getAttribute("loginedUser");
+         } else {
+            User us = (User) session.getAttribute("loginedUser");
             String successMessage = (String) request.getAttribute("successMessage");
             String errorMessage = (String) request.getAttribute("errorMessage");
         %>
 
-        <div class="container">
-            <!-- Success/Error Messages -->
-            <% if (successMessage != null) { %>
-            <div class="alert alert-success">
-                <div class="alert-content">
-                    <span class="alert-icon">✅</span>
-                    <span class="alert-text"><%= successMessage %></span>
-                    <button class="alert-close" onclick="this.parentElement.parentElement.style.display = 'none'">×</button>
+        <div class="app-container">
+            <!-- Modern Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-user-circle"></i>
+                        Account Management
+                    </div>
                 </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-item">
+                        <a href="home" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            Home
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="MyStorageServlet" class="nav-link">
+                            <i class="fas fa-book"></i>
+                            My Books
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="cart" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            Book Cart
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="ChangeProfile" class="nav-link active">
+                            <i class="fas fa-user-cog"></i>
+                            Profile
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-bell"></i>
+                            Notifications
+                        </a>
+                    </div>
+                </nav>
             </div>
-            <% } %>
 
-            <% if (errorMessage != null) { %>
-            <div class="alert alert-error">
-                <div class="alert-content">
-                    <span class="alert-icon">❌</span>
-                    <span class="alert-text"><%= errorMessage %></span>
-                    <button class="alert-close" onclick="this.parentElement.parentElement.style.display = 'none'">×</button>
-                </div>
-            </div>
-            <% } %>
-            <!-- Profile Information Card -->
-            <div class="card">
-                <div class="card-header">
-                    <a href="home" style="text-decoration: none">
-                        <button class="back-btn">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                    </a>
-                    <h2>
-                        <span class="icon">👤</span>
-                        Profile Information
-                    </h2>
-                    <p>Update your personal details</p>
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Content Header -->
+                <div class="content-header">
+                    <h1 class="page-title">Profile Management</h1>
+                    <p class="page-subtitle">Update personal information and change password</p>
                 </div>
 
-                <!-- Avatar Section -->
-                <div class="avatar-section">
-                    <div class="avatar-container">
-                        <div class="avatar-preview" id="avatarPreview">
-                            <% if (us.getAvatar() != null && !us.getAvatar().isEmpty()) { %>
-                            <img src="<%= request.getContextPath() %>/<%= us.getAvatar() %>" alt="Avatar">
-                            <% } else { %>
-                            <%= us.getName().substring(0,1).toUpperCase() %>
-                            <% } %>
-                            <div class="avatar-upload-overlay">
-                                <div class="avatar-upload-text">
-                                    📷<br><input type="file" id="avatarInput" name="avatar" class="file-input" accept="image/*">
-                                    <button type="button" class="upload-btn" onclick="document.getElementById('avatarInput').click()">
-                                        Change Photo
+                <!-- Alert Messages -->
+                <% if (successMessage != null) { %>
+                <div class="alert alert-success fade-in">
+                    <i class="fas fa-check-circle"></i>
+                    <span><%= successMessage %></span>
+                    <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                </div>
+                <% } %>
+                <% if (errorMessage != null) { %>
+                <div class="alert alert-error fade-in">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span><%= errorMessage %></span>
+                    <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                </div>
+                <% } %>
+
+                <!-- Profile Grid -->
+                <div class="profile-grid">
+                    <!-- Profile Information Card -->
+                    <div class="profile-card fade-in">
+                        <div class="card-header">
+                            <i class="fas fa-user-edit card-icon"></i>
+                            <h3 class="card-title">Personal Information</h3>
+                        </div>
+
+                        <form action="SaveProfileServlet" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="txtid" value="<%= us.getId() %>" />
+                            <input type="hidden" name="action" value="updateProfile" />
+
+                            <!-- Avatar Section -->
+                            <div class="avatar-section">
+                                <div class="avatar-container">
+                                    <img src="<%= us.getAvatar() %>" alt="Avatar" class="avatar-image" id="avatarPreview" />
+                                    <div class="avatar-overlay" onclick="document.getElementById('avatarInput').click()">
+                                        <button type="button" class="avatar-upload-btn">
+                                            <i class="fas fa-camera"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="file" name="avatar" id="avatarInput" accept="image/*" class="file-input-hidden" />
+                                <p style="color: #34495E; font-size: 0.85rem;">Click on image to change</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" name="txtname" value="<%= us.getName() %>" required class="form-input" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" value="<%= us.getEmail() %>" readonly class="form-input" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <div>
+                                    <span class="status-badge status-user">
+                                        <i class="fas fa-user"></i>
+                                        <%= us.getRole() %>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <div>
+                                    <span class="status-badge status-active">
+                                        <i class="fas fa-check-circle"></i>
+                                        <%= us.getStatus() %>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Save Information
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Change Password Card -->
+                    <div class="profile-card fade-in">
+                        <div class="card-header">
+                            <i class="fas fa-lock card-icon"></i>
+                            <h3 class="card-title">Change Password</h3>
+                        </div>
+
+                        <form action="SaveProfileServlet" method="post">
+                            <input type="hidden" name="txtid" value="<%= us.getId() %>" />
+                            <input type="hidden" name="action" value="changePassword" />
+
+                            <div class="form-group">
+                                <label class="form-label">Current Password</label>
+                                <div class="password-field">
+                                    <input type="password" name="txtcurrentpassword" id="txtcurrentpassword" required class="form-input" />
+                                    <button type="button" class="password-toggle" onclick="togglePassword('txtcurrentpassword', this)">
+                                        <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
                             </div>
-                        </div>
+
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <div class="password-field">
+                                    <input type="password" name="txtnewpassword" id="txtnewpassword" required class="form-input" />
+                                    <button type="button" class="password-toggle" onclick="togglePassword('txtnewpassword', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-requirements">
+                                    <div class="requirement-item" id="lengthReq">
+                                        <i class="fas fa-times"></i>
+                                        <span>At least 8 characters</span>
+                                    </div>
+                                    <div class="requirement-item" id="upperReq">
+                                        <i class="fas fa-times"></i>
+                                        <span>Contains uppercase letter</span>
+                                    </div>
+                                    <div class="requirement-item" id="lowerReq">
+                                        <i class="fas fa-times"></i>
+                                        <span>Contains lowercase letter</span>
+                                    </div>
+                                    <div class="requirement-item" id="numberReq">
+                                        <i class="fas fa-times"></i>
+                                        <span>Contains number</span>
+                                    </div>
+                                    <div class="requirement-item" id="specialReq">
+                                        <i class="fas fa-times"></i>
+                                        <span>Contains special character</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Confirm New Password</label>
+                                <div class="password-field">
+                                    <input type="password" name="txtconfirmnewpassword" id="txtconfirmnewpassword" required class="form-input" />
+                                    <button type="button" class="password-toggle" onclick="togglePassword('txtconfirmnewpassword', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordMatch" class="password-match" style="display: none;"></div>
+                            </div>
+
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-key"></i>
+                                Change Password
+                            </button>
+                        </form>
                     </div>
                 </div>
-
-                <form action='SaveProfileServlet' method='post' enctype="multipart/form-data">
-                    <input type='hidden' name='txtid' value='<%= us.getId() %>' />
-                    <input type='hidden' name='action' value='updateProfile' />
-
-                    <div class="form-group">
-                        <label for="txtname">Full Name</label>
-                        <input type='text' id="txtname" name='txtname' value='<%= us.getName() %>' required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="txtemail">Email Address</label>
-                        <input type='email' id="txtemail" name='txtemail' value='<%= us.getEmail() %>' readonly />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="txtrole">Role</label>
-                        <input type='text' id="txtrole" name='txtrole' value='<%= us.getRole() %>' readonly style="display: none;" />
-                        <span class="role-badge"><%= us.getRole() %></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="txtstatus">Account Status</label>
-                        <input type='text' id="txtstatus" name='txtstatus' value='<%= us.getStatus() %>' readonly style="display: none;" />
-                        <span class="status-badge"><%= us.getStatus() %></span>
-                    </div>
-
-                    <button type='submit' class="submit-btn">
-                        💾 Save Profile Changes
-                    </button>
-                </form>
-            </div>
-
-            <!-- Password Change Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>
-                        <span class="icon">🔒</span>
-                        Change Password
-                    </h2>
-                    <p>Update your account security</p>
-                </div>
-
-                <form action='SaveProfileServlet' method='post'>
-                    <input type='hidden' name='txtid' value='<%= us.getId() %>' />
-                    <input type='hidden' name='action' value='changePassword' />
-
-                    <div class="form-group">
-                        <label for="txtcurrentpassword">Current Password</label>
-                        <div class="password-group">
-                            <input type='password' id="txtcurrentpassword" name='txtcurrentpassword' placeholder="Enter your current password" required />
-                            <button type="button" class="password-toggle" onclick="togglePassword('txtcurrentpassword')">👁️</button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="txtnewpassword">New Password</label>
-                        <div class="password-group">
-                            <input type='password' id="txtnewpassword" name='txtnewpassword' placeholder="Enter new password" required />
-                            <button type="button" class="password-toggle" onclick="togglePassword('txtnewpassword')">👁️</button>
-                        </div>
-                        <div class="password-strength">
-                            <div class="password-strength-bar" id="strengthBar"></div>
-                        </div>
-                        <ul class="password-requirements" id="passwordRequirements">
-                            <li id="lengthReq">At least 8 characters</li>
-                            <li id="upperReq">One uppercase letter</li>
-                            <li id="lowerReq">One lowercase letter</li>
-                            <li id="numberReq">One number</li>
-                            <li id="specialReq">One special character</li>
-                        </ul>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="txtconfirmnewpassword">Confirm New Password</label>
-                        <div class="password-group">
-                            <input type='password' id="txtconfirmnewpassword" name='txtconfirmnewpassword' placeholder="Confirm new password" required />
-                            <button type="button" class="password-toggle" onclick="togglePassword('txtconfirmnewpassword')">👁️</button>
-                        </div>
-                        <div id="passwordMatch" style="font-size: 12px; margin-top: 5px;"></div>
-                    </div>
-
-                    <button type='submit' class="submit-btn password-submit-btn">
-                        🔐 Change Password
-                    </button>
-                </form>
             </div>
         </div>
 
         <script>
-            // Avatar Upload Preview
+            // Avatar Preview
             document.getElementById('avatarInput').addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        const avatarPreview = document.getElementById('avatarPreview');
-                        avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Avatar">`;
+                        document.getElementById('avatarPreview').src = e.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
             });
 
             // Password Toggle
-            function togglePassword(inputId) {
+            function togglePassword(inputId, button) {
                 const input = document.getElementById(inputId);
-                const button = input.nextElementSibling;
-
+                const icon = button.querySelector('i');
                 if (input.type === 'password') {
                     input.type = 'text';
-                    button.textContent = '🙈';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
                 } else {
                     input.type = 'password';
-                    button.textContent = '👁️';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
                 }
             }
 
-            // Password Strength Checker
+            // Password Validation
             document.getElementById('txtnewpassword').addEventListener('input', function (e) {
-                const password = e.target.value;
-                const strengthBar = document.getElementById('strengthBar');
-                const requirements = {
-                    length: password.length >= 8,
-                    upper: /[A-Z]/.test(password),
-                    lower: /[a-z]/.test(password),
-                    number: /\d/.test(password),
-                    special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
-                };
-
-                // Update requirement indicators
-                document.getElementById('lengthReq').classList.toggle('valid', requirements.length);
-                document.getElementById('upperReq').classList.toggle('valid', requirements.upper);
-                document.getElementById('lowerReq').classList.toggle('valid', requirements.lower);
-                document.getElementById('numberReq').classList.toggle('valid', requirements.number);
-                document.getElementById('specialReq').classList.toggle('valid', requirements.special);
-
-                // Calculate strength
-                const validCount = Object.values(requirements).filter(Boolean).length;
-                strengthBar.className = 'password-strength-bar';
-
-                if (validCount >= 5)
-                    strengthBar.classList.add('strength-strong');
-                else if (validCount >= 4)
-                    strengthBar.classList.add('strength-good');
-                else if (validCount >= 3)
-                    strengthBar.classList.add('strength-fair');
-                else if (validCount >= 1)
-                    strengthBar.classList.add('strength-weak');
+                const pwd = e.target.value;
+                
+                // Check length
+                const lengthReq = document.getElementById('lengthReq');
+                updateRequirement(lengthReq, pwd.length >= 8);
+                
+                // Check uppercase
+                const upperReq = document.getElementById('upperReq');
+                updateRequirement(upperReq, /[A-Z]/.test(pwd));
+                
+                // Check lowercase
+                const lowerReq = document.getElementById('lowerReq');
+                updateRequirement(lowerReq, /[a-z]/.test(pwd));
+                
+                // Check number
+                const numberReq = document.getElementById('numberReq');
+                updateRequirement(numberReq, /\d/.test(pwd));
+                
+                // Check special character
+                const specialReq = document.getElementById('specialReq');
+                updateRequirement(specialReq, /[!@#$%^&*(),.?":{}|<>]/.test(pwd));
+                
+                // Check password match
+                checkPasswordMatch();
             });
 
-            // Password Match Checker
+            function updateRequirement(element, isValid) {
+                const icon = element.querySelector('i');
+                if (isValid) {
+                    element.classList.add('valid');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-check');
+                } else {
+                    element.classList.remove('valid');
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-times');
+                }
+            }
+
+            // Password Match Check
             function checkPasswordMatch() {
                 const newPassword = document.getElementById('txtnewpassword').value;
                 const confirmPassword = document.getElementById('txtconfirmnewpassword').value;
                 const matchDiv = document.getElementById('passwordMatch');
 
                 if (confirmPassword === '') {
-                    matchDiv.textContent = '';
+                    matchDiv.style.display = 'none';
                     return;
                 }
 
+                matchDiv.style.display = 'block';
                 if (newPassword === confirmPassword) {
                     matchDiv.textContent = '✓ Passwords match';
-                    matchDiv.style.color = '#27AE60';
+                    matchDiv.className = 'password-match match';
                 } else {
                     matchDiv.textContent = '✗ Passwords do not match';
-                    matchDiv.style.color = '#E74C3C';
+                    matchDiv.className = 'password-match no-match';
                 }
             }
 
-            document.getElementById('txtnewpassword').addEventListener('input', checkPasswordMatch);
             document.getElementById('txtconfirmnewpassword').addEventListener('input', checkPasswordMatch);
+            
+            // Auto-hide alerts after 5 seconds
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-20px)';
+                    setTimeout(() => alert.remove(), 300);
+                });
+            }, 5000);
         </script>
-
         <%
          }
         %>

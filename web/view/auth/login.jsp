@@ -9,7 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Đăng nhập - Thư viện trực tuyến</title>
+        <title>Login - Online Library</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
@@ -118,11 +118,53 @@
                 color: #721c24;
                 border: 1px solid #f5c6cb;
             }
+
+            /* Styles for Remember Me checkbox */
+            .remember-me-container {
+                display: flex;
+                align-items: center;
+                margin-bottom: var(--spacing-md);
+                margin-top: var(--spacing-sm);
+            }
+
+            .remember-me-container input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                margin-right: var(--spacing-sm);
+                accent-color: var(--primary-accent);
+                cursor: pointer;
+            }
+
+            .remember-me-container label {
+                margin-bottom: 0;
+                font-weight: 400;
+                cursor: pointer;
+                font-size: 0.9em;
+            }
+
+            .form-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: var(--spacing-md);
+            }
+
+            .forgot-password {
+                color: var(--primary-accent);
+                text-decoration: none;
+                font-size: 0.9em;
+                transition: all 0.3s ease;
+            }
+
+            .forgot-password:hover {
+                color: var(--secondary-accent);
+                text-decoration: underline;
+            }
         </style>
     </head>
     <body>
         <div class="login-container">
-            <h1>Đăng nhập</h1>
+            <h1>Login</h1>
             
             <!-- Hiển thị thông báo thành công -->
             <% if (request.getAttribute("message") != null) { %>
@@ -140,18 +182,30 @@
             
             <form action="${pageContext.request.contextPath}/LoginServlet" method="POST">
                 <div class="form-group">
-                    <label for="username">Email đăng nhập</label>
+                    <label for="username">Your Email</label>
                     <input type="text" class="form-control" id="username" name="txtemail" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Mật khẩu</label>
+                    <label for="password">Your Password</label>
                     <input type="password" class="form-control" id="password" name="txtpassword" required>
                 </div>
-                <button type="submit" class="btn-login">Đăng nhập</button>
+                
+                <!-- Remember Me checkbox -->
+                <div class="remember-me-container">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">Remember me for 7 days</label>
+                </div>
+                
+                <button type="submit" class="btn-login">Login</button>
+                
+                <div class="form-actions">
+                    <a href="${pageContext.request.contextPath}/ForgotPasswordServlet" class="forgot-password">Forgot password?</a>
+                </div>
             </form>
+            
             <div class="register-link">
-                <p>Chưa có tài khoản? | <a href="${pageContext.request.contextPath}/RegisterServlet">Đăng ký ngay</a></p>
-                <p><a href="javascript: history.back()">Quay lại</a></p>
+                <p>New to Library? | <a href="${pageContext.request.contextPath}/RegisterServlet">Sign Up</a></p>
+                <p><a href="javascript: history.back()">Come Back</a></p>
             </div>
         </div>
     </body>

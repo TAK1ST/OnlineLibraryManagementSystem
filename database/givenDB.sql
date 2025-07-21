@@ -12,7 +12,8 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role varchar(20),
-    status varchar (20) DEFAULT 'active'   --active/inactive
+    status varchar (20) DEFAULT 'active',   --active/inactive
+	avatar varchar (100),
 );
 GO
 -- 2. BOOKS TABLE
@@ -56,6 +57,7 @@ CREATE TABLE book_requests (
     id INT PRIMARY KEY identity(1,1),
     user_id INT NOT NULL,
     book_id INT NOT NULL,
+	quantity INT NOT NULL DEFAULT 1,
     request_date DATE ,
 	request_type VARCHAR(20) NOT NULL DEFAULT 'borrow' CHECK (request_type IN ('borrow', 'return')),
     status varchar(20) default 'pending',-- 'approved', 'rejected' 
@@ -69,6 +71,23 @@ CREATE TABLE system_config (
     config_key VARCHAR(50) NOT NULL UNIQUE,
     config_value VARCHAR(100) NOT NULL,
     description TEXT
+);
+GO
+CREATE TABLE messages (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    user_id INT NOT NULL,
+    subject NVARCHAR(255),
+    message TEXT,
+    status VARCHAR(20) DEFAULT 'unread',
+    created_at DATETIME DEFAULT GETDATE()
+);
+GO
+CREATE TABLE notifications (
+    id INT PRIMARY KEY IDENTITY,
+    user_id INT,
+    message NVARCHAR(255),
+    is_read BIT DEFAULT 0,
+    created_at DATETIME DEFAULT GETDATE()
 );
 GO
 

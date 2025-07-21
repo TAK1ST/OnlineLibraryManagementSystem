@@ -1,5 +1,6 @@
 package service.implement;
 
+import constant.constance;
 import dao.implement.BookDAO;
 import dao.implement.BookRequestDAO;
 import dao.implement.BorrowRecordDAO;
@@ -13,6 +14,7 @@ import entity.BorrowRecord;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import util.DBConnection;
@@ -30,7 +32,7 @@ public class BookRequestStatusService {
       private final IBookRequestDAO bookRequestDAO;
       private final IBorrowRecordDAO borrowRecordDAO;
       private final IBookDAO bookDAO;
-
+      constance cs = new constance();
       public BookRequestStatusService(IBookRequestDAO bookRequestDAO, IBorrowRecordDAO borrowRecordDAO, IBookDAO bookDAO) {
             this.bookRequestDAO = bookRequestDAO;
             this.borrowRecordDAO = borrowRecordDAO;
@@ -61,7 +63,10 @@ public class BookRequestStatusService {
             if (offset < 0) {
                   offset = 0;
             }
-            return bookRequestDAO.getBookRequestStatusBySearch(title, status, offset);
+            
+            List<BookInforRequestStatusDTO> result = bookRequestDAO.getBookRequestStatusBySearch(title, status, offset);
+            
+            return result != null ? result : new ArrayList<>();
       }
 
       public boolean createBorrowRecord(int requestId) {
@@ -69,76 +74,66 @@ public class BookRequestStatusService {
             try {
                   cn = DBConnection.getConnection();
                   if (cn == null) {
-                        throw new SQLException("Cannot establish database connection");
+                        throw new SQLException("Cannot connect database");
                   }
                   cn.setAutoCommit(false);
 
-                  // Get the book request
+                  //get request 
                   Optional<BookRequest> requestOpt = getBookRequestById(requestId);
                   if (!requestOpt.isPresent()) {
-                        throw new IllegalArgumentException("Request not found: " + requestId);
+                        throw new IllegalArgumentException("Request not found with ID: " + requestId);
                   }
-                  BookRequest request = requestOpt.get();
+                  BookRequest request
+                          = requestOpt.get();
 
-                  // Validate request status - must be approved
-                  if (!"approved".equals(request.getStatus())) {
-                        throw new IllegalStateException("Request must be approved first. Current status: " + request.getStatus());
+                  // Kiểm tra trạng thái yêu cầu
+                  if (!"approved-borrow".equalsIgnoreCase(request.getStatus())) {
+                        throw new IllegalStateException("Yêu cầu phải ở trạng thái approved-borrow. Trạng thái hiện tại: " + request.getStatus());
                   }
 
-                  // Check book availability
+                  // Kiểm tra sách
                   Book book = bookDAO.getBookById(request.getBookId());
                   if (book == null) {
-                        System.out.println("Book not found for bookId: " + request.getBookId());
-                        throw new IllegalStateException("Book not found");
+                        throw new IllegalStateException("Không tìm thấy sách với ID: " + request.getBookId());
                   }
                   if (book.getAvailableCopies() <= 0) {
-                        throw new IllegalStateException("Book not available - no copies left");
+                        throw new IllegalStateException("Sách không còn bản sao nào khả dụng (ID: " + book.getId() + ")");
                   }
-                  if (!"active".equals(book.getStatus())) {
-                        throw new IllegalStateException("Book is not active");
+                  if (!"active".equalsIgnoreCase(book.getStatus())) {
+                        throw new IllegalStateException("Sách không ở trạng thái active (ID: " + book.getId() + ")");
                   }
 
-                  // Create borrow record
+                  // Tạo bản ghi mượn
                   BorrowRecord borrowRecord = new BorrowRecord();
                   borrowRecord.setUserId(request.getUserId());
                   borrowRecord.setBookId(request.getBookId());
                   borrowRecord.setBorrowDate(LocalDate.now());
-                  borrowRecord.setDueDate(LocalDate.now().plusDays(14)); // 2 weeks borrow period
+                  borrowRecord.setDueDate(LocalDate.now().plusDays(cs.DEFAULT_BORROW_DURATION));
                   borrowRecord.setStatus("borrowed");
 
-                  try {
-                        borrowRecordDAO.save(borrowRecord);
-                  } catch (Exception e) {
-                        e.printStackTrace();
-                  }
+                  borrowRecordDAO.save(borrowRecord);
 
-                  // Update book available copies
+                  // Cập nhật số lượng sách
                   book.setAvailableCopies(book.getAvailableCopies() - 1);
                   boolean bookUpdated = bookDAO.update(book);
                   if (!bookUpdated) {
-                        throw new RuntimeException("Failed to update book available copies");
-                  }
-
-                  // Update request status to completed
-                  boolean statusUpdated = updateBookRequestStatus(requestId, "completed");
-                  if (!statusUpdated) {
-                        throw new RuntimeException("Failed to update request status to completed");
+                        throw new RuntimeException("Không thể cập nhật số lượng sách (ID: " + book.getId() + ")");
                   }
 
                   cn.commit();
-                  System.out.println("Successfully created borrow record for request: " + requestId);
+                  System.out.println("Tạo bản ghi mượn thành công cho yêu cầu: " + requestId);
                   return true;
 
             } catch (Exception e) {
                   if (cn != null) {
                         try {
                               cn.rollback();
-                              System.out.println("Transaction rolled back due to error: " + e.getMessage());
+                              System.out.println("Giao dịch được hoàn tác do lỗi: " + e.getMessage());
                         } catch (SQLException ex) {
-                              System.err.println("Error during rollback: " + ex.getMessage());
+                              System.err.println("Lỗi khi hoàn tác giao dịch: " + ex.getMessage());
                         }
                   }
-                  System.err.println("Error creating borrow record: " + e.getMessage());
+                  System.err.println("Lỗi khi tạo bản ghi mượn: " + e.getMessage());
                   e.printStackTrace();
                   return false;
             } finally {
@@ -147,7 +142,7 @@ public class BookRequestStatusService {
                               cn.setAutoCommit(true);
                               cn.close();
                         } catch (SQLException e) {
-                              System.err.println("Error closing connection: " + e.getMessage());
+                              System.err.println("Lỗi khi đóng kết nối: " + e.getMessage());
                         }
                   }
             }
@@ -160,5 +155,17 @@ public class BookRequestStatusService {
       public boolean processReturnRequest(int requestId) {
             BookRequestDAO dao = (BookRequestDAO) bookRequestDAO;
             return dao.processReturnRequest(requestId);
+      }
+      
+      public Book getBookDAO(int id)
+      { 
+            BookRequest br = bookRequestDAO.getBookRequestById(id).get();
+            return bookDAO.getBookById(br.getBookId());
+      }
+      
+      public boolean CheckBookAvailability(int id)
+      {
+            int availableCopies = bookDAO.getBookById(id).getAvailableCopies();
+            return availableCopies > 1;
       }
 }

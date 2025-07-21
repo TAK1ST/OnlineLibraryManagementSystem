@@ -16,6 +16,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -23,77 +24,34 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class LoginValidateFilter implements Filter {
 
-    private static final boolean debug = true;
-
-    // The filter configuration object we are associated with.  If
-    // this value is null, this filter instance is not currently
-    // configured. 
+    private static final boolean debug = false; // Tắt debug để tránh spam log
     private FilterConfig filterConfig = null;
 
     public LoginValidateFilter() {
     }
 
+    /**
+     * Xử lý trước khi filter chạy
+     */
     private void doBeforeProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
         if (debug) {
             log("LoginValidateFilter:DoBeforeProcessing");
         }
-
-        // Write code here to process the request and/or response before
-        // the rest of the filter chain is invoked.
-        // For example, a logging filter might log items on the request object,
-        // such as the parameters.
-        /*
-	for (Enumeration en = request.getParameterNames(); en.hasMoreElements(); ) {
-	    String name = (String)en.nextElement();
-	    String values[] = request.getParameterValues(name);
-	    int n = values.length;
-	    StringBuffer buf = new StringBuffer();
-	    buf.append(name);
-	    buf.append("=");
-	    for(int i=0; i < n; i++) {
-	        buf.append(values[i]);
-	        if (i < n-1)
-	            buf.append(",");
-	    }
-	    log(buf.toString());
-	}
-         */
     }
 
+    /**
+     * Xử lý sau khi filter chạy
+     */
     private void doAfterProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
         if (debug) {
             log("LoginValidateFilter:DoAfterProcessing");
         }
-
-        // Write code here to process the request and/or response after
-        // the rest of the filter chain is invoked.
-        // For example, a logging filter might log the attributes on the
-        // request object after the request has been processed. 
-        /*
-	for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
-	    String name = (String)en.nextElement();
-	    Object value = request.getAttribute(name);
-	    log("attribute: " + name + "=" + value.toString());
-
-	}
-         */
-        // For example, a filter might append something to the response.
-        /*
-	PrintWriter respOut = new PrintWriter(response.getWriter());
-	respOut.println("<P><B>This has been appended by an intrusive filter.</B>");
-         */
     }
 
     /**
-     *
-     * @param request The servlet request we are processing
-     * @param response The servlet response we are creating
-     * @param chain The filter chain we are processing
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
+     * Filter chính - validate dữ liệu đăng nhập
      */
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
@@ -107,38 +65,52 @@ public class LoginValidateFilter implements Filter {
 
         Throwable problem = null;
         try {
-            // Cast để có thể sử dụng getMethod()
             HttpServletRequest httpRequest = (HttpServletRequest) request;
+            HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-            // Chỉ validate khi là POST request (submit form)
+            // Chỉ validate khi là POST request (submit form đăng nhập)
             if ("POST".equalsIgnoreCase(httpRequest.getMethod())) {
                 String email = request.getParameter("txtemail");
                 String password = request.getParameter("txtpassword");
 
-                // Kiểm tra null trước khi validate
-                if (email != null && !email.trim().isEmpty()) {
-                    if (email.matches(Regex.EMAIL_REGEX)) {
-                        chain.doFilter(request, response);
-                    } else {
-                        request.setAttribute("ERROR", "bạn phải nhập đúng định dạng gmail của bạn!(ví dụ: abc@gmail.com,...)");
-                        request.getRequestDispatcher("login.jsp").forward(request, response);
-                    }
-                } else {
-                    request.setAttribute("ERROR", "Email không được để trống!");
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                // Validate email
+                if (email == null || email.trim().isEmpty()) {
+                    request.setAttribute("error", "Email cannot be empty!");
+                    request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
+                    return;
                 }
+
+                // Validate email format
+                if (!email.trim().matches(Regex.EMAIL_REGEX)) {
+                    request.setAttribute("error", "You must enter your email format correctly! (Ex: abc@gmail.com)");
+                    request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
+                    return;
+                }
+
+                // Validate password
+                if (password == null || password.trim().isEmpty()) {
+                    request.setAttribute("error", "Password cannot be empty!");
+                    request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
+                    return;
+                }
+
+                // Nếu validation pass, tiếp tục đến LoginServlet
+                chain.doFilter(request, response);
             } else {
-                // Đối với GET request (click link), chỉ cần forward
+                // Đối với GET request, chỉ cần forward
                 chain.doFilter(request, response);
             }
 
         } catch (Throwable t) {
             problem = t;
-            t.printStackTrace();
+            if (debug) {
+                t.printStackTrace();
+            }
         }
 
         doAfterProcessing(request, response);
 
+        // Xử lý lỗi nếu có
         if (problem != null) {
             if (problem instanceof ServletException) {
                 throw (ServletException) problem;
@@ -151,41 +123,40 @@ public class LoginValidateFilter implements Filter {
     }
 
     /**
-     * Return the filter configuration object for this filter.
+     * Getter cho FilterConfig
      */
     public FilterConfig getFilterConfig() {
         return (this.filterConfig);
     }
 
     /**
-     * Set the filter configuration object for this filter.
-     *
-     * @param filterConfig The filter configuration object
+     * Setter cho FilterConfig
      */
     public void setFilterConfig(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
     }
 
     /**
-     * Destroy method for this filter
+     * Destroy method
      */
     public void destroy() {
+        // Cleanup resources if needed
     }
 
     /**
-     * Init method for this filter
+     * Init method
      */
     public void init(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
             if (debug) {
-                log("LoginValidateFilter:Initializing filter");
+                log("LoginValidateFilter: Initializing filter");
             }
         }
     }
 
     /**
-     * Return a String representation of this object.
+     * ToString method
      */
     @Override
     public String toString() {
@@ -198,6 +169,9 @@ public class LoginValidateFilter implements Filter {
         return (sb.toString());
     }
 
+    /**
+     * Xử lý lỗi và hiển thị stack trace
+     */
     private void sendProcessingError(Throwable t, ServletResponse response) {
         String stackTrace = getStackTrace(t);
 
@@ -206,16 +180,15 @@ public class LoginValidateFilter implements Filter {
                 response.setContentType("text/html");
                 PrintStream ps = new PrintStream(response.getOutputStream());
                 PrintWriter pw = new PrintWriter(ps);
-                pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
-
-                // PENDING! Localize this for next official release
+                pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n");
                 pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");
                 pw.print(stackTrace);
-                pw.print("</pre></body>\n</html>"); //NOI18N
+                pw.print("</pre></body>\n</html>");
                 pw.close();
                 ps.close();
                 response.getOutputStream().close();
             } catch (Exception ex) {
+                // Log exception nếu cần
             }
         } else {
             try {
@@ -224,10 +197,14 @@ public class LoginValidateFilter implements Filter {
                 ps.close();
                 response.getOutputStream().close();
             } catch (Exception ex) {
+                // Log exception nếu cần
             }
         }
     }
 
+    /**
+     * Lấy stack trace dưới dạng String
+     */
     public static String getStackTrace(Throwable t) {
         String stackTrace = null;
         try {
@@ -238,12 +215,17 @@ public class LoginValidateFilter implements Filter {
             sw.close();
             stackTrace = sw.getBuffer().toString();
         } catch (Exception ex) {
+            // Ignore
         }
         return stackTrace;
     }
 
+    /**
+     * Log message
+     */
     public void log(String msg) {
-        filterConfig.getServletContext().log(msg);
+        if (filterConfig != null) {
+            filterConfig.getServletContext().log(msg);
+        }
     }
-
 }

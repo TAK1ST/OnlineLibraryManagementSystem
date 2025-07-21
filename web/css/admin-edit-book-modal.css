@@ -7,63 +7,164 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Author     : asus
 */
 
-.modal-content {
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+/* Modal backdrop */
+.modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.5);
+      pointer-events: auto; /* Ensure backdrop is clickable */
 }
 
-.modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 10px 10px 0 0;
+/* Modal positioning */
+#editBookModal {
+      display: none; /* Hide modal initially */
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh; /* Full viewport height for vertical centering */
+      padding: 1rem;
 }
 
-.modal-title {
-    font-weight: 600;
+#editBookModal.show {
+      display: flex; /* Show modal when active */
 }
 
-.btn-close {
-    filter: invert(1);
+#editBookModal .modal-dialog {
+      margin: auto; /* Center dialog horizontally and vertically */
+      max-height: 90vh;
+      width: 90%;
+      max-width: 800px;
 }
 
+/* Modal content */
+#editBookModal .modal-content {
+      margin-top: 10px;
+      border-radius: 8px;
+      background: #fff;
+}
+
+/* Modal header */
+#editBookModal .modal-header {
+      background: #2C3E50;
+      color: #fff;
+      padding: 1rem;
+      border-radius: 8px 8px 0 0;
+}
+
+#editBookModal .modal-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+}
+
+#editBookModal .btn-close {
+      color: #fff;
+      font-size: 1.2rem;
+      opacity: 0.8;
+      padding: 0.5rem;
+}
+
+#editBookModal .btn-close:hover {
+      opacity: 1;
+}
+
+/* Modal body */
+#editBookModal .modal-body {
+      padding: 1.5rem;
+      background: #f5f5f5;
+      max-height: calc(90vh - 100px);
+      overflow-y: auto;
+}
+
+.modal-edit-book-section {
+      background: #fff;
+      border-radius: 4px;
+      padding: 1rem;
+}
+
+/* Form labels */
 .modal-label {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 5px;
+      color: #2C3E50;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
 }
 
-.modal-input, .modal-select {
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    padding: 10px 15px;
-    transition: all 0.3s ease;
+.modal-label .text-danger {
+      color: #e74c3c;
 }
 
-.modal-input:focus, .modal-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+/* Form inputs */
+.modal-input,
+.modal-select {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 0.5rem;
+      font-size: 0.9rem;
 }
 
-.text-danger {
-    color: #dc3545 !important;
+.modal-input:focus,
+.modal-select:focus {
+      border-color: #1ABC9C;
+      outline: none;
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-weight: 600;
-    transition: all 0.3s ease;
+.modal-input[readonly] {
+      background: #f8f9fa;
+      cursor: not-allowed;
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+/* Form rows */
+.form-row {
+      margin-bottom: 1rem;
 }
 
-.btn-secondary {
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-weight: 600;
+/* Modal footer */
+#editBookModal .modal-footer {
+      padding: 1rem;
+      border-top: 1px solid #ccc;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+}
+
+/* Buttons */
+#editBookModal .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      cursor: pointer;
+}
+
+#editBookModal .btn-secondary {
+      background: #ccc;
+      color: #333;
+}
+
+#editBookModal .btn-secondary:hover {
+      background: #bbb;
+}
+
+#editBookModal .btn-primary {
+      background: #1ABC9C;
+      color: #fff;
+}
+
+#editBookModal .btn-primary:hover {
+      background: #16a085;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+      #editBookModal .modal-content {
+            width: 95vw;
+      }
+
+      #editBookModal .modal-body {
+            padding: 1rem;
+      }
+
+      #editBookModal .modal-footer {
+            flex-direction: column;
+      }
+
+      #editBookModal .btn {
+            width: 100%;
+      }
 }

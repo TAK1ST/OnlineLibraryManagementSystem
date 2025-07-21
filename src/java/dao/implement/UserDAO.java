@@ -6,6 +6,7 @@ import entity.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -295,14 +296,13 @@ public class UserDAO implements IUserDAO {
                 if (rs != null && rs.next()) {
                     String hashedPassword = rs.getString("password");
 
-                    System.out.println("Debug - Email: " + email);
-                    System.out.println("Debug - Input password: " + password);
-                    System.out.println("Debug - Stored hash: " + hashedPassword);
-                    System.out.println("Debug - Hash starts with $2a: " + hashedPassword.startsWith("$2a"));
-
+//                    System.out.println("Debug - Email: " + email);
+//                    System.out.println("Debug - Input password: " + password);
+//                    System.out.println("Debug - Stored hash: " + hashedPassword);
+//                    System.out.println("Debug - Hash starts with $2a: " + hashedPassword.startsWith("$2a"));
                     // Verify password using BCrypt
                     boolean passwordMatch = BCrypt.checkpw(password, hashedPassword);
-                    System.out.println("Debug - Password match: " + passwordMatch);
+//                    System.out.println("Debug - Password match: " + passwordMatch);
 
                     if (passwordMatch) {
                         int id = rs.getInt("id");
@@ -311,12 +311,11 @@ public class UserDAO implements IUserDAO {
                         String status = rs.getString("status");
                         String avatar = rs.getString("avatar");
                         result = new User(id, name, email, hashedPassword, role, status, avatar);
-                        System.out.println("User authenticated successfully: " + email);
                     } else {
                         System.out.println("Password verification failed for user: " + email);
                         // Try direct comparison for debugging (remove this in production)
                         if (password.equals(hashedPassword)) {
-                            System.out.println("DEBUG: Password stored as plaintext!");
+//                            System.out.println("DEBUG: Password stored as plaintext!");
                         }
                     }
                 } else {
@@ -354,7 +353,7 @@ public class UserDAO implements IUserDAO {
         try {
             cn = DBConnection.getConnection();
             if (cn != null) {
-                String sql = "SELECT [id], [name], [email], [password], [role], [status] FROM [dbo].[users] WHERE [id] = ?";
+                String sql = "SELECT [id], [name], [email], [password], [role], [status], [avatar] FROM [dbo].[users] WHERE [id] = ?";
                 pst = cn.prepareStatement(sql);
                 pst.setInt(1, id);
                 rs = pst.executeQuery();
@@ -444,7 +443,7 @@ public class UserDAO implements IUserDAO {
         try {
             cn = DBConnection.getConnection();
             if (cn != null) {
-                String sql = "SELECT id, name, email, password, role, status FROM dbo.users WHERE email = ?";
+                String sql = "SELECT id, name, email, password, role, status, avatar FROM dbo.users WHERE email = ?";
                 st = cn.prepareStatement(sql);
                 st.setString(1, email);
                 rs = st.executeQuery();
@@ -774,4 +773,196 @@ public class UserDAO implements IUserDAO {
         return result;
     }
 
+    public boolean saveResetToken(int userId, String token, long expirationTime) throws ClassNotFoundException {
+        Connection cn = null;
+        PreparedStatement st = null;
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                // Xóa token cũ nếu có
+                String deleteSql = "DELETE FROM password_reset_tokens WHERE user_id = ?";
+                st = cn.prepareStatement(deleteSql);
+                st.setInt(1, userId);
+                st.executeUpdate();
+                st.close();
+
+                // Thêm token mới
+                String insertSql = "INSERT INTO password_reset_tokens (user_id, token, expiration_time, created_at) VALUES (?, ?, ?, GETDATE())";
+                st = cn.prepareStatement(insertSql);
+                st.setInt(1, userId);
+                st.setString(2, token);
+                st.setLong(3, expirationTime);
+
+                return st.executeUpdate() > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public boolean isValidToken(String token) throws ClassNotFoundException {
+        Connection cn = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                String sql = "SELECT expiration_time FROM password_reset_tokens WHERE token = ?";
+                st = cn.prepareStatement(sql);
+                st.setString(1, token);
+                rs = st.executeQuery();
+
+                if (rs != null && rs.next()) {
+                    long expirationTime = rs.getLong("expiration_time");
+                    return System.currentTimeMillis() < expirationTime;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    public User getUserByToken(String token) throws ClassNotFoundException {
+        Connection cn = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                String sql = "SELECT u.id, u.name, u.email, u.password, u.role, u.status, u.avatar "
+                        + "FROM users u "
+                        + "INNER JOIN password_reset_tokens prt ON u.id = prt.user_id "
+                        + "WHERE prt.token = ? AND prt.expiration_time > ?";
+
+                st = cn.prepareStatement(sql);
+                st.setString(1, token);
+                st.setLong(2, System.currentTimeMillis());
+                rs = st.executeQuery();
+
+                if (rs != null && rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    String password = rs.getString("password");
+                    String role = rs.getString("role");
+                    String status = rs.getString("status");
+                    String avatar = rs.getString("avatar");
+
+                    // Tạo User object với các trường có sẵn
+                    return new User(id, name, email, password, role, status,avatar);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+                if (cn != null) {
+                    cn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+    
+    public void deleteToken(String token) throws ClassNotFoundException {
+        Connection cn = null;
+        PreparedStatement st = null;
+        
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                String sql = "DELETE FROM password_reset_tokens WHERE token = ?";
+                st = cn.prepareStatement(sql);
+                st.setString(1, token);
+                st.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (st != null) st.close();
+                if (cn != null) cn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    // Thêm method để lấy user theo email (cần cho forgot password)
+    public User getUserByEmail(String email) throws ClassNotFoundException {
+        Connection cn = null;
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try {
+            cn = DBConnection.getConnection();
+            if (cn != null) {
+                String sql = "SELECT id, name, email, password, role, status, avatar FROM users WHERE email = ? AND status = 'active'";
+                st = cn.prepareStatement(sql);
+                st.setString(1, email);
+                rs = st.executeQuery();
+
+                if (rs != null && rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String userEmail = rs.getString("email");
+                    String password = rs.getString("password");
+                    String role = rs.getString("role");
+                    String status = rs.getString("status");
+                    String avatar = rs.getString("avatar");
+
+                    return new User(id, name, userEmail, password, role, status, avatar);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (st != null) st.close();
+                if (cn != null) cn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 }

@@ -1,18 +1,18 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ * Click nbfs://SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller.admin;
 
 import constant.ViewURL;
 import static constant.constance.RECORDS_PER_LOAD;
 import dto.BookInforRequestStatusDTO;
+import entity.Book;
 import entity.BookRequest;
 import entity.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -43,7 +43,7 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
             String searchStatus = request.getParameter("searchStatus");
             int offset = request.getParameter("offset") != null ? Integer.parseInt(request.getParameter("offset")) : 0;
 
-            // Handle empty string as null for proper filtering
+            // Normalize search parameters
             if (searchTitle != null && searchTitle.trim().isEmpty()) {
                   searchTitle = null;
             }
@@ -51,12 +51,16 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                   searchStatus = null;
             }
 
+            if (searchStatus != null) {
+                  searchStatus = mapFrontendStatusToBackend(searchStatus);
+            }
+
             List<BookInforRequestStatusDTO> bookStatusList = service.getAllBookRequestStatusLazyLoading(searchTitle, searchStatus, offset);
             if (bookStatusList == null) {
                   bookStatusList = new ArrayList<>();
             }
+
             request.setAttribute("bookStatusList", bookStatusList);
-            System.out.println("bookStatusList size: " + (bookStatusList != null ? bookStatusList.size() : "null"));
 
             if (bookStatusList.isEmpty()) {
                   request.setAttribute("emptyMessage", "No matching book borrowing requests found!");
@@ -64,8 +68,10 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
 
             request.setAttribute("recordsPerPage", RECORDS_PER_LOAD);
             request.setAttribute("offset", offset);
+            request.setAttribute("searchTitle", searchTitle);
+            request.setAttribute("searchStatus", request.getParameter("searchStatus"));
 
-            // Hiển thị thông báo từ session (nếu có)
+            // Handle session messages
             HttpSession session = request.getSession();
             String successMessage = (String) session.getAttribute("successMessage");
             String errorMessage = (String) session.getAttribute("errorMessage");
@@ -84,6 +90,7 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                   response.setContentType("text/html; charset=UTF-8");
                   request.getRequestDispatcher(ViewURL.BOOK_REQUEST_LIST_FRAGMENT).include(request, response);
             } else {
+                  System.out.println("come to status request borrow book");
                   request.getRequestDispatcher(ViewURL.ADMIN_STATUS_REQUEST_BORROW_BOOK).forward(request, response);
             }
       }
@@ -97,26 +104,22 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
             HttpSession session = request.getSession();
 
             try {
-                  // Validate parameters
-                  if (requestId == null || requestId.trim().isEmpty()) {
-                        throw new Exception("Request ID is required");
+                  // Validate request ID
+                  if (requestId == null || requestId.trim().isEmpty() || !requestId.matches("\\d+")) {
+                        throw new IllegalArgumentException("Invalid request ID");
                   }
 
+                  // Validate action
                   if (action == null || action.trim().isEmpty()) {
-                        throw new Exception("Action is required");
+                        throw new IllegalArgumentException("Invalid action");
                   }
 
                   int id = Integer.parseInt(requestId);
 
-                  // Validate action
-                  if (!action.equals("approve") && !action.equals("reject") && !action.equals("borrow")) {
-                        throw new Exception("Invalid action: " + action);
-                  }
-
-                  // Process based on action
-                  switch (action) {
+                  // Process different actions
+                  switch (action.toLowerCase()) {
                         case "approve":
-                              processApprove(service, id, session, request); 
+                              processApprove(service, id, session);
                               break;
                         case "reject":
                               processReject(service, id, session);
@@ -124,58 +127,109 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                         case "borrow":
                               processBorrow(service, id, session);
                               break;
+                        case "return":
+                              processReturn(service, id, session);
+                              break;
+                        default:
+                              throw new IllegalArgumentException("Invalid action: " + action);
                   }
 
-                  // Redirect back to the same page
                   response.sendRedirect(request.getContextPath() + "/statusrequestborrowbook");
 
             } catch (NumberFormatException e) {
+                  System.err.println("Number format error: " + e.getMessage());
                   session.setAttribute("errorMessage", "Invalid request ID format");
                   response.sendRedirect(request.getContextPath() + "/statusrequestborrowbook");
             } catch (Exception e) {
+                  System.err.println("Error processing request: " + e.getMessage());
                   e.printStackTrace();
                   session.setAttribute("errorMessage", "Error: " + e.getMessage());
                   response.sendRedirect(request.getContextPath() + "/statusrequestborrowbook");
             }
       }
 
-      // Sửa lỗi nghiêm trọng trong phương thức này
-      private void processApprove(BookRequestStatusService service, int requestId, HttpSession session, HttpServletRequest request) throws Exception {
+      /**
+       * Map frontend status values to backend status values
+       */
+      private String mapFrontendStatusToBackend(String frontendStatus) {
+            if (frontendStatus == null || frontendStatus.trim().isEmpty()) {
+                  return null;
+            }
+
+            String status = frontendStatus.toLowerCase().trim();
+            System.err.println(status);
+
+            switch (status) {
+                  case "pending_borrow":
+                        return "pending";
+                  case "pending_return":
+                        return "pending";
+                  case "approved_borrow":
+                  case "approved-borrow":
+                        return "approved-borrow";
+                  case "approved_return":
+                  case "approved-return":
+                        return "approved-return";
+                  case "borrowed":
+                        return "borrowed";
+                  case "completed":
+                        return "completed";
+                  case "rejected":
+                        return "rejected";
+                  default:
+                        return frontendStatus;
+            }
+      }
+
+      private void processApprove(BookRequestStatusService service, int requestId, HttpSession session) throws Exception {
             try {
-                  // Lấy thông tin request để xác định loại
                   BookRequest bookRequest = service.getBookRequestById(requestId)
                           .orElseThrow(() -> new Exception("Request not found with ID: " + requestId));
 
-                  // Xác định loại request từ database
-                  String requestType = bookRequest.getRequestType();
-                  if (requestType == null) {
-                        requestType = "borrow"; // Default value
+                  String requestType = bookRequest.getRequestType() != null ? bookRequest.getRequestType().toLowerCase() : "borrow";
+                  String currentStatus = bookRequest.getStatus() != null ? bookRequest.getStatus().toLowerCase() : "pending";
+
+                  // Validate current status - only accept pending requests
+                  if (!"pending".equals(currentStatus)) {
+                        throw new IllegalStateException("Request must be in pending state, current state: " + currentStatus);
                   }
 
                   String newStatus;
+                  String actionType;
+
                   if ("borrow".equalsIgnoreCase(requestType)) {
-                        newStatus = "approved";
+                        // Validate book availability for borrow requests
+                        Book book = service.getBookDAO(requestId);
+                        if (book == null) {
+                              throw new IllegalStateException("Book not found with ID: " + bookRequest.getBookId());
+                        }
+                        if (book.getAvailableCopies() <= 0) {
+                              throw new IllegalStateException("No available copies of this book");
+                        }
+                        if (!"active".equalsIgnoreCase(book.getStatus())) {
+                              throw new IllegalStateException("Book is not in active status");
+                        }
+                        newStatus = "approved-borrow";
+                        actionType = "borrow";
                   } else if ("return".equalsIgnoreCase(requestType)) {
-                        newStatus = "approved";
+                        // For return requests, no additional validation needed
+                        newStatus = "approved-return";
+                        actionType = "return";
                   } else {
-                        throw new Exception("Unknown request type: " + requestType);
+                        throw new IllegalStateException("Invalid request type: " + requestType);
                   }
 
-                  // Cập nhật trạng thái
+                  // Update status
                   boolean success = service.updateBookRequestStatus(requestId, newStatus);
                   if (!success) {
                         throw new Exception("Failed to update request status");
                   }
 
-                  // Set success message
-                  String actionType = "borrow".equalsIgnoreCase(requestType) ? "borrow" : "return";
                   session.setAttribute("successMessage", "Request #" + requestId + " has been approved for " + actionType + " successfully!");
-
-                  System.out.println("Approved request ID: " + requestId + " with status: " + newStatus + " for type: " + requestType);
+                  System.out.println("Approved request ID: " + requestId + ", Type: " + requestType + ", New status: " + newStatus);
 
             } catch (Exception e) {
                   System.err.println("Error in processApprove: " + e.getMessage());
-                  e.printStackTrace();
                   throw e;
             }
       }
@@ -190,16 +244,23 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                   System.out.println("Rejected request ID: " + requestId);
             } catch (Exception e) {
                   System.err.println("Error in processReject: " + e.getMessage());
-                  e.printStackTrace();
                   throw e;
             }
       }
 
       private void processBorrow(BookRequestStatusService service, int requestId, HttpSession session) throws Exception {
             try {
-                  // Check if book is available before creating borrow record
                   BookRequest req = service.getBookRequestById(requestId)
                           .orElseThrow(() -> new Exception("Request not found with ID: " + requestId));
+
+                  // Validate request type and status
+                  if (!"borrow".equalsIgnoreCase(req.getRequestType())) {
+                        throw new IllegalStateException("Request type must be 'borrow', current: " + req.getRequestType());
+                  }
+
+                  if (!"approved-borrow".equalsIgnoreCase(req.getStatus())) {
+                        throw new IllegalStateException("Request must be in 'approved-borrow' status, current: " + req.getStatus());
+                  }
 
                   // Create borrow record
                   boolean success = service.createBorrowRecord(requestId);
@@ -207,11 +268,50 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                         throw new Exception("Failed to create borrow record");
                   }
 
+                  // Update status to borrowed
+                  boolean statusUpdated = service.updateBookRequestStatus(requestId, "borrowed");
+                  if (!statusUpdated) {
+                        throw new Exception("Failed to update status to borrowed");
+                  }
+
                   session.setAttribute("successMessage", "Borrow record created successfully for request #" + requestId + "!");
-                  System.out.println("Created borrow record for request ID: " + requestId);
+                  System.out.println("Created borrow record for request ID: " + requestId + ", new status: borrowed");
             } catch (Exception e) {
                   System.err.println("Error in processBorrow: " + e.getMessage());
-                  e.printStackTrace();
+                  throw e;
+            }
+      }
+
+      private void processReturn(BookRequestStatusService service, int requestId, HttpSession session) throws Exception {
+            try {
+                  BookRequest req = service.getBookRequestById(requestId)
+                          .orElseThrow(() -> new Exception("Request not found with ID: " + requestId));
+
+                  // Validate request type and status
+                  if (!"return".equalsIgnoreCase(req.getRequestType())) {
+                        throw new IllegalStateException("Request type must be 'return', current: " + req.getRequestType());
+                  }
+
+                  if (!"approved-return".equalsIgnoreCase(req.getStatus())) {
+                        throw new IllegalStateException("Request must be in 'approved-return' status, current: " + req.getStatus());
+                  }
+
+                  // Process return (update book copies, close borrow record, etc.)
+                  boolean success = service.processReturnRequest(requestId);
+                  if (!success) {
+                        throw new Exception("Failed to process book return");
+                  }
+
+                  // Update status to completed (thay vì returned)
+                  boolean statusUpdated = service.updateBookRequestStatus(requestId, "completed");
+                  if (!statusUpdated) {
+                        throw new Exception("Failed to update status to completed");
+                  }
+
+                  session.setAttribute("successMessage", "Book return processed successfully for request #" + requestId + "!");
+                  System.out.println("Processed return for request ID: " + requestId + ", new status: completed");
+            } catch (Exception e) {
+                  System.err.println("Error in processReturn: " + e.getMessage());
                   throw e;
             }
       }

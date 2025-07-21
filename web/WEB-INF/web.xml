@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
-    <!--servlet config-->
+    <listener>
+        <listener-name/>
+        <listener-class>listener.OnlineUserCounterListener</listener-class>
+    </listener>
+    <listener>
+        <listener-name/>
+        <listener-class>listener.OnlineUserTrackerListener</listener-class>
+    </listener>
+    <!-- Filter Definitions -->
     <filter>
         <filter-name>LoginValidateFilter</filter-name>
         <filter-class>filter.LoginValidateFilter</filter-class>
@@ -13,18 +21,22 @@
         <filter-name>RegisterHashPasswordFilter</filter-name>
         <filter-class>filter.RegisterHashPasswordFilter</filter-class>
     </filter>
+    <!-- Filter Mappings -->
+    <!-- Authentication Filter sẽ được áp dụng qua annotation @WebFilter -->
+    <!-- Validation Filters cho các servlet cụ thể -->
     <filter-mapping>
-        <filter-name>RegisterHashPasswordFilter</filter-name>
-        <servlet-name>RegisterServlet</servlet-name>
+        <filter-name>LoginValidateFilter</filter-name>
+        <servlet-name>LoginServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
         <filter-name>RegisterValidateFilter</filter-name>
         <servlet-name>RegisterServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>LoginValidateFilter</filter-name>
-        <servlet-name>LoginServlet</servlet-name>
+        <filter-name>RegisterHashPasswordFilter</filter-name>
+        <servlet-name>RegisterServlet</servlet-name>
     </filter-mapping>
+    <!-- Servlet Definitions -->
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.auth.LoginServlet</servlet-class>
@@ -41,14 +53,7 @@
         <servlet-name>ResetPasswordServlet</servlet-name>
         <servlet-class>controller.auth.ResetPasswordServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ServletURL</servlet-name>
-        <servlet-class>constant.ServletURL</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewURL</servlet-name>
-        <servlet-class>constant.ViewURL</servlet-class>
-    </servlet>
+    <!-- Admin Servlets -->
     <servlet>
         <servlet-name>AdminDashboard</servlet-name>
         <servlet-class>controller.admin.AdminDashboard</servlet-class>
@@ -70,9 +75,55 @@
         <servlet-class>controller.admin.AdminOverdueBook</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>AdminUpdateInventory</servlet-name>
+        <servlet-class>controller.admin.AdminUpdateInventory</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminStatusRequestBorrowBook</servlet-name>
+        <servlet-class>controller.admin.AdminStatusRequestBorrowBook</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminSearchUser</servlet-name>
+        <servlet-class>controller.admin.AdminSearchUser</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminUserDetail</servlet-name>
+        <servlet-class>controller.admin.AdminUserDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminSearchBook</servlet-name>
+        <servlet-class>controller.admin.AdminSearchBook</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminAddBookManager</servlet-name>
+        <servlet-class>controller.admin.AdminAddBookManager</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminEditBook</servlet-name>
+        <servlet-class>controller.admin.AdminEditBook</servlet-class>
+    </servlet>
+    <!-- User Servlets -->
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>controller.auth.HomeServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>BookDetailServlet</servlet-name>
         <servlet-class>controller.auth.BookDetailServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UserDashboard</servlet-name>
+        <servlet-class>controller.auth.UserDashboard</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ChangeProfile</servlet-name>
+        <servlet-class>controller.auth.ChangeProfile</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SaveProfileServlet</servlet-name>
+        <servlet-class>controller.auth.SaveProfileServlet</servlet-class>
+    </servlet>
+    <!-- Cart Servlets -->
     <servlet>
         <servlet-name>ViewCartServlet</servlet-name>
         <servlet-class>controller.cart.ViewCartServlet</servlet-class>
@@ -93,51 +144,28 @@
         <servlet-name>SubmitBorrowRequestServlet</servlet-name>
         <servlet-class>controller.cart.SubmitBorrowRequestServlet</servlet-class>
     </servlet>
+    <!-- Utility Servlets -->
     <servlet>
-        <servlet-name>UserDashboard</servlet-name>
-        <servlet-class>controller.auth.UserDashboard</servlet-class>
+        <servlet-name>ServletURL</servlet-name>
+        <servlet-class>constant.ServletURL</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ChangeProfile</servlet-name>
-        <servlet-class>controller.auth.ChangeProfile</servlet-class>
+        <servlet-name>ViewURL</servlet-name>
+        <servlet-class>constant.ViewURL</servlet-class>
+    </servlet>
+    <!-- Servlet Mappings -->
+    <servlet>
+        <servlet-name>ForgotPasswordServlet</servlet-name>
+        <servlet-class>controller.auth.ForgotPasswordServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>SaveProfileServlet</servlet-name>
-        <servlet-class>controller.auth.SaveProfileServlet</servlet-class>
+        <servlet-name>OnlineUserListServlet</servlet-name>
+        <servlet-class>controller.auth.OnlineUserListServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AdminUpdateInventory</servlet-name>
-        <servlet-class>controller.admin.AdminUpdateInventory</servlet-class>
+        <servlet-name>ChatServlet</servlet-name>
+        <servlet-class>controller.websocket.ChatServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>AdminStatusRequestBorrowBook</servlet-name>
-        <servlet-class>controller.admin.AdminStatusRequestBorrowBook</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminSearchUser</servlet-name>
-        <servlet-class>controller.admin.AdminSearchUser</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>HomeServlet</servlet-name>
-        <servlet-class>controller.auth.HomeServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminUserDetail</servlet-name>
-        <servlet-class>controller.admin.AdminUserDetail</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminSearchBook</servlet-name>
-        <servlet-class>controller.admin.AdminSearchBook</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminAddBookManager</servlet-name>
-        <servlet-class>controller.admin.AdminAddBookManager</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminEditBook</servlet-name>
-        <servlet-class>controller.admin.AdminEditBook</servlet-class>
-    </servlet>
-    <!--mapping-->
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -152,15 +180,12 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ResetPasswordServlet</servlet-name>
-        <url-pattern>/ResetPasswordServlet</url-pattern>
+        <url-pattern>/resetpassword</url-pattern>
     </servlet-mapping>
+    <!-- Admin Mappings -->
     <servlet-mapping>
-        <servlet-name>ServletURL</servlet-name>
-        <url-pattern>/ServletURL</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewURL</servlet-name>
-        <url-pattern>/ViewURL</url-pattern>
+        <servlet-name>AdminDashboard</servlet-name>
+        <url-pattern>/admindashboard</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AdminSystemConfig</servlet-name>
@@ -179,6 +204,39 @@
         <url-pattern>/overduebook</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>AdminUpdateInventory</servlet-name>
+        <url-pattern>/updateinventory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminStatusRequestBorrowBook</servlet-name>
+        <url-pattern>/statusrequestborrowbook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminSearchUser</servlet-name>
+        <url-pattern>/searchUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminUserDetail</servlet-name>
+        <url-pattern>/userdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminSearchBook</servlet-name>
+        <url-pattern>/searchbook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminAddBookManager</servlet-name>
+        <url-pattern>/addbook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminEditBook</servlet-name>
+        <url-pattern>/editbook</url-pattern>
+    </servlet-mapping>
+    <!-- User Mappings -->
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>BookDetailServlet</servlet-name>
         <url-pattern>/bookdetail</url-pattern>
     </servlet-mapping>
@@ -194,22 +252,7 @@
         <servlet-name>SaveProfileServlet</servlet-name>
         <url-pattern>/SaveProfileServlet</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminUpdateInventory</servlet-name>
-        <url-pattern>/updateinventory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminStatusRequestBorrowBook</servlet-name>
-        <url-pattern>/statusrequestborrowbook</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminSearchUser</servlet-name>
-        <url-pattern>/searchUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>HomeServlet</servlet-name>
-        <url-pattern>/home</url-pattern>
-    </servlet-mapping>
+    <!-- Cart Mappings -->
     <servlet-mapping>
         <servlet-name>ViewCartServlet</servlet-name>
         <url-pattern>/cart</url-pattern>
@@ -229,31 +272,47 @@
     <servlet-mapping>
         <servlet-name>SubmitBorrowRequestServlet</servlet-name>
         <url-pattern>/SubmitBorrowRequestServlet</url-pattern>
-     </servlet-mapping>
+    </servlet-mapping>
+    <!-- Utility Mappings -->
     <servlet-mapping>
-        <servlet-name>AdminDashboard</servlet-name>
-        <url-pattern>/admindashboard</url-pattern>
+        <servlet-name>ServletURL</servlet-name>
+        <url-pattern>/ServletURL</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AdminUserDetail</servlet-name>
-        <url-pattern>/userdetail</url-pattern>
+        <servlet-name>ViewURL</servlet-name>
+        <url-pattern>/ViewURL</url-pattern>
+    </servlet-mapping>
+    <!-- Session Configuration -->
+    <servlet-mapping>
+        <servlet-name>ForgotPasswordServlet</servlet-name>
+        <url-pattern>/ForgotPasswordServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AdminSearchBook</servlet-name>
-        <url-pattern>/searchbook</url-pattern>
+        <servlet-name>OnlineUserListServlet</servlet-name>
+        <url-pattern>/OnlineUserListServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AdminAddBookManager</servlet-name>
-        <url-pattern>/addbook</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminEditBook</servlet-name>
-        <url-pattern>/editbook</url-pattern>
+        <servlet-name>ChatServlet</servlet-name>
+        <url-pattern>/ChatServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
+    <!-- Welcome File List -->
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    <!-- Error Pages -->
+<!--    <error-page>
+        <error-code>404</error-code>
+        <location>/view/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/view/error/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/view/error/403.jsp</location>
+    </error-page>-->
 </web-app>
