@@ -118,6 +118,48 @@
                 color: #721c24;
                 border: 1px solid #f5c6cb;
             }
+
+            /* Styles for Remember Me checkbox */
+            .remember-me-container {
+                display: flex;
+                align-items: center;
+                margin-bottom: var(--spacing-md);
+                margin-top: var(--spacing-sm);
+            }
+
+            .remember-me-container input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                margin-right: var(--spacing-sm);
+                accent-color: var(--primary-accent);
+                cursor: pointer;
+            }
+
+            .remember-me-container label {
+                margin-bottom: 0;
+                font-weight: 400;
+                cursor: pointer;
+                font-size: 0.9em;
+            }
+
+            .form-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: var(--spacing-md);
+            }
+
+            .forgot-password {
+                color: var(--primary-accent);
+                text-decoration: none;
+                font-size: 0.9em;
+                transition: all 0.3s ease;
+            }
+
+            .forgot-password:hover {
+                color: var(--secondary-accent);
+                text-decoration: underline;
+            }
         </style>
     </head>
     <body>
@@ -147,14 +189,20 @@
                     <label for="password">Your Password</label>
                     <input type="password" class="form-control" id="password" name="txtpassword" required>
                 </div>
+                
+                <!-- Remember Me checkbox -->
+                <div class="remember-me-container">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">Remember me for 7 days</label>
+                </div>
+                
                 <button type="submit" class="btn-login">Login</button>
-                <div class="form-group">
-                    <a href="resetpassword" style="text-decoration: none;">
-                    <label for="password"></label>Forgot password?
-                    <!--<input type="password" class="form-control" id="password" name="txtpassword" required>-->
-                    </a>
+                
+                <div class="form-actions">
+                    <a href="${pageContext.request.contextPath}/ForgotPasswordServlet" class="forgot-password">Forgot password?</a>
                 </div>
             </form>
+            
             <div class="register-link">
                 <p>New to Library? | <a href="${pageContext.request.contextPath}/RegisterServlet">Sign Up</a></p>
                 <p><a href="javascript: history.back()">Come Back</a></p>

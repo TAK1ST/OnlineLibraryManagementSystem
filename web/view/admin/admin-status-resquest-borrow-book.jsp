@@ -109,6 +109,7 @@ Author : asus
                               <tr>
                                     <th style="border-top-left-radius: 20px;">ISBN</th>
                                     <th>Title</th>
+                                    <th>Quantity</th>
                                     <th>Username</th>
                                     <th>Status Request</th>
                                     <th style="border-top-right-radius: 20px;">Action</th>
