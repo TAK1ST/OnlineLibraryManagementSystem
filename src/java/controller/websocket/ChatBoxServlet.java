@@ -1,11 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.websocket;
 
+import entity.User;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,65 +9,39 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- *
- * @author asus
- */
 @WebServlet(name = "ChatBoxServlet", urlPatterns = {"/ChatBoxServlet"})
 public class ChatBoxServlet extends HttpServlet {
 
-      /**
-       * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-       *
-       * @param request servlet request
-       * @param response servlet response
-       * @throws ServletException if a servlet-specific error occurs
-       * @throws IOException if an I/O error occurs
-       */
       protected void processRequest(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
             response.setContentType("text/html;charset=UTF-8");
-            request.getSession().setAttribute("user_id", "user123");
-            response.sendRedirect(request.getContextPath() + "/view/user/ExampleChatBox.jsp");
+            HttpSession session = request.getSession();
+
+            User loginedUser = (User) session.getAttribute("loginedUser");
+
+            if (loginedUser != null) {
+                  System.out.println("✅ User " + loginedUser.getName()+ " accessing chat box");
+                  request.getRequestDispatcher("/view/user/ExampleChatBox.jsp").forward(request, response);
+            } else {
+                  System.out.println("❌ No logged user, redirecting to login");
+                  response.sendRedirect("LoginServlet");
+            }
       }
 
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-      /**
-       * Handles the HTTP <code>GET</code> method.
-       *
-       * @param request servlet request
-       * @param response servlet response
-       * @throws ServletException if a servlet-specific error occurs
-       * @throws IOException if an I/O error occurs
-       */
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
             processRequest(request, response);
       }
 
-      /**
-       * Handles the HTTP <code>POST</code> method.
-       *
-       * @param request servlet request
-       * @param response servlet response
-       * @throws ServletException if a servlet-specific error occurs
-       * @throws IOException if an I/O error occurs
-       */
       @Override
       protected void doPost(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException {
             processRequest(request, response);
       }
 
-      /**
-       * Returns a short description of the servlet.
-       *
-       * @return a String containing servlet description
-       */
       @Override
       public String getServletInfo() {
-            return "Short description";
-      }// </editor-fold>
-
+            return "Chat Box Servlet for user chat interface";
+      }
 }

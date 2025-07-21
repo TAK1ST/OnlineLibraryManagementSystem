@@ -176,7 +176,6 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                   case "rejected":
                         return "rejected";
                   default:
-                        // Return original status if no mapping found
                         return frontendStatus;
             }
       }
@@ -189,7 +188,7 @@ public class AdminStatusRequestBorrowBook extends BaseAdminController {
                   String requestType = bookRequest.getRequestType() != null ? bookRequest.getRequestType().toLowerCase() : "borrow";
                   String currentStatus = bookRequest.getStatus() != null ? bookRequest.getStatus().toLowerCase() : "pending";
 
-                  // Validate current status - chỉ accept pending requests
+                  // Validate current status - only accept pending requests
                   if (!"pending".equals(currentStatus)) {
                         throw new IllegalStateException("Request must be in pending state, current state: " + currentStatus);
                   }

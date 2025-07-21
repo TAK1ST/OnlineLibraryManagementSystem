@@ -66,8 +66,6 @@ public class BookRequestStatusService {
             
             List<BookInforRequestStatusDTO> result = bookRequestDAO.getBookRequestStatusBySearch(title, status, offset);
             
-            System.out.println("Service - Retrieved " + (result != null ? result.size() : 0) + " records");
-            
             return result != null ? result : new ArrayList<>();
       }
 
