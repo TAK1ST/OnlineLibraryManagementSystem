@@ -16,319 +16,68 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Book Detail</title>
+        <title>Book Detail - Online Library</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                color: #333;
-                line-height: 1.6;
-            }
-
-            .container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-
-            /* Header Styles */
-            .header {
-                text-align: center;
-                margin-bottom: 40px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border-radius: 20px;
-                padding: 30px;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-            }
-
-            .header-icon {
-                font-size: 3rem;
-                color: #fff;
-                margin-bottom: 15px;
-            }
-
-            .header-title {
-                font-size: 2.5rem;
-                color: #fff;
-                margin-bottom: 10px;
-                font-weight: 700;
-            }
-
-            .header-subtitle {
-                font-size: 1.1rem;
-                color: rgba(255, 255, 255, 0.8);
-                font-weight: 300;
-            }
-
-            /* Error Message */
-            .error-message {
-                background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-                color: white;
-                padding: 20px;
-                border-radius: 15px;
-                margin-bottom: 30px;
-                text-align: center;
-                font-size: 1.1rem;
-                box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
-            }
-
-            /* Book Card */
-            .book-card {
-                background: rgba(255, 255, 255, 0.95);
-                border-radius: 25px;
-                padding: 40px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-            }
-
-            .book-title {
-                font-size: 2.2rem;
-                color: #2c3e50;
-                margin-bottom: 15px;
-                font-weight: 700;
-                text-align: center;
-                padding-bottom: 15px;
-                border-bottom: 3px solid #3498db;
-            }
-
-            .book-author {
-                font-size: 1.3rem;
-                color: #7f8c8d;
-                text-align: center;
-                margin-bottom: 30px;
-                font-style: italic;
-            }
-
-            /* Book Content Layout */
-            .book-content {
-                display: grid;
-                grid-template-columns: 1fr 2fr;
-                gap: 40px;
-                margin-bottom: 40px;
-            }
-
-            .book-image-section {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .book-image {
-                width: 100%;
-                max-width: 300px;
-                height: 400px;
-                object-fit: cover;
-                border-radius: 15px;
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-                margin-bottom: 20px;
-            }
-
-            .availability-section {
-                background: linear-gradient(135deg, #74b9ff, #0984e3);
-                color: white;
-                padding: 20px;
-                border-radius: 15px;
-                text-align: center;
-                width: 100%;
-                max-width: 300px;
-            }
-
-            .availability-count {
-                font-size: 3rem;
-                font-weight: 700;
-                margin-bottom: 10px;
-            }
-
-            .availability-text {
-                font-size: 1.1rem;
-                margin-bottom: 15px;
-            }
-
-            .status-badge {
-                display: inline-block;
-                padding: 8px 16px;
-                border-radius: 20px;
-                font-size: 0.9rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .status-available {
-                background: #00b894;
-                color: white;
-            }
-
-            .status-limited {
-                background: #fdcb6e;
-                color: #2d3436;
-            }
-
-            .status-unavailable {
-                background: #e17055;
-                color: white;
-            }
-
-            /* Book Details */
-            .book-details {
-                display: grid;
-                gap: 20px;
-            }
-
-            .detail-item {
-                display: flex;
-                align-items: center;
-                padding: 15px;
-                background: #f8f9fa;
-                border-radius: 10px;
-                border-left: 4px solid #3498db;
-                transition: all 0.3s ease;
-            }
-
-            .detail-item:hover {
-                background: #e9ecef;
-                transform: translateX(5px);
-            }
-
-            .detail-label {
-                font-weight: 600;
-                color: #2c3e50;
-                min-width: 140px;
-                display: flex;
-                align-items: center;
-            }
-
-            .detail-label i {
-                margin-right: 10px;
-                color: #3498db;
-                width: 20px;
-            }
-
-            .detail-value {
-                color: #34495e;
-                font-weight: 500;
-                flex: 1;
-            }
-
-            /* Action Buttons */
-            .book-actions {
-                display: flex;
-                gap: 15px;
-                justify-content: center;
-                margin-top: 30px;
-                flex-wrap: wrap;
-            }
-
-            .btn {
-                display: inline-flex;
-                align-items: center;
-                padding: 12px 24px;
-                border: none;
-                border-radius: 25px;
-                font-size: 1rem;
-                font-weight: 600;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                cursor: pointer;
-                min-width: 160px;
-                justify-content: center;
-            }
-
-            .btn i {
-                margin-right: 8px;
-            }
-
-            .btn-primary {
-                background: linear-gradient(135deg, #667eea, #764ba2);
-                color: white;
-            }
-
-            .btn-primary:hover {
-                background: linear-gradient(135deg, #5a6fd8, #6a4190);
-                transform: translateY(-2px);
-                box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-            }
-
-            .btn-secondary {
-                background: linear-gradient(135deg, #fd79a8, #e84393);
-                color: white;
-            }
-
-            .btn-secondary:hover {
-                background: linear-gradient(135deg, #fd6c9e, #e03e8a);
-                transform: translateY(-2px);
-                box-shadow: 0 10px 25px rgba(253, 121, 168, 0.4);
-            }
-
-            .btn:disabled {
-                background: #bdc3c7;
-                color: #7f8c8d;
-                cursor: not-allowed;
-                transform: none;
-            }
-
-            .btn:disabled:hover {
-                transform: none;
-                box-shadow: none;
-            }
-
-            /* No Book Found */
-            .no-book {
-                text-align: center;
-                color: #7f8c8d;
-                font-size: 1.3rem;
-                margin-bottom: 30px;
-            }
-
-            /* Responsive Design */
-            @media (max-width: 768px) {
-                .container {
-                    padding: 15px;
-                }
-
-                .header {
-                    padding: 20px;
-                }
-
-                .header-title {
-                    font-size: 2rem;
-                }
-
-                .book-content {
-                    grid-template-columns: 1fr;
-                    gap: 30px;
-                }
-
-                .book-title {
-                    font-size: 1.8rem;
-                }
-
-                .book-actions {
-                    flex-direction: column;
-                    align-items: center;
-                }
-
-                .btn {
-                    width: 100%;
-                    max-width: 300px;
-                }
-            }
-        </style>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-view-detail.css"/>
+<!--        <style>
+            
+        </style>-->
     </head>
     <body>
+        <!-- Thanh điều hướng - giống search.jsp -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
+                    <i class="fas fa-book-reader me-2"></i>Online Library
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <c:if test="${empty sessionScope.loginedUser}">
+                            <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/LoginServlet">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Log in
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/RegisterServlet">
+                                    <i class="fas fa-user-plus me-1"></i>Register
+                                </a>
+                            </li>
+                        </c:if>
+                        <c:if test="${not empty sessionScope.loginedUser}">
+                            <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/BorrowHistoryServlet">
+                                    <i class="fas fa-history me-1"></i>Borrowed History
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/cart">
+                                    <i class="fas fa-shopping-cart me-1"></i>Cart
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/ChangeProfile">
+                                    <i class="fas fa-user me-1"></i>Hi, ${sessionScope.loginedUser.name}!
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">
+                                    <i class="fas fa-sign-out-alt me-1"></i>Log out
+                                </a>
+                            </li>
+                        </c:if>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
         <div class="container">
             <!-- Header Section -->
-            <div class="header">
+            <div class="page-header">
                 <div class="header-icon">
                     <i class="fas fa-book-open"></i>
                 </div>
@@ -342,7 +91,7 @@
             <!-- Error Message -->
             <% if (error != null && !error.trim().isEmpty()) { %>
             <div class="error-message">
-                <i class="fas fa-exclamation-triangle"></i>
+                <i class="fas fa-exclamation-triangle me-2"></i>
                 <strong>Error:</strong> <%= error %>
             </div>
             <% } else if (book != null) { %>
@@ -402,7 +151,7 @@
                         <div class="detail-item">
                             <div class="detail-label">
                                 <i class="fas fa-book"></i>
-                                Total Book
+                                Total Books
                             </div>
                             <div class="detail-value">
                                 <%= book.getTotalCopies() %> books
@@ -424,7 +173,7 @@
                 <!-- Action Buttons -->
                 <div class="book-actions">
                     <a href="${pageContext.request.contextPath}/search" class="btn btn-primary">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-arrow-left"></i> Back to Search
                     </a>
                     <c:if test="${book.availableCopies > 0}">
                         <a href="AddToCartServlet?bookId=${book.id}" class="btn btn-secondary">
@@ -443,16 +192,31 @@
             <!-- No Book Found -->
             <div class="book-card">
                 <div class="no-book">
-                    <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; color: #bdc3c7;"></i>
+                    <i class="fas fa-search"></i>
                     <p>Book details not found.</p>
                 </div>
                 <div class="book-actions">
                     <a href="${pageContext.request.contextPath}/home" class="btn btn-primary">
-                        <i class="fas fa-home"></i> Back home
+                        <i class="fas fa-home"></i> Back to Home
                     </a>
                 </div>
             </div>
             <% } %>
         </div>
+
+        <!-- Footer -->
+        <footer class="footer text-white pt-4 pb-3 mt-5" style="height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div class="container text-center" style="padding-top: 30px">
+                <p class="mb-1">&copy; 2025 Group 7 - Library Management System</p>
+                <p class="mb-1">vdtuan245@gmail.com</p>
+                <div class="social-icons mt-2">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fas fa-envelope"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
