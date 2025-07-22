@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import util.websocket.CustomConfigurator;
 
-@ServerEndpoint(value = "/chat", configurator = CustomConfigurator.class)
+//@ServerEndpoint(value = "/chat", configurator = CustomConfigurator.class)
 public class ChatServer {
 
       private static final ConcurrentHashMap<Session, String> userSessions = new ConcurrentHashMap<>();

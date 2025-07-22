@@ -56,8 +56,7 @@ public class AuthenticationFilter implements Filter {
     private static final List<String> STATIC_RESOURCES = Arrays.asList(
         "/css/",
         "/js/",
-        "/images/",
-        "/img/",
+        "/hinh/",
         "/assets/",
         "/fonts/",
         "/favicon.ico",
