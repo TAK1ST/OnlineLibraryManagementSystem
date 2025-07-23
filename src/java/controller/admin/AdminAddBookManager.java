@@ -77,7 +77,7 @@ public class AdminAddBookManager extends BaseAdminController {
                   System.out.println("ISBN: " + isbn);
                   System.out.println("Total Copies: " + totalCopiesStr);
                   System.out.println("Published Year: " + publishedYearStr);
-
+                  
                   // Validate required parameters
                   if (title == null || title.trim().isEmpty()) {
                         throw new IllegalArgumentException("Book title is required");
@@ -154,14 +154,13 @@ public class AdminAddBookManager extends BaseAdminController {
                   book.setCategory(category);
                   book.setPublishedYear(publishedYear);
                   book.setTotalCopies(totalCopies);
-                  book.setAvailableCopies(totalCopies); // Initially all copies are available
+                  book.setAvailableCopies(totalCopies); 
                   book.setStatus(status != null ? status : "active");
                   book.setImageUrl(imageUrl);
 
                   System.out.println("Book object created successfully");
                   System.out.println("Calling bookManagementService.addBook()...");
 
-                  // Add book using service - FIX: Correct logic
                   boolean success = bookManagementService.addBook(book);
 
                   System.out.println("addBook() returned: " + success);

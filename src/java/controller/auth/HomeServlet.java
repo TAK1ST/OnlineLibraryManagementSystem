@@ -28,6 +28,7 @@ public class HomeServlet extends HttpServlet {
                   List<Book> newBooks = dao.getNewBooks();
                   for (Book book : newBooks) {
                         book.setImageUrl(ImageDisplayHelper.getBookImageUrl(book));
+                        System.out.println(ImageDisplayHelper.getBookImageUrl(book));
                   }
                   request.setAttribute("newBooks", newBooks);
 

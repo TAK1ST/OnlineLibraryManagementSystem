@@ -267,33 +267,27 @@
 
                   // Image preview functionality
                   function previewImage(event) {
+                        console.log('previewImage triggered');
                         const file = event.target.files[0];
                         const uploadBox = document.getElementById('uploadBox');
 
                         if (file) {
-                              // Validate file type
-                              if (!file.type.match('image/(jpeg|png|jpg)')) {
-                                    showAlert('Only JPEG, JPG or PNG images are allowed.', 'error');
-                                    event.target.value = '';
-                                    resetUploadBox();
-                                    return;
-                              }
-
-                              // Validate file size (max 5MB)
-                              if (file.size > 5242880) {
-                                    showAlert('File size must be less than 5MB.', 'error');
-                                    event.target.value = '';
-                                    resetUploadBox();
-                                    return;
-                              }
-
-                              const reader = new FileReader();
-                              reader.onload = function (e) {
-                                    uploadBox.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Book Cover Preview">`;
-                              };
-                              reader.readAsDataURL(file);
+                            console.log('File selected:', file.name, 'Type:', file.type, 'Size:', file.size);
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                console.log('FileReader onload, data URL length:', e.target.result.length);
+                                uploadBox.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Book Cover Preview" style="max-width: 200px; max-height: 200px; object-fit: contain; display: block;">`;
+                                console.log('Preview image set');
+                            };
+                            reader.onerror = function(e) {
+                                console.error('FileReader error:', e);
+                                showAlert('Error reading file.', 'error');
+                                uploadBox.innerHTML = '<div class="upload-placeholder"><p>Error loading image</p></div>';
+                            };
+                            reader.readAsDataURL(file);
                         } else {
-                              resetUploadBox();
+                            console.log('No file selected');
+                            resetUploadBox();
                         }
                   }
 
@@ -306,6 +300,7 @@
                             <small>book cover image</small>
                         </div>
                     `;
+                        console.log('Upload box reset');
                   }
 
                   // Form submission
@@ -413,6 +408,13 @@
                                     value = value.substring(0, 17);
                               }
                               this.value = value;
+                        });
+
+                        // Debug input file
+                        const fileInput = document.getElementById('bookImage');
+                        fileInput.addEventListener('change', function() {
+                              console.log('File input changed, files:', this.files);
+                              previewImage({ target: this }); 
                         });
 
                         console.log('Form initialization complete');

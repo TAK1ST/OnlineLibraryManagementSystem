@@ -40,7 +40,7 @@ public class AsyncUploadServlet extends HttpServlet {
             // Process upload asynchronously
             CompletableFuture.supplyAsync(() -> {
                   try {
-                        Part filePart = request.getPart("image");
+                        Part filePart = request.getPart("bookImage");
                         String folder = request.getParameter("folder");
 
                         if (folder == null || folder.trim().isEmpty()) {
