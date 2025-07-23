@@ -17,8 +17,8 @@ public class AsyncSupabaseImageService {
       private static final Logger logger = Logger.getLogger(AsyncSupabaseImageService.class.getName());
       private static final String SUPABASE_URL = "https://icdmgutnvthphneaxxsq.supabase.co";
       private static final String BUCKET = "image.library";
-      private static final String ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljZG1ndXRudnRocGhuZWF4eHNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyNTUyOTUsImV4cCI6MjA2NjgzMTI5NX0.cv7UgCnqHFHoElI-Nvgv5ytkktzDJaFquU-bPUS1Hdo";
-
+      private static final String ANON_KEY = 
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljZG1ndXRudnRocGhuZWF4eHNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyNTUyOTUsImV4cCI6MjA2NjgzMTI5NX0.cv7UgCnqHFHoElI-Nvgv5ytkktzDJaFquU-bPUS1Hdo";
       // Default images trong Supabase
       private static final String DEFAULT_BOOK_IMAGE = "defaults/default-book.jpg";
       private static final String DEFAULT_AVATAR_IMAGE = "defaults/default-avatar.png";
