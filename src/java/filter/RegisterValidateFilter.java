@@ -116,7 +116,7 @@ public class RegisterValidateFilter implements Filter {
                     || password == null || password.trim().isEmpty()
                     || confirmPassword == null || confirmPassword.trim().isEmpty()) {
 
-                request.setAttribute("error", "All fields are required.");
+                request.setAttribute("errorMessage", "All fields are required.");
                 request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
                 return;
 

@@ -7,6 +7,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="entity.Book" %>
 <%@ page import="java.util.List" %>
+<%@ page import="util.ImageDisplayHelper" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -111,7 +112,8 @@
                 <div class="book-content">
                     <!-- Image & Availability Section -->
                     <div class="book-image-section">
-                        <img src="hinh/book.jpg" alt="The book image could not be loaded" class="book-image">
+                        <img src="<%= ImageDisplayHelper.getBookImageUrl((entity.Book) request.getAttribute("book")) %>" alt="${book.title}" 
+                             style="max-width: 300px; max-height: 700px; object-fit: contain; border-radius: 10px; margin-bottom: 5px">
                         
                         <div class="availability-section">
                             <div class="availability-count"><%= book.getAvailableCopies() %></div>

@@ -33,7 +33,7 @@
                     <span>Online Users Manager</span>
                 </div>
                 <div class="nav-buttons">
-                    <a href="home.jsp" class="nav-btn btn-home">
+                    <a href="home" class="nav-btn btn-home">
                         <span>🏠</span>
                         <span>Home</span>
                     </a>

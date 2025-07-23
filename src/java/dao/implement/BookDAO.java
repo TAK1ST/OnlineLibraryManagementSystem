@@ -23,7 +23,7 @@ import util.DBConnection;
  */
 public class BookDAO implements IBookDAO {
     // Lấy sách theo tiêu đề
-
+//Trung
     @Override
     public ArrayList<Book> getBookByTitle(String title) {
         ArrayList<Book> result = new ArrayList<>();
@@ -67,6 +67,7 @@ public class BookDAO implements IBookDAO {
     }
 
     // Lấy tất cả sách
+    //Trung
     @Override
     public List<Book> getAllBook() {
         List<Book> books = new ArrayList<>();
@@ -104,7 +105,7 @@ public class BookDAO implements IBookDAO {
         }
         return books;
     }
-
+//Kiet
     public List<Book> getNewBooks(int limit) throws SQLException, ClassNotFoundException {
         List<Book> newBooks = new ArrayList<>();
         Connection cn = null;
@@ -139,7 +140,7 @@ public class BookDAO implements IBookDAO {
         }
         return newBooks;
     }
-
+//Trung
     @Override
     public List<Book> getNewBooks() throws SQLException, ClassNotFoundException {
         List<Book> newBooks = new ArrayList<>();
@@ -173,7 +174,7 @@ public class BookDAO implements IBookDAO {
         return newBooks;
     }
 
-    // Tìm kiếm sách động
+    // Tìm kiếm sách động - Trung
     @Override
     public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException {
         ArrayList<Book> result = new ArrayList<>();
@@ -285,7 +286,7 @@ public class BookDAO implements IBookDAO {
         return result;
     }
 
-    // Lấy sách theo id
+    // Lấy sách theo id - Kiet
     @Override
     public Book getBookById(int id) {
         Book book = null;
@@ -326,7 +327,7 @@ public class BookDAO implements IBookDAO {
         return book;
     }
 
-    // Cập nhật tổng số lượng và số lượng còn lại (an toàn)
+    // Cập nhật tổng số lượng và số lượng còn lại (an toàn) - Updating...
     public boolean updateTotalCopiesAlternative(int bookId, int totalCopies) {
         Connection conn = null;
         try {
@@ -383,7 +384,7 @@ public class BookDAO implements IBookDAO {
         }
     }
 
-    // Lấy tổng số sách
+    // Lấy tổng số sách - Tuan
     @Override
     public int getTotalBooks() {
         Connection cn = null;
@@ -412,7 +413,7 @@ public class BookDAO implements IBookDAO {
         return count;
     }
 
-    // Tìm kiếm sách theo isbn
+    // Tìm kiếm sách theo isbn - Tuan
     public List<Book> searchByIsbn(String searchTerm) {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books WHERE isbn LIKE ? AND status = 'active'";
@@ -428,7 +429,7 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-    // Tìm kiếm sách theo category
+    // Tìm kiếm sách theo category - Tuan
     public List<Book> searchByCategory(String searchTerm) {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books WHERE category LIKE ? AND status = 'active'";
@@ -444,7 +445,7 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-    // Tìm kiếm sách theo author
+    // Tìm kiếm sách theo author - Tuan
     public List<Book> searchByAuthor(String searchTerm) {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books WHERE author LIKE ? AND status = 'active'";
@@ -460,7 +461,7 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-    // Tìm kiếm sách theo title
+    // Tìm kiếm sách theo title - Tuan
     public List<Book> searchByTitle(String searchTerm) {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books WHERE title LIKE ? AND status = 'active'";
@@ -476,7 +477,7 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-    // Cập nhật tổng số lượng và số lượng còn lại
+    // Cập nhật tổng số lượng và số lượng còn lại - Updating...
     public boolean updateTotalCopies(int bookId, int totalCopies) {
         String query = "UPDATE books SET total_copies = ?, available_copies = ? - (SELECT COUNT(*) FROM borrow_records WHERE book_id = ? AND status = 'borrowed') WHERE id = ? AND status = 'active'";
         try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -500,6 +501,7 @@ public class BookDAO implements IBookDAO {
  * @param quantityToAdd Số lượng cần cộng thêm
  * @return true nếu cập nhật thành công, false nếu thất bại
  */
+    //Tuan
 public boolean addToTotalCopies(int bookId, int quantityToAdd) {
     Connection conn = null;
     PreparedStatement psSelect = null;
@@ -552,7 +554,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
 }
 
 
-    // Cập nhật thông tin sách
+    // Cập nhật thông tin sách - Kiet
     @Override
     public boolean update(Book book) {
         Connection cn = null;
@@ -592,7 +594,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         }
     }
 
-    // Tìm kiếm sách động theo searchTerm và searchBy
+    // Tìm kiếm sách động theo searchTerm và searchBy - Updating...
     @Override
     public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
         List<Book> books = new ArrayList<>();
@@ -608,7 +610,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         return books;
     }
 
-    // Cập nhật số lượng sách còn lại
+    // Cập nhật số lượng sách còn lại - Tuan
     @Override
     public boolean updateBookQuantity(int bookId, int newQuantity) {
         Connection cn = null;
@@ -634,7 +636,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         }
     }
 
-    // Lấy tổng số lượt mượn sách
+    // Lấy tổng số lượt mượn sách - Tuan
     @Override
     public int getBorrowBooks() {
         Connection cn = null;
@@ -663,7 +665,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         return count;
     }
 
-    // Lấy tất cả sách kèm số lượng còn lại, sắp xếp theo available_copies giảm dần
+    // Lấy tất cả sách kèm số lượng còn lại, sắp xếp theo available_copies giảm dần - Updating...
     public List<Book> getAllBooksWithAvailability() throws SQLException {
         List<Book> books = new ArrayList<>();
         Connection cn = null;
@@ -687,7 +689,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         return books;
     }
 
-    // Lấy tất cả category duy nhất
+    // Lấy tất cả category duy nhất - Trung
     public ArrayList<String> getAllCategories() throws SQLException {
         ArrayList<String> categories = new ArrayList<>();
         Connection cn = null;
@@ -725,7 +727,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         return book;
     }
 
-    // Lấy top 5 sách được mượn nhiều nhất
+    // Lấy top 5 sách được mượn nhiều nhất - Trung
     public List<BorrowedBookDTO> getTop5BorrowedBooks() {
         List<BorrowedBookDTO> bookList = new ArrayList<>();
         String sql = "SELECT TOP 5 "
@@ -759,7 +761,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         }
         return bookList;
     }
-
+//Trung
     @Override
     public boolean updateBook(Book book) throws SQLException, ClassNotFoundException {
         Connection cn = null;
@@ -795,7 +797,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
             }
         }
     }
-
+//Tuan - hoc hoi Trung
     public ArrayList<Book> search(String title, String author, String category) throws SQLException, ClassNotFoundException {
         ArrayList<Book> list = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
