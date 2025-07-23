@@ -48,7 +48,7 @@
                                           <label for="modalStatus" class="modal-label">Status</label>
                                           <select class="modal-select" id="modalStatus" name="status">
                                                 <option value="active" ${selectedUser.status.equalsIgnoreCase("active") ? "selected" : ""}>Active</option>
-                                                <option value="inactive" ${selectedUser.status.equalsIgnoreCase("blocked") ? "selected" : ""}>Block</option>
+                                                <option value="blocked" ${selectedUser.status.equalsIgnoreCase("blocked") ? "selected" : ""}>Block</option>
                                           </select>
                                     </div>
                                     <div class="button-row">

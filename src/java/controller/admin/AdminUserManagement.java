@@ -90,8 +90,8 @@ public class AdminUserManagement extends BaseAdminController {
                   } else {
                         us.setName(name);
                         if (password != null && !password.trim().isEmpty()) {
-                              if (password.length() < 6) {
-                                    session.setAttribute("errorMessage", "Password must be at least 6 characters");
+                              if (password.length() < 8) {
+                                    session.setAttribute("errorMessage", "Password must be at least 8 characters");
                               } else {
                                     us.setPassword(password);
                                     userService.updateUser(userId, name, password, status);

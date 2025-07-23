@@ -10,6 +10,7 @@ package entity;
  */
 public class Fine {
     private int id;
+    private int borrowId;
     private BorrowRecord borrowRecord;
     private Long fineAmount;
     private String paidStatus;
@@ -17,8 +18,9 @@ public class Fine {
       public Fine() {
       }
 
-      public Fine(int id, BorrowRecord borrowRecord, Long fineAmount, String paidStatus) {
+      public Fine(int id, int borrowId, BorrowRecord borrowRecord, Long fineAmount, String paidStatus) {
             this.id = id;
+            this.borrowId = borrowId;
             this.borrowRecord = borrowRecord;
             this.fineAmount = fineAmount;
             this.paidStatus = paidStatus;
@@ -55,6 +57,14 @@ public class Fine {
       public void setPaidStatus(String paidStatus) {
             this.paidStatus = paidStatus;
       }
+
+    public int getBorrowId() {
+        return borrowId;
+    }
+
+    public void setBorrowId(int borrowId) {
+        this.borrowId = borrowId;
+    }
 
 
 }

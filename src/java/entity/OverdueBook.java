@@ -36,7 +36,7 @@ public class OverdueBook {
     
     // Overdue and fine information
     private int overdueDays;
-    private BigDecimal fineAmount;
+    private Long fineAmount;
     private String paidStatus;
 
     // Default constructor
@@ -45,7 +45,7 @@ public class OverdueBook {
 
     // Constructor with basic information
     public OverdueBook(int borrowId, String userName, String bookTitle, Date borrowDate, 
-                      Date dueDate, int overdueDays, BigDecimal fineAmount, String paidStatus) {
+                      Date dueDate, int overdueDays, Long fineAmount, String paidStatus) {
         this.borrowId = borrowId;
         this.userName = userName;
         this.bookTitle = bookTitle;
@@ -188,11 +188,11 @@ public class OverdueBook {
         this.overdueDays = overdueDays;
     }
 
-    public BigDecimal getFineAmount() {
+    public Long getFineAmount() {
         return fineAmount;
     }
 
-    public void setFineAmount(BigDecimal fineAmount) {
+    public void setFineAmount(Long fineAmount) {
         this.fineAmount = fineAmount;
     }
 
