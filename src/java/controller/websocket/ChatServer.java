@@ -94,26 +94,50 @@ public class ChatServer {
 
                         if (targetSession != null && targetSession.isOpen()) {
                               targetSession.getBasicRemote().sendText("👨‍💼 Admin: " + actualMsg);
+                              System.out.println("✅ Sent message to user " + targetUserId + ": " + actualMsg);
                         } else {
                               // Lưu pending message
                               pendingMessages.computeIfAbsent(targetUserId, k -> new ConcurrentLinkedQueue<>())
                                       .add("👨‍💼 Admin: " + actualMsg);
+                              System.out.println("📝 Saved pending message for " + targetUserId);
                         }
                   }
-            } else if (senderId != null && !"admin".equals(senderId)) {
-                  Session adminSession = userMap.get("admin");
-                  if (adminSession != null && adminSession.isOpen()) {
-                        adminSession.getBasicRemote().sendText("From " + senderId + ": " + message);
-                  } else {
-                        // Lưu pending cho admin
-                        pendingMessages.computeIfAbsent("admin", k -> new ConcurrentLinkedQueue<>())
-                                .add("From " + senderId + ": " + message);
+            } else if (message.startsWith("USER:")) {
+                  // Xử lý tin nhắn từ user với format USER:username:message
+                  String[] parts = message.split(":", 3);
+                  if (parts.length == 3) {
+                        String username = parts[1].trim();
+                        String actualMsg = parts[2].trim();
+
+                        Session adminSession = userMap.get("admin");
+                        if (adminSession != null && adminSession.isOpen()) {
+                              adminSession.getBasicRemote().sendText("From " + username + ": " + actualMsg);
+                              System.out.println("✅ Forwarded message from " + username + " to admin: " + actualMsg);
+                        } else {
+                              // Lưu pending cho admin
+                              pendingMessages.computeIfAbsent("admin", k -> new ConcurrentLinkedQueue<>())
+                                      .add("From " + username + ": " + actualMsg);
+                              System.out.println("📝 Saved pending message from " + username + " for admin");
+                        }
+                  } else if (senderId != null && !"admin".equals(senderId)) {
+                        // Fallback cho tin nhắn không có format đặc biệt
+                        Session adminSession = userMap.get("admin");
+                        if (adminSession != null && adminSession.isOpen()) {
+                              adminSession.getBasicRemote().sendText("From " + senderId + ": " + message);
+                              System.out.println("✅ Forwarded fallback message from " + senderId + " to admin: " + message);
+                        } else {
+                              // Lưu pending cho admin
+                              pendingMessages.computeIfAbsent("admin", k -> new ConcurrentLinkedQueue<>())
+                                      .add("From " + senderId + ": " + message);
+                              System.out.println("📝 Saved pending fallback message from " + senderId + " for admin");
+                        }
                   }
             }
       }
 
       @OnClose
-      public void onClose(Session session) {
+      public void onClose(Session session
+      ) {
             String userId = userSessions.remove(session);
             if (userId != null) {
                   userMap.remove(userId);

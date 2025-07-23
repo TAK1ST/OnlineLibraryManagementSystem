@@ -337,7 +337,8 @@
                               }
                               try {
                                     console.log("📤 Sending message:", message);
-                                    ws.send(message);
+                                    // Thêm username vào tin nhắn để server có thể xác định người gửi
+                                    ws.send(`USER:${currentUsername}:${message}`);
                                     addUserMessage(message);
                                     messageInput.value = '';
                                     messageInput.focus();

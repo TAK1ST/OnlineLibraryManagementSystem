@@ -358,14 +358,23 @@
                         }
 
                         if (message.startsWith("From ")) {
-                              const [prefix, userId, actualMsg] = message.split(":", 3);
-                              console.log("📨 Message from user:", userId.trim(), "Content:", actualMsg);
-                              if (userId.trim() === selectedUser) {
-                                    addUserMessage(actualMsg.trim());
-                              } else {
-                                    console.log("⚠️ Message from non-selected user:", userId.trim());
-                                    sessionStorage.setItem(`pendingMessage_${userId.trim()}`, actualMsg.trim());
-                                    addSystemMessage(`Tin nhắn mới từ ${userId.trim()}. Vui lòng chọn user để xem.`);
+                              // Sửa cách parse tin nhắn từ user
+                              const fromIndex = message.indexOf("From ");
+                              const colonIndex = message.indexOf(": ", fromIndex);
+                              
+                              if (colonIndex !== -1) {
+                                    const userId = message.substring(fromIndex + 5, colonIndex).trim();
+                                    const actualMsg = message.substring(colonIndex + 2).trim();
+                                    
+                                    console.log("📨 Message from user:", userId, "Content:", actualMsg);
+                                    
+                                    if (userId === selectedUser) {
+                                          addUserMessage(actualMsg);
+                                    } else {
+                                          console.log("⚠️ Message from non-selected user:", userId);
+                                          sessionStorage.setItem(`pendingMessage_${userId}`, actualMsg);
+                                          addSystemMessage(`Tin nhắn mới từ ${userId}. Vui lòng chọn user để xem.`);
+                                    }
                               }
                               return;
                         }
