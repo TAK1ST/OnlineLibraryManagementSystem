@@ -288,7 +288,7 @@ public class UserDAO implements IUserDAO {
             cn = DBConnection.getConnection();
             if (cn != null) {
                 // Only search by email first
-                String sql = "SELECT id, name, email, password, role, status, avatar FROM dbo.users WHERE email = ?";
+                String sql = "SELECT id, name, email, password, role, status, avatar FROM dbo.users WHERE email = ? COLLATE Latin1_General_CS_AS";
                 st = cn.prepareStatement(sql);
                 st.setString(1, email);
 

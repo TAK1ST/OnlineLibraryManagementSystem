@@ -118,12 +118,10 @@
         String requestType = determineRequestType(dto);
         
         // Chỉ hiển thị approve button cho pending requests
-        if (!"pending".equals(status)) ssage());
+        if (!"pending".equals(status)){
                 return false;
             }
-        }{
-            return false;
-        }
+
         
         // Với borrow request, kiểm tra available copies
         if ("borrow".equals(requestType)) {

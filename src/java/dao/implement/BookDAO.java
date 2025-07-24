@@ -173,7 +173,7 @@ public class BookDAO implements IBookDAO {
         return newBooks;
     }
 
-    // Tìm kiếm sách động
+
     @Override
     public ArrayList<Book> searchBooks(String title, String author, String category) throws ClassNotFoundException, SQLException {
         ArrayList<Book> result = new ArrayList<>();
@@ -215,20 +215,20 @@ public class BookDAO implements IBookDAO {
                 System.out.println("Added category filter: %" + category.trim() + "%");
             }
 
-            // Debug: In ra SQL query
+       
             System.out.println("Final SQL: " + sql.toString());
             System.out.println("Parameters: " + params);
 
             st = cn.prepareStatement(sql.toString());
 
-            // Set parameters
+      
             for (int i = 0; i < params.size(); i++) {
                 st.setString(i + 1, params.get(i));
             }
 
             table = st.executeQuery();
 
-            // Debug: Đếm số kết quả
+
             int count = 0;
             while (table.next()) {
                 count++;
@@ -246,7 +246,7 @@ public class BookDAO implements IBookDAO {
                 Book book = new Book(id, bookTitle, isbn, bookAuthor, bookCategory, year, total, avaCopies, status, imageUrl, borrowedCount);
                 result.add(book);
 
-                // Debug: In ra thông tin sách tìm được
+ 
                 System.out.println("Found book: " + bookTitle + " by " + bookAuthor);
             }
 
@@ -326,7 +326,7 @@ public class BookDAO implements IBookDAO {
         return book;
     }
 
-    // Cập nhật tổng số lượng và số lượng còn lại (an toàn)
+   
     public boolean updateTotalCopiesAlternative(int bookId, int totalCopies) {
         Connection conn = null;
         try {
@@ -383,7 +383,7 @@ public class BookDAO implements IBookDAO {
         }
     }
 
-    // Lấy tổng số sách
+
     @Override
     public int getTotalBooks() {
         Connection cn = null;
@@ -412,7 +412,7 @@ public class BookDAO implements IBookDAO {
         return count;
     }
 
-    // Tìm kiếm sách theo isbn
+
     public List<Book> searchByIsbn(String searchTerm) {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books WHERE isbn LIKE ? AND status = 'active'";
@@ -444,7 +444,7 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-    // Tìm kiếm sách theo author
+ 
     public List<Book> searchByAuthor(String searchTerm) {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books WHERE author LIKE ? AND status = 'active'";
@@ -460,7 +460,6 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-    // Tìm kiếm sách theo title
     public List<Book> searchByTitle(String searchTerm) {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books WHERE title LIKE ? AND status = 'active'";
@@ -476,7 +475,6 @@ public class BookDAO implements IBookDAO {
         return books;
     }
 
-    // Cập nhật tổng số lượng và số lượng còn lại
     public boolean updateTotalCopies(int bookId, int totalCopies) {
         String query = "UPDATE books SET total_copies = ?, available_copies = ? - (SELECT COUNT(*) FROM borrow_records WHERE book_id = ? AND status = 'borrowed') WHERE id = ? AND status = 'active'";
         try ( Connection conn = DBConnection.getConnection();  PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -492,7 +490,7 @@ public class BookDAO implements IBookDAO {
         }
     }
 
-    // Thêm method này vào class BookDAO của bạn
+  
 
 /**
  * Cập nhật tổng số lượng sách trong kho bằng cách cộng dồn
@@ -506,10 +504,10 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
     PreparedStatement psUpdate = null;
     ResultSet rs = null;
     try {
-        conn = DBConnection.getConnection();  // hoặc dùng connection pool nếu bạn có
+        conn = DBConnection.getConnection();  
         if (conn == null) return false;
         
-        // Bước 1: Lấy số lượng hiện tại
+       
         String sqlSelect = "SELECT [total_copies] FROM books WHERE id = ?";
         psSelect = conn.prepareStatement(sqlSelect);
         psSelect.setInt(1, bookId);
@@ -519,18 +517,18 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         if (rs.next()) {
             currentQuantity = rs.getInt("total_copies");
         } else {
-            return false; // Không tìm thấy sách
+            return false; 
         }
         
-        // Bước 2: Tính số lượng mới
+        
         int newQuantity = currentQuantity + quantityToAdd;
         
-        // FIX: Kiểm tra số lượng mới không được âm
+        
         if (newQuantity < 0) {
             return false;
         }
         
-        // Bước 3: Cập nhật vào bảng
+       
         String sqlUpdate = "UPDATE books SET [total_copies] = ? WHERE id = ?";
         psUpdate = conn.prepareStatement(sqlUpdate);
         psUpdate.setInt(1, newQuantity);
@@ -552,7 +550,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
 }
 
 
-    // Cập nhật thông tin sách
+   
     @Override
     public boolean update(Book book) {
         Connection cn = null;
@@ -592,7 +590,7 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         }
     }
 
-    // Tìm kiếm sách động theo searchTerm và searchBy
+    
     @Override
     public List<Book> searchBooks(String searchTerm, String searchBy) throws SQLException, ClassNotFoundException {
         List<Book> books = new ArrayList<>();
@@ -608,7 +606,6 @@ public boolean addToTotalCopies(int bookId, int quantityToAdd) {
         return books;
     }
 
-    // Cập nhật số lượng sách còn lại
     @Override
     public boolean updateBookQuantity(int bookId, int newQuantity) {
         Connection cn = null;

@@ -45,7 +45,6 @@ public class SearchBookServlet extends HttpServlet {
                 books = bookDAO.searchBooks(title, author, category);
             }
 
-            // TẠO COOKIE CHỈ KHI SEARCH BẰNG TITLE
             if (title != null && !title.trim().isEmpty()) {
                 try {
                     Cookie recentKeyword = new Cookie("recentKeyword", URLEncoder.encode(title.trim(), "UTF-8"));
@@ -54,7 +53,7 @@ public class SearchBookServlet extends HttpServlet {
                     } else {
                         recentKeyword.setPath(contextPath + "/");
                     }
-                    recentKeyword.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
+                    recentKeyword.setMaxAge(7 * 24 * 60 * 60); 
                     recentKeyword.setHttpOnly(false);
                     response.addCookie(recentKeyword);
 
